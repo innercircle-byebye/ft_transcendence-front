@@ -1,6 +1,6 @@
 import React, { ReactElement } from "react";
 import Head from "next/head";
-import MainLayout from "../layouts/MainLayout";
+import MainLayout from "../layouts/mainLayout";
 import styles from "../styles/Home.module.css";
 
 const Home = () => {
