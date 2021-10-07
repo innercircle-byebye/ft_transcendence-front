@@ -1,6 +1,24 @@
 import Image from "next/image";
+import { useRouter } from "next/router";
+import useSWR from "swr";
+import fetcher from "@/utils/fetcher";
+import { IUser } from "@/typings/db";
+import { useEffect } from "react";
 
 const Login = () => {
+  const router = useRouter();
+  const { data: userData } = useSWR<IUser | false>("/api/users", fetcher);
+
+  useEffect(() => {
+    if (userData) {
+      router.push("/");
+    }
+  }, [userData, router]);
+
+  if (userData || userData === undefined) {
+    return <h1>로딩중...</h1>;
+  }
+
   return (
     <div className="w-screen h-screen bg-sky-700 flex justify-center items-center">
       <div className="flex flex-col items-center">
