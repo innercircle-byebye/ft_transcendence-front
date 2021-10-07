@@ -3,11 +3,32 @@ import { useRouter } from "next/router";
 import useSWR from "swr";
 import fetcher from "@/utils/fetcher";
 import { IUser } from "@/typings/db";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
+import axios from "axios";
 
 const Login = () => {
   const router = useRouter();
-  const { data: userData } = useSWR<IUser | false>("/api/users", fetcher);
+  const { data: userData, revalidate } = useSWR<IUser | false>(
+    "/api/users",
+    fetcher
+  );
+
+  const onClickLogin = useCallback(
+    (e) => {
+      e.preventDefault();
+      axios
+        .post("/api/login", {
+          withCredentials: true,
+        })
+        .then((res) => {
+          router.push("/");
+          revalidate();
+          console.log(res.data);
+        })
+        .catch(() => {});
+    },
+    [revalidate, router]
+  );
 
   useEffect(() => {
     if (userData) {
@@ -32,7 +53,7 @@ const Login = () => {
         <p className="font-light tracking-widest h-16 text-amber-200 ">
           Play Pong & Chat
         </p>
-        <form className="h-60">
+        <form className="h-60" onSubmit={onClickLogin}>
           <button className="group flex flex-row bg-white hover:bg-amber-600 hover:text-white text-sky-800 font-bold py-2 px-4 w-36 rounded-full">
             <svg
               xmlns="http://www.w3.org/2000/svg"

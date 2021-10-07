@@ -12,6 +12,6 @@ export default function handler(
   if (req.method === "POST") {
     res.setHeader("Set-Cookie", "a_name=jiwlee;Max-Age=3600;HttpOnly,Secure");
     res.statusCode = 200;
-    res.json({ message: "ok" });
+    res.json({ message: "login success" });
   }
 }
