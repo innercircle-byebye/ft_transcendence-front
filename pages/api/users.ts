@@ -10,7 +10,11 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data | false>
 ) {
-  res.status(200).json({
-    userData: { id: 1, nickname: "jiwlee", email: "aaa@example.com" },
-  });
+  res.status(200).json(
+    req.cookies.a_name
+      ? {
+          userData: { id: 1, nickname: "jiwlee", email: "aaa@example.com" },
+        }
+      : false
+  );
 }
