@@ -1,12 +1,11 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import useSWR from "swr";
 import fetcher from "@/utils/fetcher";
 import { IUser } from "@/typings/db";
-import { useCallback, useEffect } from "react";
-import axios from "axios";
-
-const JWT_EXPIRE_TIME = 24 * 3600 * 1000;
+import React, { useEffect } from "react";
+import { getServerSideProps } from "pages";
 
 const Login = () => {
   const router = useRouter();
@@ -14,26 +13,8 @@ const Login = () => {
     "/api/users",
     fetcher
   );
-
-  const onClickLogin = useCallback(
-    (e) => {
-      e.preventDefault();
-      axios
-        .post("/api/login")
-        .then((res) => {
-          const { accessToken, message } = res.data;
-
-          axios.defaults.headers.common[
-            "Authorization"
-          ] = `Bearer ${accessToken}`;
-          console.log(axios.defaults.headers.common["Authorization"]);
-          revalidate();
-          console.log(message);
-        })
-        .catch(() => {});
-    },
-    [revalidate]
-  );
+  // userData === undefined: 데이터를 가져오는중
+  // userData === false: 데이터가 없음(로그아웃상태)
 
   useEffect(() => {
     if (userData) {
@@ -58,8 +39,13 @@ const Login = () => {
         <p className="font-light tracking-widest h-16 text-amber-200 ">
           Play Pong & Chat
         </p>
-        <form className="h-60" onSubmit={onClickLogin}>
-          <button className="group flex flex-row bg-white hover:bg-amber-600 hover:text-white text-sky-800 font-bold py-2 px-4 w-36 rounded-full">
+        <Link href="http://localhost:3005/auth/ft_login" passHref>
+          <button
+            onClick={() => {
+              revalidate();
+            }}
+            className="group flex flex-row bg-white hover:bg-amber-600 hover:text-white text-sky-800 font-bold py-2 px-4 w-36 rounded-full"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="group-hover:opacity-5 h-5 w-10"
@@ -82,7 +68,7 @@ const Login = () => {
             </svg>
             LOGIN
           </button>
-        </form>
+        </Link>
       </div>
     </div>
   );

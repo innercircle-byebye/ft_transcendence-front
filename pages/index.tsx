@@ -7,47 +7,48 @@ import useSWR from "swr";
 import { IUser } from "@/typings/db";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import cookie from "js-cookie";
 
 // axios.defaults.baseURL = "https://localhost:3005";
 axios.defaults.withCredentials = true;
 
-const Home = () => {
+const Home = ({
+  pong_access_token,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const {
-    data: userData,
-    revalidate,
-    mutate,
-  } = useSWR<IUser | false>("/api/users", fetcher, {
-    dedupingInterval: 2000, // 2초
-  });
+  const { data: userData, mutate } = useSWR<IUser | false>(
+    "/api/users",
+    fetcher,
+    {
+      dedupingInterval: 2000, // 2초
+    }
+  );
 
   const onClickLogout = useCallback(
     (e) => {
       e.preventDefault();
       axios.get("/api/logout").then((res) => {
         const { message } = res.data;
-
-        axios.defaults.headers.common[{ Authorization }] = "";
-        mutate(false, false);
         console.log(message);
+        mutate(false, false);
+        // cookie 삭제
+        cookie.remove("pong_access_token");
+        // token 삭제
+        delete axios.defaults.headers.common["Authorization"];
+        router.push('/login');
+      }).catch(() => {
+
       });
     },
     [mutate]
   );
 
   useEffect(() => {
-    if (userData === false) {
-      router.push("/login");
-    }
-  }, [router, userData]);
-
-  if (userData === false) {
-    return null;
-  }
-
-  if (userData === undefined) {
-    return <h1 className={styles.title}>로딩중...</h1>;
-  }
+    // token 저장
+    axios.defaults.headers.common["Authorization"] = pong_access_token;
+    console.log("set authorization header");
+  }, [pong_access_token]);
 
   return (
     <div className={styles.container}>
@@ -68,6 +69,21 @@ const Home = () => {
       </main>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  if (!context.req.cookies.pong_access_token) {
+    return ({
+      redirect: {
+        destination: '/login',
+        permanent: false
+      }
+    })
+  }
+
+  return {
+    props: { pong_access_token: context.req.cookies.pong_access_token },
+  };
 };
 
 Home.getLayout = function getLayout(page: ReactElement) {
