@@ -15,6 +15,7 @@ export default function Dropdown(){
               <Menu.Item>
                 {({ active }) => (
                   <Link href="/profile">
+                    {/* 여기에 border 추가하면 될 듯합니다. */}
                     <a
                       className={`${
                         active

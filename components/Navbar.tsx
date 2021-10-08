@@ -5,26 +5,35 @@ import SearchInput from "./SearchInput";
 
 const Navbar: VFC = () => {
   return (
-    <div className="flex flex-row h-auto bg-blue-100 justify-between">
-      <div className="w-auto">Logo image</div>
-      <div className="flex flex-row">
+    // navbar 높이는 고정 크기를 갖도록
+    <div className="flex flex-row px-3 py-3 h-12 bg-blue-100 justify-between">
+      <div className="">Logo image</div>
+      <div className="space-x-6 flex flex-row">
         <div className="w-16">
-          <Link href="/TestSamplePage">list 1</Link>
+          <Link href="/TestSamplePage">
+            <a>list 1</a>
+          </Link>
         </div>
         <div className="w-16">
-          <Link href="/TestSamplePage">list 2</Link>
+          <Link href="/TestSamplePage">
+            <a>list 2</a>
+          </Link>
         </div>
         <div className="w-16">
-          <Link href="/TestSamplePage">list 3</Link>
+          <Link href="/TestSamplePage">
+            <a>list 3</a>
+          </Link>
         </div>
         <div className="w-16">
-          <Link href="/TestSamplePage">list 4</Link>
+          <Link href="/TestSamplePage">
+            <a>list 4</a>
+          </Link>
         </div>
       </div>
-      <div className="focus:border-indigo-500">
+      <div className="">
         <SearchInput></SearchInput>
       </div>
-      <div className="flex">
+      <div className="flex w-1/12 justify-end">
         <div className="w-16">ID</div>
         <Dropdown></Dropdown>
       </div>
