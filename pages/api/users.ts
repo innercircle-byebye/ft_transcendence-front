@@ -11,7 +11,7 @@ export default function handler(
   res: NextApiResponse<Data | false>
 ) {
   res.status(200).json(
-    req.headers.cookie
+    req.headers.authorization
       ? {
         userData: { id: 1, nickname: "jiwlee", email: "aaa@example.com" },
       }

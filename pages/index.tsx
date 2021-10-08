@@ -17,7 +17,7 @@ const Home = ({
   pong_access_token,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const { data: userData, mutate } = useSWR<IUser | false>(
+  const { data: userData, revalidate, mutate } = useSWR<IUser | false>(
     "/api/users",
     fetcher,
     {
@@ -47,8 +47,13 @@ const Home = ({
   useEffect(() => {
     // token 저장
     axios.defaults.headers.common["Authorization"] = pong_access_token;
+    revalidate();
     console.log("set authorization header");
   }, [pong_access_token]);
+
+  if (!userData) {
+    return <div>로딩중...</div>
+  }
 
   return (
     <div className={styles.container}>
