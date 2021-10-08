@@ -6,6 +6,8 @@ import { IUser } from "@/typings/db";
 import { useCallback, useEffect } from "react";
 import axios from "axios";
 
+const JWT_EXPIRE_TIME = 24 * 3600 * 1000;
+
 const Login = () => {
   const router = useRouter();
   const { data: userData, revalidate } = useSWR<IUser | false>(
@@ -17,17 +19,20 @@ const Login = () => {
     (e) => {
       e.preventDefault();
       axios
-        .post("/api/login", {
-          withCredentials: true,
-        })
+        .post("/api/login")
         .then((res) => {
-          router.push("/");
+          const { accessToken, message } = res.data;
+
+          axios.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${accessToken}`;
+          console.log(axios.defaults.headers.common["Authorization"]);
           revalidate();
-          console.log(res.data);
+          console.log(message);
         })
         .catch(() => {});
     },
-    [revalidate, router]
+    [revalidate]
   );
 
   useEffect(() => {

@@ -2,6 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 type Data = {
+  accessToken: string;
   message: string;
 };
 
@@ -10,8 +11,7 @@ export default function handler(
   res: NextApiResponse<Data>
 ) {
   if (req.method === "POST") {
-    res.setHeader("Set-Cookie", "a_name=jiwlee;Max-Age=3600;HttpOnly,Secure");
     res.statusCode = 200;
-    res.json({ message: "login success" });
+    res.json({ accessToken: "accessToken", message: "login success" });
   }
 }

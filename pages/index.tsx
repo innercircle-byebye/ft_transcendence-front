@@ -8,6 +8,9 @@ import { IUser } from "@/typings/db";
 import { useRouter } from "next/router";
 import axios from "axios";
 
+// axios.defaults.baseURL = "https://localhost:3005";
+axios.defaults.withCredentials = true;
+
 const Home = () => {
   const router = useRouter();
   const {
@@ -22,12 +25,14 @@ const Home = () => {
     (e) => {
       e.preventDefault();
       axios.get("/api/logout").then((res) => {
-        router.push("/login");
+        const { message } = res.data;
+
+        axios.defaults.headers.common[{ Authorization }] = "";
         mutate(false, false);
-        console.log(res.data);
+        console.log(message);
       });
     },
-    [mutate, router]
+    [mutate]
   );
 
   useEffect(() => {
