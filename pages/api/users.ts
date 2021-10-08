@@ -10,13 +10,11 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data | false>
 ) {
-  console.log("check");
-  console.log(req.headers.authorization);
   res.status(200).json(
-    req.headers.authorization
+    req.headers.cookie
       ? {
-          userData: { id: 1, nickname: "jiwlee", email: "aaa@example.com" },
-        }
+        userData: { id: 1, nickname: "jiwlee", email: "aaa@example.com" },
+      }
       : false
   );
 }
