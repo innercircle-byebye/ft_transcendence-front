@@ -10,23 +10,23 @@ const Navbar: VFC = () => {
       <div className="">Logo image</div>
       <div className="space-x-6 flex flex-row">
         <div className="w-16">
-          <Link href="/TestSamplePage">
-            <a>list 1</a>
+          <Link href="/">
+            <a>HOME</a>
           </Link>
         </div>
         <div className="w-16">
-          <Link href="/TestSamplePage">
-            <a>list 2</a>
+          <Link href="/">
+            <a>PLAY</a>
           </Link>
         </div>
         <div className="w-16">
-          <Link href="/TestSamplePage">
-            <a>list 3</a>
+          <Link href="/">
+            <a>RANK</a>
           </Link>
         </div>
         <div className="w-16">
-          <Link href="/TestSamplePage">
-            <a>list 4</a>
+          <Link href="/">
+            <a>CHAT</a>
           </Link>
         </div>
       </div>
