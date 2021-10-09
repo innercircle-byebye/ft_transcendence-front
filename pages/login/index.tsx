@@ -17,7 +17,8 @@ const Login = () => {
         <p className="font-light tracking-widest h-16 text-amber-200 ">
           Play Pong & Chat
         </p>
-        <Link href="http://localhost:3005/auth/ft_login" passHref>
+        <Link href="http://localhost:3005/auth/ft_login">
+          <a>
           <button
             className="group flex flex-row bg-white hover:bg-amber-600 hover:text-white text-sky-800 font-bold py-2 px-4 w-36 rounded-full"
           >
@@ -43,6 +44,7 @@ const Login = () => {
             </svg>
             LOGIN
           </button>
+          </a>
         </Link>
       </div>
     </div>
