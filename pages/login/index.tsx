@@ -1,31 +1,9 @@
 import Image from "next/image";
-import { useRouter } from "next/router";
 import Link from "next/link";
-import useSWR from "swr";
-import fetcher from "@/utils/fetcher";
-import { IUser } from "@/typings/db";
-import React, { useEffect } from "react";
-import { getServerSideProps } from "pages";
+import React from "react";
+import { GetServerSideProps } from "next";
 
 const Login = () => {
-  const router = useRouter();
-  const { data: userData, revalidate } = useSWR<IUser | false>(
-    "/api/users",
-    fetcher
-  );
-  // userData === undefined: 데이터를 가져오는중
-  // userData === false: 데이터가 없음(로그아웃상태)
-
-  useEffect(() => {
-    if (userData) {
-      router.push("/");
-    }
-  }, [userData, router]);
-
-  if (userData || userData === undefined) {
-    return <h1>로딩중...</h1>;
-  }
-
   return (
     <div className="w-screen h-screen bg-sky-700 flex justify-center items-center">
       <div className="flex flex-col items-center">
@@ -41,9 +19,6 @@ const Login = () => {
         </p>
         <Link href="http://localhost:3005/auth/ft_login" passHref>
           <button
-            onClick={() => {
-              revalidate();
-            }}
             className="group flex flex-row bg-white hover:bg-amber-600 hover:text-white text-sky-800 font-bold py-2 px-4 w-36 rounded-full"
           >
             <svg
@@ -72,6 +47,20 @@ const Login = () => {
       </div>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  if (context.req.cookies.pong_access_token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
 };
 
 export default Login;
