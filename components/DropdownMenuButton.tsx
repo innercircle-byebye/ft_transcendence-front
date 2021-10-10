@@ -1,37 +1,55 @@
 import { Menu } from "@headlessui/react";
 import Link from "next/link";
+import { MenuIcon } from "@heroicons/react/solid";
+
+/*
+const MenuIcon = () => {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-5 w-5"
+      viewBox="0 0 20 20"
+      fill="currentColor"
+    >
+      <path
+        fillRule="evenodd"
+        d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+};
+*/
 
 const DropdownMenuButton = () => {
   return (
     <Menu>
-      <Menu.Button>button</Menu.Button>
-      <Menu.Items>
+      <Menu.Button>
+        <MenuIcon className="w-8 h-8"/>
+      </Menu.Button>
+      <Menu.Items className="px-2 flex flex-col divide-y divide-gray-50 bg-white">
         <Menu.Item>
           {({ active }) => (
             <a className={`${active && "bg-blue-500"}`}>
-            <Link href="/">
-              {/* <a className={`${active && "bg-blue-500"}`}>Profile</a> */}
-              Profile test
-            </Link>
+              <Link href="/">
+                Profile test
+              </Link>
             </a>
           )}
         </Menu.Item>
         <Menu.Item>
           {({ active }) => (
-            <Link href="/">
-              <a className={`${active && "bg-blue-500"}`}>History</a>
-            </Link>
+            <a className={`${active && "bg-blue-500"}`}>
+              <Link href="/">History</Link>
+            </a>
           )}
         </Menu.Item>
         <Menu.Item>
           {({ active }) => (
-            <Link href="/">
-              <a className={`${active && "bg-blue-500"}`}>Log out</a>
-            </Link>
+            <a className={`${active && "bg-blue-500"}`}>
+              <Link href="/">Log out</Link>
+            </a>
           )}
-        </Menu.Item>
-        <Menu.Item disabled>
-          <span className="opacity-75">Invite a friend (coming soon!)</span>
         </Menu.Item>
       </Menu.Items>
     </Menu>
