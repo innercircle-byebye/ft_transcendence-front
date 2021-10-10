@@ -1,25 +1,32 @@
 import { ReactElement } from "react";
 import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
 import MainLayout from "@/layouts/MainLayout";
 import styles from "@/styles/Home.module.css";
 
+const dummyUserProfile = {
+  avatarURL: "https://picsum.photos/400/400",
+  username: "Fox",
+};
+
 const dummyRankDatas = [
-  "1 | Jane | 30000",
-  "2 | John | 20000",
-  "3 | Tom | 20000",
-  "4 | Tom | 20000",
-  "5 | Tom | 20000",
-  "6 | Tom | 20000",
-  "7 | Tom | 20000",
-  "8 | Tom | 20000",
-  "9 | Tom | 20000",
-  "10 | Tom | 20000",
-  "11 | Tom | 20000",
-  "12 | Tom | 20000",
-  "13 | Tom | 20000",
+  { rank: 1, username: "Jane", xp: 30000 },
+  { rank: 2, username: "John", xp: 20000 },
+  { rank: 3, username: "Tom1", xp: 20000 },
+  { rank: 4, username: "Tom2", xp: 20000 },
+  { rank: 5, username: "Tom3", xp: 20000 },
+  { rank: 6, username: "Tom4", xp: 20000 },
+  { rank: 7, username: "Tom5", xp: 20000 },
+  { rank: 8, username: "Tom6", xp: 20000 },
+  { rank: 9, username: "Tom7", xp: 20000 },
+  { rank: 10, username: "Tom8", xp: 20000 },
+  { rank: 11, username: "Tom9", xp: 20000 },
+  { rank: 12, username: "Tom10", xp: 20000 },
+  { rank: 13, username: "Tom11", xp: 20000 },
 ];
 
-const dummyPaginationButtonTexts = ["<", "1", "2", "3", "4", "5", ">"];
+const dummyPaginationLinkTexts = ["<", "1", "2", "3", "4", "5", ">"];
 
 const Rank = () => {
   return (
@@ -29,44 +36,56 @@ const Rank = () => {
         <meta name="description" content="Rank - Play pong game and Chat" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="w-10/12 h-4/6 grid gap-8 grid-cols-3 border border-gray-700">
-        <div className="">
-          <div className="bg-gray-200 rounded-md">
-            <div>
-              <div>Image</div>
+      <div className="grid gap-8 grid-cols-3 py-8 w-8/12 max-w-screen-xl h-full">
+        {/* 사용자 정보 */}
+        <div>
+          <div className="py-12 mb-6 rounded-md bg-gray-200">
+            <div className="flex justify-center mb-4">
+              <div className="w-72 h-72 rounded-full overflow-hidden">
+                <Image
+                  src={dummyUserProfile.avatarURL}
+                  width={300}
+                  height={300}
+                  alt="Avatar"
+                />
+              </div>
             </div>
-            <div>
-              <p>Fox</p>
+            <div className="py-2 text-center">
+              <h2 className="text-5xl">{dummyUserProfile.username}</h2>
             </div>
           </div>
-          <div>
-            <button className="px-2 py-1 rounded-md bg-amber-300 text-gray-700">
-              내 Rank 보기
-            </button>
+          <div className="flex justify-center">
+            <Link href="/">
+              <a className="px-2 py-1 rounded-md text-lg bg-amber-300 text-gray-700">
+                내 Rank 보기
+              </a>
+            </Link>
           </div>
         </div>
+        {/* 랭크 정보 */}
         <div className="col-span-2 h-full">
-          <div>
-            <h1>Ranks</h1>
+          <div className="mb-4">
+            <h1 className="text-4xl leading-10">Ranks</h1>
           </div>
-          <div className=" bg-gray-300 rounded-md">
-            <div>
+          <div className="p-4 rounded-md bg-gray-300 ">
+            <div className="text-lg">
               <ul>
                 <li>Rank | Name | Point</li>
                 {dummyRankDatas.map((rankData) => (
-                  <li key={rankData}>{rankData}</li>
+                  <li key={rankData.username}>
+                    {rankData.rank} | {rankData.username} | {rankData.xp}
+                  </li>
                 ))}
               </ul>
             </div>
-            <div>
-              <div className="bg-gray-50">
-                {dummyPaginationButtonTexts.map((aginationButtonText) => (
-                  <button
-                    key={aginationButtonText}
-                    className="mx-px px-2 py-1 bg-amber-300 text-gray-700"
-                  >
-                    {aginationButtonText}
-                  </button>
+            <div className="flex justify-center">
+              <div className="inline-block rounded-md border border-gray-50 overflow-hidden bg-gray-50">
+                {dummyPaginationLinkTexts.map((paginationLinkText) => (
+                  <Link href="/" key={paginationLinkText}>
+                    <a className="mx-px px-2 py-1 bg-amber-300 text-gray-700">
+                      {paginationLinkText}
+                    </a>
+                  </Link>
                 ))}
               </div>
             </div>
