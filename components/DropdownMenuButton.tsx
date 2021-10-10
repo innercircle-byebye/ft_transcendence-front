@@ -2,51 +2,31 @@ import { Menu } from "@headlessui/react";
 import Link from "next/link";
 import { MenuIcon } from "@heroicons/react/solid";
 
-/*
-const MenuIcon = () => {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-5 w-5"
-      viewBox="0 0 20 20"
-      fill="currentColor"
-    >
-      <path
-        fillRule="evenodd"
-        d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-        clipRule="evenodd"
-      />
-    </svg>
-  );
-};
-*/
-
 const DropdownMenuButton = () => {
   return (
     <Menu>
       <Menu.Button>
-        <MenuIcon className="w-8 h-8"/>
+        {/* MenuIcon size 를 어떻게 맞춰야하는지 모르겠습니다... */}
+        <MenuIcon className="w-12 h-12 px-4" />
       </Menu.Button>
-      <Menu.Items className="px-2 flex flex-col divide-y divide-gray-50 bg-white">
+      <Menu.Items className="w-20 px-2 flex flex-col divide-y divide-gray-50 bg-white">
         <Menu.Item>
           {({ active }) => (
-            <a className={`${active && "bg-blue-500"}`}>
-              <Link href="/">
-                Profile test
-              </Link>
+            <a className={`${active && "bg-blue-500 text-white"}`}>
+              <Link href="/">Profile</Link>
             </a>
           )}
         </Menu.Item>
         <Menu.Item>
           {({ active }) => (
-            <a className={`${active && "bg-blue-500"}`}>
+            <a className={`${active && "bg-blue-500 text-white"}`}>
               <Link href="/">History</Link>
             </a>
           )}
         </Menu.Item>
         <Menu.Item>
           {({ active }) => (
-            <a className={`${active && "bg-blue-500"}`}>
+            <a className={`${active && "bg-blue-500 text-white"}`}>
               <Link href="/">Log out</Link>
             </a>
           )}
