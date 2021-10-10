@@ -10,22 +10,6 @@ interface IListItem {
   current: boolean;
 }
 
-/*
-// navlist component
-const NavList = (props: { list: IListItem[] }) => {
-  const lists = props.list;
-  const listItems = lists.map((item: IListItem) => (
-    <div key={item.name} className="mx-10">
-      <Link href={item.href}>
-        <a>{item.name}</a>
-      </Link>
-    </div>
-  ));
-
-  return <>{listItems}</>;
-};
-*/
-
 const Navbar: VFC = () => {
   // list 향후 State 로 관리해야합니다.
   const navigationList: IListItem[] = [
@@ -37,6 +21,7 @@ const Navbar: VFC = () => {
 
   return (
     <div className="flex flex-row flex-wrap px-12 py-3 bg-blue-100">
+      {/* 이미지 */}
       <div className="px-6 justify-start">
         <Image
           src="/Logo.png"
@@ -46,9 +31,8 @@ const Navbar: VFC = () => {
           objectFit="contain"
         />
       </div>
-
+      {/* page lists */}
       <div className="px-12 mx-6 flex flex-row flex-wrap">
-        {/* <NavList list={navigationList} /> */}
         {navigationList.map((item: IListItem) => (
           <div key={item.name} className="mx-10">
             <Link href={item.href}>
@@ -57,11 +41,13 @@ const Navbar: VFC = () => {
           </div>
         ))}
       </div>
+      {/* user search input box */}
       <div className="px-12">
         <div className="justify-center">
           <SearchInput />
         </div>
       </div>
+      {/* ID 와 Dropdown button */}
       <div className="flex flex-auto flex-wrap justify-end">
         <div className="mx-2">ID</div>
         <Dropdown />
