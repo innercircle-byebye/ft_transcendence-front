@@ -17,23 +17,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const res = await axios.get("http://localhost:3000/api/user/me", {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${context.req.cookies.pong_access_token}`,
-    },
-  });
-  const { status } = res.data;
-
-  if (status !== "not_registered") {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
-
   return {
     props: {},
   };
