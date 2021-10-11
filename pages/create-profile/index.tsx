@@ -9,18 +9,18 @@ const CreateProfile = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  // if (!context.req.cookies.pong_access_token) {
-  //   return {
-  //     redirect: {
-  //       destination: "/login",
-  //       permanent: false,
-  //     },
-  //   };
-  // }
+  if (!context.req.cookies.pong_access_token) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
 
-  // axios.defaults.withCredentials = true;
-  // axios.defaults.headers.common["Authorization"] =
-  //   context.req.cookies.pong_access_token;
+  axios.defaults.withCredentials = true;
+  axios.defaults.headers.common["Authorization"] =
+    context.req.cookies.pong_access_token;
 
   const res = await axios.get("http://localhost:3000/api/user/me");
 
