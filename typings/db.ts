@@ -14,3 +14,7 @@ export interface IUser {
   lastModifiedAt: string;
   deletedAt: string | null;
 }
+
+export interface IMessage {
+  message: string;
+}
