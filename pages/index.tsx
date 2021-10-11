@@ -18,9 +18,18 @@ const Home = ({
     data: userData,
     revalidate,
     mutate,
-  } = useSWR<IUser | false>("/api/user/me", fetcher, {
-    dedupingInterval: 2000, // 2초
-  });
+  } = useSWR<IUser | false>(
+    [
+      "/api/user/me",
+      {
+        Authorization: pong_access_token,
+      },
+    ],
+    fetcher,
+    {
+      dedupingInterval: 2000, // 2초
+    }
+  );
 
   const onClickLogout = useCallback(
     (e) => {
@@ -30,8 +39,6 @@ const Home = ({
         .then((res) => {
           const { message } = res.data;
           mutate(false, false);
-          // token 삭제
-          delete axios.defaults.headers.common["Authorization"];
           // cookie 삭제
           cookie.remove("pong_access_token");
           router.push("/login");
@@ -44,11 +51,6 @@ const Home = ({
   );
 
   useEffect(() => {
-    // token 저장
-    axios.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${pong_access_token}`;
-    // 사용자 정보 다시 가져옴
     revalidate();
   }, [pong_access_token, revalidate, userData]);
 
@@ -88,6 +90,23 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       redirect: {
         destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  const res = await axios.get("http://localhost:3000/api/user/me", {
+    withCredentials: true,
+    headers: {
+      Authorization: `{$context.req.cookies.pong_access_token}`,
+    },
+  });
+  const { status } = res.data;
+
+  if (status === "not_registered") {
+    return {
+      redirect: {
+        destination: "/create-profile",
         permanent: false,
       },
     };
