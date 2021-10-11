@@ -1,4 +1,7 @@
 import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+import { GetServerSideProps } from "next";
 
 const Login = () => {
   return (
@@ -14,8 +17,11 @@ const Login = () => {
         <p className="font-light tracking-widest h-16 text-amber-200 ">
           Play Pong & Chat
         </p>
-        <form className="h-60">
-          <button className="group flex flex-row bg-white hover:bg-amber-600 hover:text-white text-sky-800 font-bold py-2 px-4 w-36 rounded-full">
+        <Link href={process.env.FT_LOGIN_URL as string}>
+          <a>
+          <button
+            className="group flex flex-row bg-white hover:bg-amber-600 hover:text-white text-sky-800 font-bold py-2 px-4 w-36 rounded-full"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="group-hover:opacity-5 h-5 w-10"
@@ -38,10 +44,25 @@ const Login = () => {
             </svg>
             LOGIN
           </button>
-        </form>
+          </a>
+        </Link>
       </div>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  if (context.req.cookies.pong_access_token) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {},
+  };
 };
 
 export default Login;
