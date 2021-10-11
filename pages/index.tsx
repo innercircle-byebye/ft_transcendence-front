@@ -19,12 +19,7 @@ const Home = ({
     revalidate,
     mutate,
   } = useSWR<IUser | false>(
-    [
-      "/api/user/me",
-      {
-        Authorization: pong_access_token,
-      },
-    ],
+    ["/api/user/me", { Authorization: pong_access_token }],
     fetcher,
     {
       dedupingInterval: 2000, // 2초
