@@ -145,26 +145,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-
-  axios.defaults.withCredentials = true;
-  axios.defaults.headers.common["Authorization"] = `Bearer ${context.req.cookies.pong_access_token}`;
-
-  const res = await axios.get("http://localhost:3000/api/user/me");
-  const data = res.data;
-  const { status } = res.data;
-
-  if (status !== "not_registered") {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  }
+  const res = await axios.get("http://localhost:3000/api/user/me", {
+    withCredentials: true,
+    headers: {
+      Authorization: `Bearer ${context.req.cookies.pong_access_token}`,
+    },
+  });
 
   return {
     props: {
-      userData: data,
+      userData: res.data,
     },
   };
 };
