@@ -1,7 +1,7 @@
 import { SearchIcon } from "@heroicons/react/solid";
 import React, { useState } from "react";
 
-const SearchInputBox = () => {
+const SearchUserInputBox = () => {
   const [User, setUser] = useState("");
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
@@ -31,4 +31,4 @@ const SearchInputBox = () => {
   );
 };
 
-export default SearchInputBox;
+export default SearchUserInputBox;
