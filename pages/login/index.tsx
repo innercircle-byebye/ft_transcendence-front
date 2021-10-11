@@ -1,9 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import { GetServerSideProps } from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-const Login = () => {
+const Login = ({
+  login_auth_url,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <div className="w-screen h-screen bg-sky-700 flex justify-center items-center">
       <div className="flex flex-col items-center">
@@ -17,7 +19,7 @@ const Login = () => {
         <p className="font-light tracking-widest h-16 text-amber-200 ">
           Play Pong & Chat
         </p>
-        <Link href="http://localhost:3005/auth/ft_login">
+        <Link href={login_auth_url}>
           <a>
           <button
             className="group flex flex-row bg-white hover:bg-amber-600 hover:text-white text-sky-800 font-bold py-2 px-4 w-36 rounded-full"
@@ -61,7 +63,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
   return {
-    props: {},
+    props: {
+      login_auth_url: process.env.LOGIN_AUTH_URL
+    },
   };
 };
 
