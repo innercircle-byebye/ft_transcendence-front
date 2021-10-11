@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const res = await axios.get("http://localhost:3000/api/user/me", {
     withCredentials: true,
     headers: {
-      Authorization: `{$context.req.cookies.pong_access_token}`,
+      Authorization: `Bearer ${context.req.cookies.pong_access_token}`,
     },
   });
   const { status } = res.data;
