@@ -1,11 +1,57 @@
+import Link from "next/link";
+import Image from "next/image";
 import React, { VFC } from "react";
-import SearchInputBox from "./SearchInputBox";
+import Dropdown from "./Dropdown";
+import SearchInput from "./SearchInput";
+
+interface IListItem {
+  name: string;
+  href: string;
+  current: boolean;
+}
 
 const Navbar: VFC = () => {
+  // list 향후 State 로 관리해야합니다.
+  const navigationList: IListItem[] = [
+    { name: "HOME", href: "/", current: true },
+    { name: "PLAY", href: "/", current: false },
+    { name: "RANK", href: "/", current: false },
+    { name: "CHAT", href: "/", current: false },
+  ];
+
   return (
-    <div>
-      Navbar
-      <SearchInputBox />
+    <div className="flex flex-row flex-wrap px-12 py-3 bg-blue-100">
+      {/* 이미지 */}
+      <div className="px-6 justify-start">
+        <Image
+          src="/Logo.png"
+          alt="Logo"
+          width={"100"}
+          height={"21"}
+          objectFit="contain"
+        />
+      </div>
+      {/* page lists */}
+      <div className="px-12 mx-6 flex flex-row flex-wrap">
+        {navigationList.map((item: IListItem) => (
+          <div key={item.name} className="mx-10">
+            <Link href={item.href}>
+              <a>{item.name}</a>
+            </Link>
+          </div>
+        ))}
+      </div>
+      {/* user search input box */}
+      <div className="px-12">
+        <div className="justify-center">
+          <SearchInput />
+        </div>
+      </div>
+      {/* ID 와 Dropdown button */}
+      <div className="flex flex-auto flex-wrap justify-end">
+        <div className="mx-2">ID</div>
+        <Dropdown />
+      </div>
     </div>
   );
 };
