@@ -17,7 +17,7 @@ const Login = () => {
         <p className="font-light tracking-widest h-16 text-amber-200 ">
           Play Pong & Chat
         </p>
-        <Link href="http://localhost:3005/auth/ft_login">
+        <Link href={process.env.FT_LOGIN_URL as string}>
           <a>
           <button
             className="group flex flex-row bg-white hover:bg-amber-600 hover:text-white text-sky-800 font-bold py-2 px-4 w-36 rounded-full"
