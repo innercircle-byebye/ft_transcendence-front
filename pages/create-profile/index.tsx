@@ -4,7 +4,6 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 const CreateProfile = ({
   userData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-
   return <div>create-profile</div>;
 };
 

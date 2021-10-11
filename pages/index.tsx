@@ -56,8 +56,8 @@ const Home = ({
     return <div>로딩중...</div>;
   }
 
-  if (userData.status === 'not_registered') {
-    router.push('/create-profile');
+  if (userData.status === "not_registered") {
+    router.push("/create-profile");
     return <div>로딩중...</div>;
   }
 
