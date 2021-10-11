@@ -15,22 +15,22 @@ const UserInfoMenu = () => {
         <Menu.Items className="absolute w-20 flex flex-col divide-y divide-gray-50 bg-white">
           <Menu.Item>
             {({ active }) => (
-              <a className={`${active && "bg-blue-500 text-white"}`}>
-                <Link href="/">Profile</Link>
+              <a className={`${active && "bg-blue-500 text-white"}`} href="#">
+                Profile
               </a>
             )}
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <a className={`${active && "bg-blue-500 text-white"}`}>
-                <Link href="/">History</Link>
+              <a className={`${active && "bg-blue-500 text-white"}`} href="#">
+                History
               </a>
             )}
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <a className={`${active && "bg-blue-500 text-white"}`}>
-                <Link href="/">Log out</Link>
+              <a className={`${active && "bg-blue-500 text-white"}`} href="#">
+                Log out
               </a>
             )}
           </Menu.Item>
