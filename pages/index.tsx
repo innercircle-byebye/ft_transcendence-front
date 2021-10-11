@@ -18,18 +18,9 @@ const Home = ({
     data: userData,
     revalidate,
     mutate,
-  } = useSWR<IUser | false>("/api/users", fetcher, {
+  } = useSWR<IUser | false>("/api/user/me", fetcher, {
     dedupingInterval: 2000, // 2초
   });
-
-  useEffect(() => {
-    // token 저장
-    axios.defaults.headers.common[
-      "Authorization"
-    ] = `Bearer ${pong_access_token}`;
-    // 사용자 정보 다시 가져옴
-    revalidate();
-  }, [pong_access_token, revalidate, userData]);
 
   const onClickLogout = useCallback(
     (e) => {
@@ -52,7 +43,21 @@ const Home = ({
     [mutate, router]
   );
 
+  useEffect(() => {
+    // token 저장
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${pong_access_token}`;
+    // 사용자 정보 다시 가져옴
+    revalidate();
+  }, [pong_access_token, revalidate, userData]);
+
   if (!userData) {
+    return <div>로딩중...</div>;
+  }
+
+  if (userData.status === "not_registered") {
+    router.push("/create-profile");
     return <div>로딩중...</div>;
   }
 
