@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import React, { VFC } from "react";
-import Dropdown from "./Dropdown";
-import SearchUserInputBox from "./SearchInputBox";
+import SearchUserNicknameInputBox from "./SearchUserNicknameInputBox";
+import UserInfoMenu from "./UserInfoMenu";
 
 interface IListItem {
   name: string;
@@ -20,7 +20,7 @@ const Navbar: VFC = () => {
   ];
 
   return (
-    <div className="flex flex-row flex-wrap px-12 py-3 bg-blue-100">
+    <div className="flex flex-row flex-wrap px-12 py-3 bg-blue-100 h-1/12">
       {/* 이미지 */}
       <div className="px-6 justify-start">
         <Image
@@ -44,13 +44,13 @@ const Navbar: VFC = () => {
       {/* user search input box */}
       <div className="px-12">
         <div className="justify-center">
-          <SearchUserInputBox />
+          <SearchUserNicknameInputBox />
         </div>
       </div>
       {/* ID 와 Dropdown button */}
       <div className="flex flex-auto flex-wrap justify-end">
         <div className="mx-2">ID</div>
-        <Dropdown />
+        <UserInfoMenu />
       </div>
     </div>
   );
