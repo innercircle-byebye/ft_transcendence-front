@@ -5,8 +5,7 @@ const SearchUserInputBox = () => {
   const [user, setUser] = useState("");
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
-    const userText = event.target;
-    setUser(userText.value);
+    setUser(event.target.value);
   }
 
   const onClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
