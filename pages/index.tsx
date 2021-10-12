@@ -15,18 +15,20 @@ const Home = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { data: userData, mutate } = useSWR<IUser | false>(
-    ["/api/user/me", pong_access_token],
+    ["http://nestjs-back:3005/api/user", pong_access_token],
     fetcher,
     {
       dedupingInterval: 2000, // 2초
     }
   );
 
+  console.log(userData);
+
   const onClickLogout = useCallback(
     (e) => {
       e.preventDefault();
       axios
-        .get("/api/logout")
+        .get("http://nestjs-back:3005/api/logout")
         .then((res) => {
           const { message } = res.data;
           mutate(false, false);
@@ -83,13 +85,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const res = await axios.get("http://localhost:3000/api/user/me", {
+  const res = await axios.get("http://nestjs-back:3005/api/user/6", {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${context.req.cookies[access_token]}`,
     },
   });
   const { status } = res.data;
+  console.log(res.data);
 
   if (status === process.env.STATUS_NOT_REGISTER) {
     return {

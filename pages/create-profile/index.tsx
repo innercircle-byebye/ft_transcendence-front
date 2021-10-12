@@ -38,6 +38,17 @@ const CreateProfile = ({
     setEmail(e.target.value);
   }, []);
 
+  const onClickReset = useCallback(
+    (e) => {
+      e.preventDefault();
+      setNickname(userData.nickname);
+      setEmail(userData.email);
+      setPreviewImagePath(userData.imagePath);
+      setImageFile(null);
+    },
+    [userData.email, userData.imagePath, userData.nickname]
+  );
+
   const onClickSave = useCallback(
     (e) => {
       e.preventDefault();
@@ -138,12 +149,20 @@ const CreateProfile = ({
             </div>
           </div>
         </div>
-        <button
-          className="bg-sky-800 hover:bg-amber-600 hover:text-white text-white font-bold py-2 px-4 mt-6 w-20 rounded-full"
-          onClick={onClickSave}
-        >
-          SAVE
-        </button>
+        <div className="justify-between">
+          <button
+            className="bg-sky-800 hover:bg-amber-600 hover:text-white text-white font-bold py-2 px-4 mt-6 w-20 rounded-full"
+            onClick={onClickReset}
+          >
+            RESET
+          </button>
+          <button
+            className="bg-sky-800 hover:bg-amber-600 hover:text-white text-white font-bold py-2 px-4 mt-6 w-20 rounded-full"
+            onClick={onClickSave}
+          >
+            SAVE
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -160,7 +179,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-  const res = await axios.get("http://localhost:3000/api/user/me", {
+  const res = await axios.get(`http://nestjs-back:3005/api/user/6`, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${context.req.cookies.pong_access_token}`,
