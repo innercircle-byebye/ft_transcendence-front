@@ -9,8 +9,8 @@ const CreateProfile = ({
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [image, setImage] = useState<File | null>();
-  const [preview, setPreview] = useState<string | null>();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [previewImagePath, setPreviewImagePath] = useState<string | null>(null);
   const [nickname, setNickname] = useState(userData.nickname);
   const [email, setEmail] = useState(userData.email);
 
@@ -24,45 +24,50 @@ const CreateProfile = ({
   const onChangeImage = useCallback((e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(file);
+      setImageFile(file);
     } else {
-      setImage(null);
+      setImageFile(null);
     }
   }, []);
 
   const onChangeNickname = useCallback((e) => {
     setNickname(e.target.value);
-  },[]);
+  }, []);
 
   const onChangeEmail = useCallback((e) => {
     setEmail(e.target.value);
-  },[]);
+  }, []);
 
-  const onClickSave = useCallback((e) => {
-    e.preventDefault();
-    axios.post(`/api/user/${userData.userId}`, {
-      ...userData,
-      "nickname": nickname,
-      "email": email,
-      "imagePath": image
-    }).then((res) => {
-      const { message } = res.data;
-      console.log(message);
-      router.push('/');
-    });
-  }, [email, image, nickname, router, userData]);
+  const onClickSave = useCallback(
+    (e) => {
+      e.preventDefault();
+      axios
+        .post(`/api/user/${userData.userId}`, {
+          ...userData,
+          nickname: nickname,
+          email: email,
+          imagePath: previewImagePath,
+        })
+        .then((res) => {
+          const { message } = res.data;
+          console.log(message);
+          router.push("/");
+        });
+    },
+    [email, nickname, previewImagePath, router, userData]
+  );
 
   useEffect(() => {
-    if (image) {
+    if (imageFile) {
       const fileReader = new FileReader();
       fileReader.onloadend = () => {
-        setPreview(fileReader.result as string);
+        setPreviewImagePath(fileReader.result as string);
       };
-      fileReader.readAsDataURL(image);
+      fileReader.readAsDataURL(imageFile);
     } else {
-      setPreview(null);
+      setPreviewImagePath(userData.imagePath);
     }
-  }, [image]);
+  }, [imageFile, previewImagePath, userData.imagePath]);
 
   return (
     <div className="w-screen h-screen bg-sky-700 flex justify-center items-center">
@@ -76,9 +81,9 @@ const CreateProfile = ({
         <div className="text-6xl pb-14">Create Profile</div>
         <div className="grid grid-row-4 gap-4 justify-items-center">
           <form className="relative bg-blue-300 w-56 h-56 rounded-full shadow-lg">
-            {preview ? (
+            {previewImagePath ? (
               <Image
-                src={preview}
+                src={previewImagePath}
                 alt="preview"
                 objectFit="cover"
                 layout="fill"
@@ -98,39 +103,47 @@ const CreateProfile = ({
               onChange={onChangeImage}
             />
           </form>
-          <div>
-            <label className="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              {`NickName `}
-            </label>
-            <input
-              className="w-auto bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight"
-              id="grid-first-name"
-              type="text"
-              placeholder={userData.intraUsername}
-              value={nickname}
-              onChange={onChangeNickname}
-            />
+          <div className="md:flex md:items-center mt-6">
+            <div className="md:w-1/3">
+              <label className="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                NickName
+              </label>
+            </div>
+            <div className="md:w-2/3">
+              <input
+                className="bg-white text-gray-700 border rounded-full py-3 px-4 leading-tight"
+                id="grid-first-name"
+                type="text"
+                placeholder={userData.intraUsername}
+                value={nickname}
+                onChange={onChangeNickname}
+              />
+            </div>
           </div>
-          <div>
-            <label className="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-              {`email `}
-            </label>
-            <input
-              className="w-auto bg-gray-200 text-gray-700 border rounded py-3 px-4 mb-3 leading-tight"
-              id="grid-first-name"
-              type="text"
-              placeholder={userData.email}
-              value={email}
-              onChange={onChangeEmail}
-            />
+          <div className="md:flex md:items-center">
+            <div className="md:w-1/3">
+              <label className="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
+                email
+              </label>
+            </div>
+            <div className="md:w-2/3">
+              <input
+                className="bg-white text-gray-700 border rounded-full py-3 px-4 leading-tight"
+                id="grid-first-name"
+                type="text"
+                placeholder={userData.email}
+                value={email}
+                onChange={onChangeEmail}
+              />
+            </div>
           </div>
-          <button
-            className="bg-white hover:bg-amber-600 hover:text-white text-sky-800 font-bold py-2 px-4 w-20 rounded-full"
-            onClick={onClickSave}
-          >
-            SAVE
-          </button>
         </div>
+        <button
+          className="bg-sky-800 hover:bg-amber-600 hover:text-white text-white font-bold py-2 px-4 mt-6 w-20 rounded-full"
+          onClick={onClickSave}
+        >
+          SAVE
+        </button>
       </div>
     </div>
   );
