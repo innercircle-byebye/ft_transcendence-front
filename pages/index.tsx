@@ -92,7 +92,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     },
   });
   const { status } = res.data;
-  console.log(res.data);
 
   if (status === process.env.STATUS_NOT_REGISTER) {
     return {

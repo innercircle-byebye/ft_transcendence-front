@@ -185,6 +185,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       Authorization: `Bearer ${context.req.cookies.pong_access_token}`,
     },
   });
+  const { status } = res.data;
+
+  if (status !== process.env.STATUS_NOT_REGISTER) {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {
+      pong_access_token: context.req.cookies[access_token],
+    },
+  };
 
   return {
     props: {
