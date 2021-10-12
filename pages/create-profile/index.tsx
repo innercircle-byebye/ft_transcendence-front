@@ -8,7 +8,9 @@ const CreateProfile = ({}: InferGetServerSidePropsType<
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (!context.req.cookies.Authentication) {
+  const access_token = process.env.ACCESS_TOKEN as string;
+
+  if (!context.req.cookies[access_token]) {
     return {
       redirect: {
         destination: "/login",
