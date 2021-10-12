@@ -102,7 +102,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      pong_access_token: context.req.cookies.pong_access_token,
+      pong_access_token: context.req.cookies[access_token],
     },
   };
 };
