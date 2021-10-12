@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import React, { VFC } from "react";
-import SearchInput from "./SearchInput";
+import SearchUserNicknameInputBox from "./SearchUserNicknameInputBox";
 import UserInfoMenu from "./UserInfoMenu";
 
 interface IListItem {
@@ -44,7 +44,7 @@ const Navbar: VFC = () => {
       {/* user search input box */}
       <div className="px-12">
         <div className="justify-center">
-          <SearchInput />
+          <SearchUserNicknameInputBox />
         </div>
       </div>
       {/* ID 와 Dropdown button */}
