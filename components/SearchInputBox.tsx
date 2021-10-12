@@ -15,11 +15,11 @@ const SearchUserInputBox = () => {
   };
 
   return (
-    <div className="mt-1 relative flex item-center rounded-md shadow-sm h-1/6 w-full">
+    <div className="mt-1 relative flex item-center rounded-md shadow-sm w-full">
       <input
         type="text"
         name="userNickName"
-        className="focus:ring-gray-500 focus:border-gray-500 block w-full h-1/6 pl-7 pr-12 sm:text-sm border-gray-300 ring-gray-300 rounded-md"
+        className="focus:ring-gray-500 focus:border-gray-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 ring-gray-300 rounded-md"
         placeholder="Search user Nickname"
         onChange={onChange}
         value={user}
