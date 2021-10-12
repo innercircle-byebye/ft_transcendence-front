@@ -12,40 +12,35 @@ import cookie from "js-cookie";
 
 const Home = ({
   pong_access_token,
+  access_token_name,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { data: userData, mutate } = useSWR<IUser | false>(
-    ["http://nestjs-back:3005/api/user", pong_access_token],
+    ["/api/user/1", pong_access_token],
     fetcher,
     {
       dedupingInterval: 2000, // 2초
     }
   );
 
-  console.log(userData);
-
   const onClickLogout = useCallback(
     (e) => {
       e.preventDefault();
       axios
-        .get("http://nestjs-back:3005/api/logout")
+        .get("/api/logout")
         .then((res) => {
           const { message } = res.data;
           mutate(false, false);
           // cookie 삭제
-          cookie.remove("pong_access_token");
+          cookie.remove(access_token_name);
           router.push("/login");
           // "logout success"
           console.log(message);
         })
         .catch(() => {});
     },
-    [mutate, router]
+    [access_token_name, mutate, router]
   );
-
-  useEffect(() => {
-    console.log(userData);
-  }, [userData]);
 
   if (!userData) {
     return <div>로딩중...</div>;
@@ -85,7 +80,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  const res = await axios.get("http://nestjs-back:3005/api/user/6", {
+  const res = await axios.get("http://nestjs-back:3005/api/user/1", {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${context.req.cookies[access_token]}`,
@@ -103,9 +98,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {
-      pong_access_token: context.req.cookies[access_token],
-    },
+    props: [
+      { pong_access_token: context.req.cookies[access_token] },
+      { access_token_name: access_token },
+    ],
   };
 };
 

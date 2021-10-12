@@ -10,7 +10,9 @@ const CreateProfile = ({
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewImagePath, setPreviewImagePath] = useState<string | null>(null);
+  const [previewImagePath, setPreviewImagePath] = useState<string>(
+    userData.imagePath
+  );
   const [nickname, setNickname] = useState(userData.nickname);
   const [email, setEmail] = useState(userData.email);
 
@@ -52,20 +54,19 @@ const CreateProfile = ({
   const onClickSave = useCallback(
     (e) => {
       e.preventDefault();
-      axios
-        .post(`/api/user/${userData.userId}`, {
-          ...userData,
-          nickname: nickname,
-          email: email,
-          imagePath: previewImagePath,
-        })
-        .then((res) => {
-          const { message } = res.data;
-          console.log(message);
-          router.push("/");
-        });
+      const formData = new FormData();
+      imageFile && formData.append("imageFile", imageFile);
+      nickname !== userData.nickname && formData.append("nickname", nickname);
+      email !== userData.email && formData.append("email", email);
+
+      axios.post("/api/user/register", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      router.push("/");
     },
-    [email, nickname, previewImagePath, router, userData]
+    [email, imageFile, nickname, router, userData.email, userData.nickname]
   );
 
   useEffect(() => {
@@ -75,8 +76,6 @@ const CreateProfile = ({
         setPreviewImagePath(fileReader.result as string);
       };
       fileReader.readAsDataURL(imageFile);
-    } else {
-      setPreviewImagePath(userData.imagePath);
     }
   }, [imageFile, previewImagePath, userData.imagePath]);
 
@@ -86,16 +85,16 @@ const CreateProfile = ({
         <Image src="/Logo.png" alt="small-logo" width={100} height={40} />
       </div>
       <div
-        className="flex flex-col justify-center items-center bg-blue-100 rounded-full"
+        className="bg-white shadow-md rounded-full px-8 pt-6 pb-8 mb-4 w-full flex flex-col items-center justify-evenly"
         style={{ width: "672px", height: "672px" }}
       >
-        <div className="text-6xl pb-14">Create Profile</div>
-        <div className="grid grid-row-4 gap-4 justify-items-center">
-          <form className="relative bg-blue-300 w-56 h-56 rounded-full shadow-lg">
+        <div className="text-6xl text-gray-700">Create Profile</div>
+        <form className="flex flex-col items-center">
+          <div className="relative bg-blue-300 w-56 h-56 mb-4 rounded-full shadow-lg">
             {previewImagePath ? (
               <Image
                 src={previewImagePath}
-                alt="preview"
+                alt="previewImage"
                 objectFit="cover"
                 layout="fill"
                 className="rounded-full"
@@ -109,60 +108,89 @@ const CreateProfile = ({
             </button>
             <input
               type="file"
+              accept="image/jpg,image/png,image/jpeg,image/gif"
               className="hidden"
               ref={fileInputRef}
               onChange={onChangeImage}
             />
-          </form>
-          <div className="md:flex md:items-center mt-6">
-            <div className="md:w-1/3">
-              <label className="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                NickName
-              </label>
-            </div>
-            <div className="md:w-2/3">
-              <input
-                className="bg-white text-gray-700 border rounded-full py-3 px-4 leading-tight"
-                id="grid-first-name"
-                type="text"
-                placeholder={userData.intraUsername}
-                value={nickname}
-                onChange={onChangeNickname}
-              />
-            </div>
           </div>
-          <div className="md:flex md:items-center">
-            <div className="md:w-1/3">
-              <label className="uppercase tracking-wide text-gray-700 text-xs font-bold mb-2">
-                email
-              </label>
-            </div>
-            <div className="md:w-2/3">
-              <input
-                className="bg-white text-gray-700 border rounded-full py-3 px-4 leading-tight"
-                id="grid-first-name"
-                type="text"
-                placeholder={userData.email}
-                value={email}
-                onChange={onChangeEmail}
-              />
-            </div>
+          <div className="mb-4 w-64">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="nickname"
+            >
+              Nickname
+              <button
+                className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                type="button"
+                onClick={() => {
+                  setNickname(userData.nickname);
+                }}
+              >
+                Reset
+              </button>
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="nickname"
+              type="text"
+              placeholder={userData.nickname}
+              value={nickname}
+              onChange={onChangeNickname}
+            />
+            {!nickname && (
+              <p className="text-red-500 text-xs italic">
+                닉네임을 입력해주세요.
+              </p>
+            )}
           </div>
-        </div>
-        <div className="justify-between">
-          <button
-            className="bg-sky-800 hover:bg-amber-600 hover:text-white text-white font-bold py-2 px-4 mt-6 w-20 rounded-full"
-            onClick={onClickReset}
-          >
-            RESET
-          </button>
-          <button
-            className="bg-sky-800 hover:bg-amber-600 hover:text-white text-white font-bold py-2 px-4 mt-6 w-20 rounded-full"
-            onClick={onClickSave}
-          >
-            SAVE
-          </button>
-        </div>
+          <div className="mb-6 w-64">
+            <label
+              className="block text-gray-700 text-sm font-bold mb-2"
+              htmlFor="password"
+            >
+              Email
+              <button
+                className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                type="button"
+                onClick={() => {
+                  setEmail(userData.email);
+                }}
+              >
+                Reset
+              </button>
+            </label>
+            <input
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="email"
+              type="email"
+              placeholder={userData.email}
+              value={email}
+              onChange={onChangeEmail}
+            />
+            {!email && (
+              <p className="text-red-500 text-xs italic">
+                이메일을 입력해주세요.
+              </p>
+            )}
+          </div>
+          <div className="w-56 flex items-center justify-evenly">
+            <button
+              className="bg-white text-sky-600 border-sky-600 border font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              onClick={onClickReset}
+            >
+              Reset
+            </button>
+            <button
+              className="bg-sky-600 hover:bg-sky-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              onClick={onClickSave}
+            >
+              Save
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
@@ -179,7 +207,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-  const res = await axios.get(`http://nestjs-back:3005/api/user/6`, {
+  const res = await axios.get(`http://nestjs-back:3005/api/user/1`, {
     withCredentials: true,
     headers: {
       Authorization: `Bearer ${context.req.cookies.pong_access_token}`,
@@ -195,12 +223,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   }
-
-  return {
-    props: {
-      pong_access_token: context.req.cookies[access_token],
-    },
-  };
 
   return {
     props: {
