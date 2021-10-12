@@ -72,7 +72,7 @@ const Home = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (!context.req.cookies.pong_access_token) {
+  if (!context.req.cookies.Authentication) {
     return {
       redirect: {
         destination: "/login",
@@ -84,7 +84,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const res = await axios.get("http://localhost:3000/api/user/me", {
     withCredentials: true,
     headers: {
-      Authorization: `Bearer ${context.req.cookies.pong_access_token}`,
+      Authorization: `Bearer ${context.req.cookies.Authentication}`,
     },
   });
   const { status } = res.data;

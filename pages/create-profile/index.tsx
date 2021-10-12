@@ -8,7 +8,7 @@ const CreateProfile = ({}: InferGetServerSidePropsType<
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (!context.req.cookies.pong_access_token) {
+  if (!context.req.cookies.Authentication) {
     return {
       redirect: {
         destination: "/login",
