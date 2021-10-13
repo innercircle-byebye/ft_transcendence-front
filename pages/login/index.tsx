@@ -86,6 +86,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           "set-Cookie",
           `Authentication=${res.data["Authentication"]}; HttpOnly`
         );
+      })
+      .catch((error) => {
+        console.log(error);
       });
     return {
       redirect: {

@@ -4,6 +4,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 const CreateProfile = ({
   userData,
@@ -60,12 +61,19 @@ const CreateProfile = ({
       nickname !== userData.nickname && formData.append("nickname", nickname);
       email !== userData.email && formData.append("email", email);
 
-      axios.post("/api/user/register", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      router.push("/");
+      axios
+        .post("/api/user/register", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(() => {
+          router.push("/");
+        })
+        .catch((error) => {
+          console.dir(error);
+          toast.error(error.response?.data, { position: "bottom-center" });
+        });
     },
     [email, imageFile, nickname, router, userData.email, userData.nickname]
   );
@@ -230,6 +238,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           "set-Cookie",
           `Authentication=${res.data["Authentication"]}; HttpOnly`
         );
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
 

@@ -1,10 +1,11 @@
-import React, { ReactElement, useCallback, useEffect } from "react";
+import React, { ReactElement, useCallback } from "react";
 import Head from "next/head";
 import MainLayout from "@/layouts/MainLayout";
 import styles from "@/styles/Home.module.css";
 import { IUser } from "@/typings/db";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
 const Home = ({
@@ -22,6 +23,7 @@ const Home = ({
         })
         .catch((error) => {
           console.dir(error);
+          toast.error(error.response?.data, { position: "bottom-center" });
         });
     },
     [router]
@@ -83,6 +85,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       })
       .then((res) => {
         context.res.setHeader("set-Cookie", res.headers["set-cookie"]);
+      })
+      .catch((error) => {
+        console.log(error);
       });
   }
   const res = await axios.get(`${process.env.BACK_API_PATH}/api/user/1`, {
