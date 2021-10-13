@@ -54,33 +54,9 @@ const Login = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
+  const refresh_token = process.env.REFRESH_TOKEN || "";
 
-  if (context.req.cookies[refresh_token] && context.req.cookies[access_token]) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
-  } else if (context.req.cookies[refresh_token]) {
-    await axios
-      .get(`${process.env.BACK_API_PATH}/auth/refresh`, {
-        withCredentials: true,
-        headers: {
-          Cookie: `Refresh=${context.req.cookies[refresh_token]}`,
-        },
-      })
-      .then((res) => {
-        context.res.setHeader(
-          "set-Cookie",
-          `Authentication=${res.data["Authentication"]}; HttpOnly`
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+  if (context.req.cookies[refresh_token]) {
     return {
       redirect: {
         destination: "/",
