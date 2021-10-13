@@ -1,7 +1,7 @@
 import { SpeakerphoneIcon } from "@heroicons/react/outline";
 const AnnouncementList = () => {
   return (
-    <div className="bg-gray-700 flex flex-col w-1/5 text-center py-2 space-y-2">
+    <div className="bg-gray-700 flex flex-col w-1/5 text-center py-6 space-y-6 rounded-2xl">
       {/* justify-center 를 사용하여 하위 element 들을 가운데 정렬, items-center 를 사용하여 icon 화면 정중앙으로 배치 */}
       <div className="flex flex-row h-1/5 space-x-6 text-white justify-center items-center">
         <div className="w-4 h-4">
@@ -9,11 +9,11 @@ const AnnouncementList = () => {
         </div>
         <div>Announcement</div>
       </div>
-      <div className="flex flex-col space-y-2">
+      <div className="flex flex-col space-y-4 mx-4 rounded-lg">
         {/* 향후 list 로 관리 scroll 기능으로 확장 예정 */}
-        <div className="bg-sky-200">list1</div>
-        <div className="bg-sky-200">list2</div>
-        <div className="bg-sky-200">list3</div>
+        <div className="bg-sky-200 rounded-md">list1</div>
+        <div className="bg-sky-200 rounded-md">list2</div>
+        <div className="bg-sky-200 rounded-md">list3</div>
       </div>
     </div>
   );
