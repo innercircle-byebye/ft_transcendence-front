@@ -54,7 +54,9 @@ const Login = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  if (context.req.cookies.pong_access_token) {
+  const access_token = process.env.ACCESS_TOKEN;
+
+  if (!access_token || context.req.cookies[access_token]) {
     return {
       redirect: {
         destination: "/",
