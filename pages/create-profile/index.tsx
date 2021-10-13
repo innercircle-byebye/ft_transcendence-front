@@ -1,3 +1,4 @@
+import { IUser } from "@/typings/db";
 import axios from "axios";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Image from "next/image";
@@ -198,23 +199,36 @@ const CreateProfile = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN;
+  const refresh_token = process.env.REFRESH_TOKEN;
 
-  if (!access_token || !context.req.cookies[access_token]) {
+  if (!refresh_token || !access_token) {
+    return {
+      redirect: {
+        destination: "/500",
+        permanent: false,
+      },
+    };
+  }
+
+  if (!context.req.cookies[refresh_token]) {
     return {
       redirect: {
         destination: "/login",
         permanent: false,
       },
     };
+  } else if (!context.req.cookies[access_token]) {
+    await axios.get(`${process.env.BACK_API_PATH}/auth/refresh`, {
+      withCredentials: true,
+    });
   }
-  const res = await axios.get(`http://nestjs-back:3005/api/user/1`, {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${context.req.cookies.pong_access_token}`,
-    },
-  });
-  const { status } = res.data;
 
+  const res = await axios.get(`${process.env.BACK_API_PATH}/api/user/1`, {
+    withCredentials: true,
+  });
+  const userData: IUser = res.data;
+
+  const { status } = userData;
   if (status !== process.env.STATUS_NOT_REGISTER) {
     return {
       redirect: {
@@ -226,7 +240,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      userData: res.data,
+      userData: userData,
     },
   };
 };
