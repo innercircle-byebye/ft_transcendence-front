@@ -8,15 +8,11 @@ import { IUser } from "@/typings/db";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import cookie from "js-cookie";
 
-const Home = ({
-  pong_access_token,
-  access_token_name,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Home = ({}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { data: userData, mutate } = useSWR<IUser | false>(
-    ["/api/user/1", pong_access_token],
+    "/api/user/1",
     fetcher,
     {
       dedupingInterval: 2000, // 2초
@@ -27,19 +23,15 @@ const Home = ({
     (e) => {
       e.preventDefault();
       axios
-        .get("/api/logout")
+        .get("/auth/logout")
         .then((res) => {
-          const { message } = res.data;
           mutate(false, false);
-          // cookie 삭제
-          cookie.remove(access_token_name);
           router.push("/login");
-          // "logout success"
-          console.log(message);
+          console.log("goto login");
         })
         .catch(() => {});
     },
-    [access_token_name, mutate, router]
+    [mutate, router]
   );
 
   if (!userData) {
@@ -70,25 +62,36 @@ const Home = ({
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN;
+  const refresh_token = process.env.REFRESH_TOKEN;
 
-  if (!access_token || !context.req.cookies[access_token]) {
+  if (!refresh_token || !access_token) {
+    return {
+      redirect: {
+        destination: "/500",
+        permanent: false,
+      },
+    };
+  }
+
+  if (!context.req.cookies[refresh_token]) {
     return {
       redirect: {
         destination: "/login",
         permanent: false,
       },
     };
+  } else if (!context.req.cookies[access_token]) {
+    await axios.get(`${process.env.BACK_API_PATH}/auth/refresh`, {
+      withCredentials: true,
+    });
   }
 
-  const res = await axios.get("http://nestjs-back:3005/api/user/1", {
+  const res = await axios.get(`${process.env.BACK_API_PATH}/api/user/1`, {
     withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${context.req.cookies[access_token]}`,
-    },
   });
-  const { status } = res.data;
+  const userData: IUser = res.data;
 
-  if (status === process.env.STATUS_NOT_REGISTER) {
+  if (userData.status === process.env.STATUS_NOT_REGISTER) {
     return {
       redirect: {
         destination: "/create-profile",
@@ -98,10 +101,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: [
-      { pong_access_token: context.req.cookies[access_token] },
-      { access_token_name: access_token },
-    ],
+    props: {},
   };
 };
 

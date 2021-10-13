@@ -8,7 +8,11 @@ module.exports = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://nestjs-back:3005/api/:path*",
+        destination: "http://back-nestjs:3005/api/:path*",
+      },
+      {
+        source: "/auth/:path*",
+        destination: "http://back-nestjs:3005/auth/:path*",
       },
     ];
   },
