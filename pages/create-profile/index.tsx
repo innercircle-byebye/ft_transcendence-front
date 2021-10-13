@@ -218,9 +218,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   } else if (!context.req.cookies[access_token]) {
-    await axios.get(`${process.env.BACK_API_PATH}/auth/refresh`, {
-      withCredentials: true,
-    });
+    await axios
+      .get(`${process.env.BACK_API_PATH}/auth/refresh`, {
+        withCredentials: true,
+        headers: {
+          Cookie: `Refresh=${context.req.cookies[refresh_token]}`,
+        },
+      })
+      .then((res) => {
+        context.res.setHeader(
+          "set-Cookie",
+          `Authentication=${res.data["Authentication"]}; HttpOnly`
+        );
+      });
   }
 
   const res = await axios.get(`${process.env.BACK_API_PATH}/api/user/1`, {

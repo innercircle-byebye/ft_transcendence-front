@@ -74,9 +74,25 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   } else if (context.req.cookies[refresh_token]) {
-    await axios.get(`${process.env.BACK_API_PATH}/auth/refresh`, {
-      withCredentials: true,
-    });
+    await axios
+      .get(`${process.env.BACK_API_PATH}/auth/refresh`, {
+        withCredentials: true,
+        headers: {
+          Cookie: `Refresh=${context.req.cookies[refresh_token]}`,
+        },
+      })
+      .then((res) => {
+        context.res.setHeader(
+          "set-Cookie",
+          `Authentication=${res.data["Authentication"]}; HttpOnly`
+        );
+      });
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
   }
 
   return {

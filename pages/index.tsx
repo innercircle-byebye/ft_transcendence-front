@@ -2,36 +2,29 @@ import React, { ReactElement, useCallback, useEffect } from "react";
 import Head from "next/head";
 import MainLayout from "@/layouts/MainLayout";
 import styles from "@/styles/Home.module.css";
-import fetcher from "@/utils/fetcher";
-import useSWR from "swr";
 import { IUser } from "@/typings/db";
 import { useRouter } from "next/router";
 import axios from "axios";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 
-const Home = ({}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Home = ({
+  userData,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const { data: userData, mutate } = useSWR<IUser | false>(
-    "/api/user/1",
-    fetcher,
-    {
-      dedupingInterval: 2000, // 2초
-    }
-  );
 
   const onClickLogout = useCallback(
     (e) => {
       e.preventDefault();
       axios
         .get("/auth/logout")
-        .then((res) => {
-          mutate(false, false);
+        .then(() => {
           router.push("/login");
-          console.log("goto login");
         })
-        .catch(() => {});
+        .catch((error) => {
+          console.dir(error);
+        });
     },
-    [mutate, router]
+    [router]
   );
 
   if (!userData) {
@@ -81,11 +74,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     };
   } else if (!context.req.cookies[access_token]) {
-    await axios.get(`${process.env.BACK_API_PATH}/auth/refresh`, {
-      withCredentials: true,
-    });
+    await axios
+      .get(`${process.env.BACK_API_PATH}/auth/refresh`, {
+        withCredentials: true,
+        headers: {
+          Cookie: `Refresh=${context.req.cookies[refresh_token]}`,
+        },
+      })
+      .then((res) => {
+        context.res.setHeader("set-Cookie", res.headers["set-cookie"]);
+      });
   }
-
   const res = await axios.get(`${process.env.BACK_API_PATH}/api/user/1`, {
     withCredentials: true,
   });
@@ -101,7 +100,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {},
+    props: {
+      userData,
+    },
   };
 };
 
