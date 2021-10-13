@@ -1,4 +1,6 @@
 import { IUser } from "@/typings/db";
+import checkTokens from "@/utils/checkTokens";
+import fetcher from "@/utils/fetcher";
 import axios from "axios";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Image from "next/image";
@@ -206,48 +208,15 @@ const CreateProfile = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN;
-  const refresh_token = process.env.REFRESH_TOKEN;
+  const access_token = process.env.ACCESS_TOKEN || '';
+  const refresh_token = process.env.REFRESH_TOKEN || '';
 
-  if (!refresh_token || !access_token) {
-    return {
-      redirect: {
-        destination: "/500",
-        permanent: false,
-      },
-    };
+  const checkResult = await checkTokens(context, access_token, refresh_token);
+  if (checkResult.redirect) {
+    return checkResult;
   }
 
-  if (!context.req.cookies[refresh_token]) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  } else if (!context.req.cookies[access_token]) {
-    await axios
-      .get(`${process.env.BACK_API_PATH}/auth/refresh`, {
-        withCredentials: true,
-        headers: {
-          Cookie: `Refresh=${context.req.cookies[refresh_token]}`,
-        },
-      })
-      .then((res) => {
-        context.res.setHeader(
-          "set-Cookie",
-          `Authentication=${res.data["Authentication"]}; HttpOnly`
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
-  const res = await axios.get(`${process.env.BACK_API_PATH}/api/user/1`, {
-    withCredentials: true,
-  });
-  const userData: IUser = res.data;
+  const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/1`);
 
   const { status } = userData;
   if (status !== process.env.STATUS_NOT_REGISTER) {

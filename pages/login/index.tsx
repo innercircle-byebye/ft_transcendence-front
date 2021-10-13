@@ -54,17 +54,8 @@ const Login = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN;
-  const refresh_token = process.env.REFRESH_TOKEN;
-
-  if (!refresh_token || !access_token) {
-    return {
-      redirect: {
-        destination: "/500",
-        permanent: false,
-      },
-    };
-  }
+  const access_token = process.env.ACCESS_TOKEN || '';
+  const refresh_token = process.env.REFRESH_TOKEN || '';
 
   if (context.req.cookies[refresh_token] && context.req.cookies[access_token]) {
     return {
