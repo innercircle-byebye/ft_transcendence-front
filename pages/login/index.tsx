@@ -2,8 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import axios from "axios";
-import { IUser } from "@/typings/db";
 
 const Login = ({
   login_auth_url,
