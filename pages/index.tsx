@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import ressiueToken from "@/utils/reissueTokens";
+import reissueToken from "@/utils/reissueTokens";
 import fetcher from "@/utils/fetcher";
 
 const Home = ({
@@ -62,7 +62,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const refresh_token = process.env.REFRESH_TOKEN || '';
 
   if (!context.req.cookies[refresh_token] || !context.req.cookies[access_token]) {
-    return ressiueToken(context, access_token, refresh_token, '/');
+    return reissueToken(context, access_token, refresh_token, '/');
   }
 
   const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/me`, context.req.cookies[access_token]);

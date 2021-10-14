@@ -2,7 +2,7 @@ import axios from "axios";
 import { GetServerSidePropsContext } from "next";
 import { ParsedUrlQuery } from "querystring";
 
-const ressiueToken = async (
+const reissueToken = async (
   context: GetServerSidePropsContext<ParsedUrlQuery>,
   access_token: string,
   refresh_token: string,
@@ -40,4 +40,4 @@ const ressiueToken = async (
   };
 };
 
-export default ressiueToken;
+export default reissueToken;
