@@ -1,49 +1,35 @@
-import React, { ReactElement, useCallback, useEffect } from "react";
+import React, { ReactElement, useCallback } from "react";
 import Head from "next/head";
 import MainLayout from "@/layouts/MainLayout";
 import styles from "@/styles/Home.module.css";
-import fetcher from "@/utils/fetcher";
-import useSWR from "swr";
 import { IUser } from "@/typings/db";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import cookie from "js-cookie";
+import checkTokens from "@/utils/checkTokens";
+import fetcher from "@/utils/fetcher";
 
 const Home = ({
-  pong_access_token,
+  userData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const { data: userData, mutate } = useSWR<IUser | false>(
-    ["/api/user/me", pong_access_token],
-    fetcher,
-    {
-      dedupingInterval: 2000, // 2초
-    }
-  );
 
   const onClickLogout = useCallback(
     (e) => {
       e.preventDefault();
       axios
-        .get("/api/logout")
-        .then((res) => {
-          const { message } = res.data;
-          mutate(false, false);
-          // cookie 삭제
-          cookie.remove("pong_access_token");
+        .get("/auth/logout")
+        .then(() => {
           router.push("/login");
-          // "logout success"
-          console.log(message);
         })
-        .catch(() => {});
+        .catch((error) => {
+          console.dir(error);
+          toast.error(error.response?.data, { position: "bottom-center" });
+        });
     },
-    [mutate, router]
+    [router]
   );
-
-  useEffect(() => {
-    console.log(userData);
-  }, [userData]);
 
   if (!userData) {
     return <div>로딩중...</div>;
@@ -72,26 +58,16 @@ const Home = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN;
+  const access_token = process.env.ACCESS_TOKEN || '';
+  const refresh_token = process.env.REFRESH_TOKEN || '';
 
-  if (!access_token || !context.req.cookies[access_token]) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
+  const checkResult = await checkTokens(context, access_token, refresh_token);
+  if (checkResult.redirect) {
+    return checkResult;
   }
+  const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/me`, context.req.cookies[access_token]);
 
-  const res = await axios.get("http://localhost:3000/api/user/me", {
-    withCredentials: true,
-    headers: {
-      Authorization: `Bearer ${context.req.cookies[access_token]}`,
-    },
-  });
-  const { status } = res.data;
-
-  if (status === process.env.STATUS_NOT_REGISTER) {
+  if (userData.status === process.env.STATUS_NOT_REGISTER) {
     return {
       redirect: {
         destination: "/create-profile",
@@ -102,7 +78,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      pong_access_token: context.req.cookies[access_token],
+      userData,
     },
   };
 };
