@@ -2,19 +2,16 @@ import axios from "axios";
 import { GetServerSidePropsContext } from "next";
 import { ParsedUrlQuery } from "querystring";
 
-const checkTokens = async (
+const ressiueToken = async (
   context: GetServerSidePropsContext<ParsedUrlQuery>,
   access_token: string,
-  refresh_token: string
+  refresh_token: string,
+  current_url: string
 ) => {
-  if (!context.req.cookies[refresh_token]) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  } else if (!context.req.cookies[access_token]) {
+  if (
+    context.req.cookies[refresh_token] &&
+    !context.req.cookies[access_token]
+  ) {
     await axios
       .get(`${process.env.BACK_API_PATH}/auth/refresh`, {
         withCredentials: true,
@@ -28,10 +25,19 @@ const checkTokens = async (
       .catch((error) => {
         console.log(error);
       });
+    return {
+      redirect: {
+        destination: current_url,
+        permanent: false,
+      },
+    };
   }
   return {
-    redirect: null,
+    redirect: {
+      destination: "/login",
+      permanent: false,
+    },
   };
 };
 
-export default checkTokens;
+export default ressiueToken;
