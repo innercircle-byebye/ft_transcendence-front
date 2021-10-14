@@ -2,6 +2,7 @@ import { IUser } from "@/typings/db";
 import fetcher from "@/utils/fetcher";
 import { useCallback, useState, VFC } from "react";
 import useSWR from "swr";
+import Image from 'next/image';
 
 const DMList: VFC = () => {
   const { data: userData } = useSWR<IUser>("/api/user/me", fetcher, {
@@ -64,13 +65,22 @@ const DMList: VFC = () => {
                 key={member.intraUsername}
                 className="w-full px-2 py-1 border-b-2 flex justify-between items-center hover:bg-gray-300"
               >
-                <div>
+                <div className="flex flex-row items-center space-x-1">
+                  <div className="relative bg-blue-300 w-5 h-5 rounded-full shadow-lg mr-2">
+                    <Image
+                      src={member.imagePath}
+                      alt="previewImage"
+                      objectFit="cover"
+                      layout="fill"
+                      className="rounded-full"
+                    />
+                  </div>
                   {member.nickname}
                   {member.intraUsername === userData?.intraUsername && <span> (나)</span>}
+                  {member.status === 'online' ? (
+                    <div className="w-2 h-2 rounded-full bg-green-600" />
+                  ) : <div className="w-2 h-2 rounded-full bg-red-600" />}
                 </div>
-                {member.status === 'online' ? (
-                  <div className="w-2 h-2 rounded-full bg-green-600" />
-                ) : <div className="w-2 h-2 rounded-full bg-red-600" />}
               </span>
             );
           })}
