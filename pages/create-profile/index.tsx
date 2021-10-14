@@ -59,28 +59,34 @@ const CreateProfile = ({
   const onSubmitCreateProfile = useCallback(
     (e) => {
       e.preventDefault();
-      const formData = new FormData();
-      imageFile && formData.append("image", imageFile);
-      formData.append("nickname", nickname);
-      formData.append("email", email);
-      axios
-        .post("/api/user/register", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then(() => {
-          router.push("/");
-        })
-        .catch((error) => {
-          console.dir(error);
-          toast.error(error.response?.data, { position: "bottom-center" });
-        });
+      if (nickname && email && !emailError) {
+        const formData = new FormData();
+        imageFile && formData.append("image", imageFile);
+        formData.append("nickname", nickname);
+        formData.append("email", email);
+        axios
+          .post("/api/user/register", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then(() => {
+            router.push("/");
+          })
+          .catch((error) => {
+            console.dir(error);
+            toast.error(error.response?.data, { position: "bottom-center" });
+          });
+      }
     },
-    [email, imageFile, nickname, router]
+    [email, emailError, imageFile, nickname, router]
   );
 
   useEffect(() => {
+    const emailForm =
+      /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    setEmailError(!emailForm.test(email));
+
     if (imageFile) {
       const fileReader = new FileReader();
       fileReader.onloadend = () => {
@@ -88,7 +94,7 @@ const CreateProfile = ({
       };
       fileReader.readAsDataURL(imageFile);
     }
-  }, [imageFile, previewImagePath, userData.imagePath]);
+  }, [email, emailError, imageFile, previewImagePath, userData.imagePath]);
 
   return (
     <div className="w-screen h-screen bg-sky-700 flex justify-center items-center">
@@ -100,7 +106,10 @@ const CreateProfile = ({
         style={{ width: "672px", height: "672px" }}
       >
         <div className="text-6xl text-gray-700">Create Profile</div>
-        <form className="flex flex-col items-center" onSubmit={onSubmitCreateProfile}>
+        <form
+          className="flex flex-col items-center"
+          onSubmit={onSubmitCreateProfile}
+        >
           <div className="relative bg-blue-300 w-56 h-56 mb-4 rounded-full shadow-lg">
             {previewImagePath ? (
               <Image
@@ -176,6 +185,11 @@ const CreateProfile = ({
             {!email && (
               <p className="text-red-500 text-xs italic">
                 이메일을 입력해주세요.
+              </p>
+            )}
+            {email && emailError && (
+              <p className="text-red-500 text-xs italic">
+                잘못된 이메일 주소입니다.
               </p>
             )}
           </div>
