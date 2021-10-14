@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import checkTokens from "@/utils/checkTokens";
+import ressiueToken from "@/utils/reissueTokens";
 import fetcher from "@/utils/fetcher";
 
 const Home = ({
@@ -61,10 +61,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || '';
   const refresh_token = process.env.REFRESH_TOKEN || '';
 
-  const checkResult = await checkTokens(context, access_token, refresh_token);
-  if (checkResult.redirect) {
-    return checkResult;
+  if (!context.req.cookies[refresh_token] || !context.req.cookies[access_token]) {
+    return ressiueToken(context, access_token, refresh_token, '/');
   }
+
   const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/me`, context.req.cookies[access_token]);
 
   if (userData.status === process.env.STATUS_NOT_REGISTER) {
