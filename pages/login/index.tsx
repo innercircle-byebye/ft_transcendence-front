@@ -2,8 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import axios from "axios";
-import { IUser } from "@/typings/db";
 
 const Login = ({
   login_auth_url,
@@ -54,29 +52,15 @@ const Login = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN;
-  const refresh_token = process.env.REFRESH_TOKEN;
+  const refresh_token = process.env.REFRESH_TOKEN || "";
 
-  if (!refresh_token || !access_token) {
-    return {
-      redirect: {
-        destination: "/500",
-        permanent: false,
-      },
-    };
-  }
-
-  if (context.req.cookies[refresh_token] && context.req.cookies[access_token]) {
+  if (context.req.cookies[refresh_token]) {
     return {
       redirect: {
         destination: "/",
         permanent: false,
       },
     };
-  } else if (context.req.cookies[refresh_token]) {
-    await axios.get(`${process.env.BACK_API_PATH}/auth/refresh`, {
-      withCredentials: true,
-    });
   }
 
   return {

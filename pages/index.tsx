@@ -1,37 +1,34 @@
-import React, { ReactElement, useCallback, useEffect } from "react";
+import React, { ReactElement, useCallback } from "react";
 import Head from "next/head";
 import MainLayout from "@/layouts/MainLayout";
 import styles from "@/styles/Home.module.css";
-import fetcher from "@/utils/fetcher";
-import useSWR from "swr";
 import { IUser } from "@/typings/db";
 import { useRouter } from "next/router";
 import axios from "axios";
+import { toast } from "react-toastify";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import checkTokens from "@/utils/checkTokens";
+import fetcher from "@/utils/fetcher";
 
-const Home = ({}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Home = ({
+  userData,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const { data: userData, mutate } = useSWR<IUser | false>(
-    "/api/user/1",
-    fetcher,
-    {
-      dedupingInterval: 2000, // 2초
-    }
-  );
 
   const onClickLogout = useCallback(
     (e) => {
       e.preventDefault();
       axios
         .get("/auth/logout")
-        .then((res) => {
-          mutate(false, false);
+        .then(() => {
           router.push("/login");
-          console.log("goto login");
         })
-        .catch(() => {});
+        .catch((error) => {
+          console.dir(error);
+          toast.error(error.response?.data, { position: "bottom-center" });
+        });
     },
-    [mutate, router]
+    [router]
   );
 
   if (!userData) {
@@ -61,35 +58,14 @@ const Home = ({}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN;
-  const refresh_token = process.env.REFRESH_TOKEN;
+  const access_token = process.env.ACCESS_TOKEN || '';
+  const refresh_token = process.env.REFRESH_TOKEN || '';
 
-  if (!refresh_token || !access_token) {
-    return {
-      redirect: {
-        destination: "/500",
-        permanent: false,
-      },
-    };
+  const checkResult = await checkTokens(context, access_token, refresh_token);
+  if (checkResult.redirect) {
+    return checkResult;
   }
-
-  if (!context.req.cookies[refresh_token]) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  } else if (!context.req.cookies[access_token]) {
-    await axios.get(`${process.env.BACK_API_PATH}/auth/refresh`, {
-      withCredentials: true,
-    });
-  }
-
-  const res = await axios.get(`${process.env.BACK_API_PATH}/api/user/1`, {
-    withCredentials: true,
-  });
-  const userData: IUser = res.data;
+  const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/1`);
 
   if (userData.status === process.env.STATUS_NOT_REGISTER) {
     return {
@@ -101,7 +77,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   return {
-    props: {},
+    props: {
+      userData,
+    },
   };
 };
 

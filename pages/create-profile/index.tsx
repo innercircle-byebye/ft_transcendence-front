@@ -1,9 +1,12 @@
 import { IUser } from "@/typings/db";
+import checkTokens from "@/utils/checkTokens";
+import fetcher from "@/utils/fetcher";
 import axios from "axios";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 const CreateProfile = ({
   userData,
@@ -60,12 +63,19 @@ const CreateProfile = ({
       nickname !== userData.nickname && formData.append("nickname", nickname);
       email !== userData.email && formData.append("email", email);
 
-      axios.post("/api/user/register", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      router.push("/");
+      axios
+        .post("/api/user/register", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then(() => {
+          router.push("/");
+        })
+        .catch((error) => {
+          console.dir(error);
+          toast.error(error.response?.data, { position: "bottom-center" });
+        });
     },
     [email, imageFile, nickname, router, userData.email, userData.nickname]
   );
@@ -198,35 +208,15 @@ const CreateProfile = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN;
-  const refresh_token = process.env.REFRESH_TOKEN;
+  const access_token = process.env.ACCESS_TOKEN || '';
+  const refresh_token = process.env.REFRESH_TOKEN || '';
 
-  if (!refresh_token || !access_token) {
-    return {
-      redirect: {
-        destination: "/500",
-        permanent: false,
-      },
-    };
+  const checkResult = await checkTokens(context, access_token, refresh_token);
+  if (checkResult.redirect) {
+    return checkResult;
   }
 
-  if (!context.req.cookies[refresh_token]) {
-    return {
-      redirect: {
-        destination: "/login",
-        permanent: false,
-      },
-    };
-  } else if (!context.req.cookies[access_token]) {
-    await axios.get(`${process.env.BACK_API_PATH}/auth/refresh`, {
-      withCredentials: true,
-    });
-  }
-
-  const res = await axios.get(`${process.env.BACK_API_PATH}/api/user/1`, {
-    withCredentials: true,
-  });
-  const userData: IUser = res.data;
+  const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/1`);
 
   const { status } = userData;
   if (status !== process.env.STATUS_NOT_REGISTER) {
