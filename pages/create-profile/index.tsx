@@ -1,5 +1,5 @@
 import { IUser } from "@/typings/db";
-import checkTokens from "@/utils/checkTokens";
+import ressiueToken from "@/utils/reissueTokens";
 import fetcher from "@/utils/fetcher";
 import axios from "axios";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
@@ -218,9 +218,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || "";
   const refresh_token = process.env.REFRESH_TOKEN || "";
 
-  const checkResult = await checkTokens(context, access_token, refresh_token);
-  if (checkResult.redirect) {
-    return checkResult;
+  if (!context.req.cookies[refresh_token] || !context.req.cookies[access_token]) {
+    return ressiueToken(context, access_token, refresh_token, '/create-profile');
   }
 
   const userData: IUser = await fetcher(
