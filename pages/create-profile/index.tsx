@@ -1,6 +1,5 @@
 import { IUser } from "@/typings/db";
 import reissueToken from "@/utils/reissueTokens";
-import fetcher from "@/utils/fetcher";
 import axios from "axios";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Image from "next/image";

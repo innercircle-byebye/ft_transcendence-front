@@ -8,7 +8,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import reissueToken from "@/utils/reissueTokens";
-import fetcher from "@/utils/fetcher";
 
 const Home = ({
   userData,
