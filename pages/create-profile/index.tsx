@@ -59,10 +59,9 @@ const CreateProfile = ({
     (e) => {
       e.preventDefault();
       const formData = new FormData();
-      imageFile && formData.append("imageFile", imageFile);
-      nickname !== userData.nickname && formData.append("nickname", nickname);
-      email !== userData.email && formData.append("email", email);
-
+      imageFile && formData.append("image", imageFile);
+      formData.append("nickname", nickname);
+      formData.append("email", email);
       axios
         .post("/api/user/register", formData, {
           headers: {
@@ -77,7 +76,7 @@ const CreateProfile = ({
           toast.error(error.response?.data, { position: "bottom-center" });
         });
     },
-    [email, imageFile, nickname, router, userData.email, userData.nickname]
+    [email, imageFile, nickname, router]
   );
 
   useEffect(() => {
@@ -128,7 +127,6 @@ const CreateProfile = ({
           <div className="mb-4 w-64">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="nickname"
             >
               Nickname
               <button
@@ -143,7 +141,6 @@ const CreateProfile = ({
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="nickname"
               type="text"
               placeholder={userData.nickname}
               value={nickname}
@@ -158,7 +155,6 @@ const CreateProfile = ({
           <div className="mb-6 w-64">
             <label
               className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="password"
             >
               Email
               <button
@@ -173,7 +169,6 @@ const CreateProfile = ({
             </label>
             <input
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="email"
               type="email"
               placeholder={userData.email}
               value={email}
@@ -216,7 +211,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return checkResult;
   }
 
-  const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/1`);
+  const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/me`, context.req.cookies[access_token]);
 
   const { status } = userData;
   if (status !== process.env.STATUS_NOT_REGISTER) {

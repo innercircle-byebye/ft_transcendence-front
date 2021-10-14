@@ -65,7 +65,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (checkResult.redirect) {
     return checkResult;
   }
-  const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/1`);
+  const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/me`, context.req.cookies[access_token]);
 
   if (userData.status === process.env.STATUS_NOT_REGISTER) {
     return {
