@@ -15,10 +15,6 @@ export interface IUser {
   deletedAt: string | null;
 }
 
-export interface IUserWithOnline extends IUser {
-  online: boolean;
-}
-
 export interface IMessage {
   message: string;
 }
