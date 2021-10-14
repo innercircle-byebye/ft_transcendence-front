@@ -19,6 +19,7 @@ const CreateProfile = ({
   );
   const [nickname, setNickname] = useState(userData.nickname);
   const [email, setEmail] = useState(userData.email);
+  const [emailError, setEmailError] = useState(false);
 
   const onClickUploadImage = useCallback((e) => {
     e.preventDefault();
@@ -55,32 +56,37 @@ const CreateProfile = ({
     [userData.email, userData.imagePath, userData.nickname]
   );
 
-  const onClickSave = useCallback(
+  const onSubmitCreateProfile = useCallback(
     (e) => {
       e.preventDefault();
-      const formData = new FormData();
-      imageFile && formData.append("imageFile", imageFile);
-      nickname !== userData.nickname && formData.append("nickname", nickname);
-      email !== userData.email && formData.append("email", email);
-
-      axios
-        .post("/api/user/register", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then(() => {
-          router.push("/");
-        })
-        .catch((error) => {
-          console.dir(error);
-          toast.error(error.response?.data, { position: "bottom-center" });
-        });
+      if (nickname && email && !emailError) {
+        const formData = new FormData();
+        imageFile && formData.append("image", imageFile);
+        formData.append("nickname", nickname);
+        formData.append("email", email);
+        axios
+          .post("/api/user/register", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          .then(() => {
+            router.push("/");
+          })
+          .catch((error) => {
+            console.dir(error);
+            toast.error(error.response?.data, { position: "bottom-center" });
+          });
+      }
     },
-    [email, imageFile, nickname, router, userData.email, userData.nickname]
+    [email, emailError, imageFile, nickname, router]
   );
 
   useEffect(() => {
+    const emailForm =
+      /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    setEmailError(!emailForm.test(email));
+
     if (imageFile) {
       const fileReader = new FileReader();
       fileReader.onloadend = () => {
@@ -88,7 +94,7 @@ const CreateProfile = ({
       };
       fileReader.readAsDataURL(imageFile);
     }
-  }, [imageFile, previewImagePath, userData.imagePath]);
+  }, [email, emailError, imageFile, previewImagePath, userData.imagePath]);
 
   return (
     <div className="w-screen h-screen bg-sky-700 flex justify-center items-center">
@@ -100,7 +106,10 @@ const CreateProfile = ({
         style={{ width: "672px", height: "672px" }}
       >
         <div className="text-6xl text-gray-700">Create Profile</div>
-        <form className="flex flex-col items-center">
+        <form
+          className="flex flex-col items-center"
+          onSubmit={onSubmitCreateProfile}
+        >
           <div className="relative bg-blue-300 w-56 h-56 mb-4 rounded-full shadow-lg">
             {previewImagePath ? (
               <Image
@@ -126,10 +135,7 @@ const CreateProfile = ({
             />
           </div>
           <div className="mb-4 w-64">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="nickname"
-            >
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               Nickname
               <button
                 className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -142,8 +148,8 @@ const CreateProfile = ({
               </button>
             </label>
             <input
+              name="nickname"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="nickname"
               type="text"
               placeholder={userData.nickname}
               value={nickname}
@@ -156,10 +162,7 @@ const CreateProfile = ({
             )}
           </div>
           <div className="mb-6 w-64">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="password"
-            >
+            <label className="block text-gray-700 text-sm font-bold mb-2">
               Email
               <button
                 className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -172,8 +175,8 @@ const CreateProfile = ({
               </button>
             </label>
             <input
+              name="email"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="email"
               type="email"
               placeholder={userData.email}
               value={email}
@@ -182,6 +185,11 @@ const CreateProfile = ({
             {!email && (
               <p className="text-red-500 text-xs italic">
                 이메일을 입력해주세요.
+              </p>
+            )}
+            {email && emailError && (
+              <p className="text-red-500 text-xs italic">
+                잘못된 이메일 주소입니다.
               </p>
             )}
           </div>
@@ -195,8 +203,7 @@ const CreateProfile = ({
             </button>
             <button
               className="bg-sky-600 hover:bg-sky-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-              type="button"
-              onClick={onClickSave}
+              type="submit"
             >
               Save
             </button>
@@ -208,15 +215,18 @@ const CreateProfile = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
+  const access_token = process.env.ACCESS_TOKEN || "";
+  const refresh_token = process.env.REFRESH_TOKEN || "";
 
   const checkResult = await checkTokens(context, access_token, refresh_token);
   if (checkResult.redirect) {
     return checkResult;
   }
 
-  const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/1`);
+  const userData: IUser = await fetcher(
+    `${process.env.BACK_API_PATH}/api/user/me`,
+    context.req.cookies[access_token]
+  );
 
   const { status } = userData;
   if (status !== process.env.STATUS_NOT_REGISTER) {
