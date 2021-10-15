@@ -8,7 +8,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import reissueToken from "@/utils/reissueTokens";
-import fetcher from "@/utils/fetcher";
 
 const Home = ({
   userData,
@@ -58,14 +57,24 @@ const Home = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
+  const access_token = process.env.ACCESS_TOKEN || "";
+  const refresh_token = process.env.REFRESH_TOKEN || "";
 
-  if (!context.req.cookies[refresh_token] || !context.req.cookies[access_token]) {
-    return reissueToken(context, access_token, refresh_token, '/');
+  if (
+    !context.req.cookies[refresh_token] ||
+    !context.req.cookies[access_token]
+  ) {
+    return reissueToken(context, access_token, refresh_token, "/");
   }
 
-  const userData: IUser = await fetcher(`${process.env.BACK_API_PATH}/api/user/me`, context.req.cookies[access_token]);
+  const userData: IUser = await axios
+    .get(`${process.env.BACK_API_PATH}/api/user/me`, {
+      withCredentials: true,
+      headers: {
+        Cookie: `Authentication=${context.req.cookies[access_token]}`,
+      },
+    })
+    .then((response) => response.data);
 
   if (userData.status === process.env.STATUS_NOT_REGISTER) {
     return {

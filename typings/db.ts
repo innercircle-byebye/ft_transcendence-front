@@ -18,3 +18,9 @@ export interface IUser {
 export interface IMessage {
   message: string;
 }
+
+export interface IChannel {
+  id: number;
+  name: string;
+  private: boolean; // 비공개 채널 여부, 강좌에서는 모두 false(공개)
+}
