@@ -1,18 +1,12 @@
 import ChatLayout from "@/layouts/ChatLayout";
-import MainLayout from "@/layouts/MainLayout";
 import React, { ReactElement } from "react";
 
 const Chat = () => {
-  return <div>chat</div>;
+  return <div className="font-bold">chat</div>;
 };
 
 Chat.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <MainLayout>
-      <ChatLayout />
-    </MainLayout>
-  );
+  return <ChatLayout>{page}</ChatLayout>;
 };
-
 
 export default Chat;
