@@ -1,8 +1,12 @@
 import { IUser } from "@/typings/db";
 import Image from "next/image";
-import React from "react";
+import { VFC } from "react";
 
-const ProfileCard: React.FC<IUser> = (userData: IUser) => {
+interface Props {
+  userData: IUser;
+}
+
+const ProfileCard: VFC<Props> = ({userData}) => {
   console.log("userData:", userData);
   console.log(userData.imagePath)
   return (
