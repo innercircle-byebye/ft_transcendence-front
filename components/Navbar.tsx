@@ -16,7 +16,7 @@ const Navbar: VFC = () => {
     { name: "HOME", href: "/", current: true },
     { name: "PLAY", href: "/", current: false },
     { name: "RANK", href: "/", current: false },
-    { name: "CHAT", href: "/", current: false },
+    { name: "CHAT", href: "/chat", current: false },
   ];
 
   return (
