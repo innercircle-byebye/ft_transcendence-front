@@ -1,5 +1,26 @@
+import { IAnnouncement } from "@/typings/db";
+import fetcher from "@/utils/fetcher";
 import { SpeakerphoneIcon } from "@heroicons/react/outline";
+import axios from "axios";
+import useSWR from "swr";
+
 const AnnouncementList = () => {
+  // api 호출
+  // GET http://localhost:3005/api/admin/announcement
+  /* 안되니까 SWR 로 변경해보자
+  const announcementData: IAnnouncement = axios
+    .get(`${process.env.BACK_API_PATH}/api/admin/announcement`, {
+      withCredentials: true,
+    })
+    .then((res) => res.data);
+  */
+
+  const { data: announcementData } = useSWR<IAnnouncement>(
+    "/api/admin/announcement",
+    fetcher
+  );
+  console.log("Announcement:", announcementData);
+
   return (
     <div className="bg-gray-700 flex flex-col w-1/5 text-center py-6 space-y-6 rounded-2xl">
       {/* justify-center 를 사용하여 하위 element 들을 가운데 정렬, items-center 를 사용하여 icon 화면 정중앙으로 배치 */}

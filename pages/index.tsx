@@ -8,6 +8,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import reissueToken from "@/utils/reissueTokens";
+import AnnouncementList from "@/components/main-page/AnnouncementList";
 
 const Home = ({
   userData,
@@ -43,6 +44,7 @@ const Home = ({
       </Head>
 
       <main className={styles.main}>
+        <AnnouncementList />
         <h1 className={styles.title}>Welcome to Home Page!</h1>
         <h2>{userData?.nickname}</h2>
         <button
