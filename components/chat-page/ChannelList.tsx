@@ -16,10 +16,6 @@ const ChannelList: VFC = ({ }) => {
   );
   const [channelCollapse, setChannelCollapse] = useState(false);
 
-  // const onClickCreateNew = useCallback(() => {
-  //   router.push('/chat/create-channel');
-  // }, []);
-
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
   }, []);
@@ -27,7 +23,7 @@ const ChannelList: VFC = ({ }) => {
   return (
     <div className="border-2 border-sky-700 bg-sky-50 rounded-lg w-full h-auto p-3 space-y-3">
       <div className="border-2 border-gray-500 bg-white rounded-2xl p-2 flex flex-row items-center space-x-2">
-        <Link href="/chat/create-channel">
+        <Link href={`${router.pathname}/create-channel`}>
           <a>
             <svg
               xmlns="http://www.w3.org/2000/svg"
