@@ -15,6 +15,11 @@ export interface IUser {
   deletedAt: string | null;
 }
 
+export interface IHistory {
+  win: number;
+  lose: number;
+}
+
 export interface IMessage {
   message: string;
 }
