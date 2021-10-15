@@ -1,11 +1,11 @@
 import Navbar from "@/components/Navbar";
 import { useRouter } from "next/router";
-import React, { ReactElement, useCallback, useState } from "react";
+import React, { ReactElement, useCallback, useEffect, useState } from "react";
 
 const CreateChannel = () => {
   const router = useRouter();
   const [channelName, setChannelName] = useState('');
-  const [maxMemberNum, setMaxMemberNum] = useState(10);
+  const [maxMemberNum, setMaxMemberNum] = useState(3);
   const [isPrivate, setIsPrivate] = useState(false);
   const [inviteMembers, setInviteMembers] = useState([]);
 
@@ -21,13 +21,19 @@ const CreateChannel = () => {
     router.back();
   }, [router]);
 
+  useEffect(() => {
+    if (maxMemberNum < 3) {
+      setMaxMemberNum(3);
+    }
+  }, [maxMemberNum]);
+
   return (
     <div className="w-screen h-full flex flex-col items-center justify-center">
       <div className="text-5xl">Create Chat Channel</div>
       <input className="px-6 py-4 rounded-full bg-gray-100 text-xl" placeholder="채널명" type="text" value={channelName} onChange={onChangeChannelName} />
       <div>
         최대인원수
-        <input type="number" min={10} value={maxMemberNum} onChange={onChangeMaxMemberNum} />
+        <input type="number" min={3} value={maxMemberNum} onChange={onChangeMaxMemberNum} />
       </div>
       <div>
         <div>Private / Public</div>
