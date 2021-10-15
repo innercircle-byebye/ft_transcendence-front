@@ -16,6 +16,7 @@ export interface IUser {
 }
 
 export interface IHistory {
+  count: number;
   win: number;
   lose: number;
 }
