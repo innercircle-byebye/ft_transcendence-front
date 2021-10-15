@@ -20,6 +20,7 @@ const AnnouncementList = () => {
     fetcher
   );
   console.log("Announcement:", announcementData);
+  // console.log(Object.entries(announcementData));  이 코드는 error 가 발생합니다.
 
   return (
     <div className="bg-gray-700 flex flex-col w-1/5 text-center py-6 space-y-6 rounded-2xl">
@@ -32,6 +33,12 @@ const AnnouncementList = () => {
       </div>
       <div className="flex flex-col space-y-4 mx-4 rounded-lg">
         {/* 향후 list 로 관리 scroll 기능으로 확장 예정 */}
+        {/* 객체를 array 로 바꿔야하는 군요... 할 수 있을 것 같은데... 일단 error 없이 되긴함 */}
+        {announcementData?.map((item: IAnnouncement) => (
+          <div key={item.announcementId} className="bg-sky-200 rounded-md py-2">
+              <a>{item.title}</a>
+          </div>
+        ))}
         {/* align-middle 이 적용되지 않아서 y축 padding 을 적용하여 text 를 중앙정렬시켰습니다. */}
         <div className="bg-sky-200 rounded-md py-2">list1</div>
         <div className="bg-sky-200 rounded-md py-2">list2</div>
