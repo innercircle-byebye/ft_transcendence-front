@@ -45,8 +45,7 @@ const CreateChannel = () => {
             d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
             clipRule="evenodd"
           />
-        </svg>
-        }
+        </svg>}
         <div className="text-5xl">Create Chat Channel</div>
       </div>
       <div className="flex flex-col items-center justify-evenly space-y-10">
@@ -55,21 +54,17 @@ const CreateChannel = () => {
           <div className="ml-3 text-gray-700 font-medium">최대멤버수</div>
           <input className="px-6 py-4 w-24 rounded-full bg-gray-100 text-xl" type="number" min={3} value={maxMemberNum} onChange={onChangeMaxMemberNum} />
         </div>
-
-
         <div className="flex flex-row items-center justify-center space-x-6">
           <div className="ml-3 text-gray-700 font-medium">
             Public / Private
           </div>
           <button className="relative" onClick={onClickSwitch}>
-            {/* <input type="checkbox" id="toggleB" className="sr-only" /> */}
             <div className="block bg-gray-600 w-14 h-8 rounded-full"></div>
-            {isPrivate ? (<div className="absolute right-1 top-1 bg-red-400 w-6 h-6 rounded-full transition"></div>) :
+            {isPrivate ?
+              (<div className="absolute right-1 top-1 bg-red-400 w-6 h-6 rounded-full transition"></div>) :
               (<div className="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>)}
           </button>
         </div>
-
-
         <div>invite member</div>
         <div className="space-x-4">
           <button
