@@ -1,6 +1,7 @@
 import { IUser } from "@/typings/db";
 import reissueToken from "@/utils/reissueTokens";
 import axios from "axios";
+import useInput from "hooks/useInput";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -16,8 +17,8 @@ const CreateProfile = ({
   const [previewImagePath, setPreviewImagePath] = useState<string>(
     userData.imagePath
   );
-  const [nickname, setNickname] = useState(userData.nickname);
-  const [email, setEmail] = useState(userData.email);
+  const [nickname, onChangeNickname, setNickname] = useInput<string>(userData.nickname);
+  const [email, onChangeEmail, setEmail] = useInput<string>(userData.email);
   const [emailError, setEmailError] = useState(false);
 
   const onClickUploadImage = useCallback((e) => {
@@ -34,14 +35,6 @@ const CreateProfile = ({
     } else {
       setImageFile(null);
     }
-  }, []);
-
-  const onChangeNickname = useCallback((e) => {
-    setNickname(e.target.value);
-  }, []);
-
-  const onChangeEmail = useCallback((e) => {
-    setEmail(e.target.value);
   }, []);
 
   const onClickReset = useCallback(
