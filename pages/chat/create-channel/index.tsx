@@ -53,7 +53,6 @@ const CreateChannel = () => {
 
   return (
     <div className="w-screen h-full flex flex-col items-center space-y-20">
-      {/* <div className="flex flex-row items-center mt-20"> */}
       <div className="grid grid-cols-7 justify-items-start mt-20">
         {isPrivate && <svg
           xmlns="http://www.w3.org/2000/svg"
