@@ -3,7 +3,12 @@ import DMList from "@/components/chat-page/DMList";
 import Navbar from "@/components/Navbar";
 import React, { FC } from "react";
 
-const ChatLayout: FC = ({ children }) => {
+interface IProps {
+  clickedChannel: string | undefined;
+  clickedDM: string | undefined;
+}
+
+const ChatLayout: FC<IProps> = ({ children, clickedChannel, clickedDM }) => {
   return (
     <div className="h-screen flex flex-col">
       <div className="flex-initial">
@@ -11,11 +16,9 @@ const ChatLayout: FC = ({ children }) => {
       </div>
       <div className="bg-sky-100 flex flex-row p-4 space-x-4 h-auto flex-1">
         <div className="flex flex-col space-y-4 w-60">
-          {/* <div className="flex-1"> */}
-            <ChannelList />
-          {/* </div> */}
+            <ChannelList clickedChannel={clickedChannel}/>
           <div className="flex-1">
-            <DMList />
+            <DMList clickedDM={clickedDM}/>
           </div>
         </div>
         <main>{children}</main>

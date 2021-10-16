@@ -6,7 +6,7 @@ const Chat = () => {
 };
 
 Chat.getLayout = function getLayout(page: ReactElement) {
-  return <ChatLayout>{page}</ChatLayout>;
+  return <ChatLayout clickedChannel={undefined} clickedDM={undefined}>{page}</ChatLayout>;
 };
 
 export default Chat;

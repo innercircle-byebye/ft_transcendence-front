@@ -4,7 +4,11 @@ import { useCallback, useState, VFC } from "react";
 import useSWR from "swr";
 import Image from 'next/image';
 
-const DMList: VFC = () => {
+interface IProps {
+  clickedDM: string | undefined;
+}
+
+const DMList: VFC<IProps> = ({ clickedDM }) => {
   const { data: userData } = useSWR<IUser>("/api/user/me", fetcher, {
     dedupingInterval: 2000, // 2초
   });
