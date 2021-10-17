@@ -21,12 +21,15 @@ const CreateChannel = () => {
     visible: false,
   });
 
-  const onClickSwitch = useCallback((e) => {
-    e.preventDefault();
-    setIsPrivate((prev) => !prev);
-    setPassword('');
-    setInputPasswordType({ type: 'password', visible: false });
-  }, []);
+  const onClickSwitch = useCallback(
+    (e) => {
+      e.preventDefault();
+      setIsPrivate((prev) => !prev);
+      setPassword('');
+      setInputPasswordType({ type: 'password', visible: false });
+    },
+    [setPassword]
+  );
 
   const onClickPasswordEye = useCallback(() => {
     setInputPasswordType((prev) => ({
@@ -50,7 +53,7 @@ const CreateChannel = () => {
     } else {
       setIsValidPassword(false);
     }
-  }, [maxMemberNum, password]);
+  }, [maxMemberNum, password, setMaxMemberNum]);
 
   return (
     <div className="w-screen h-full flex flex-col items-center space-y-20">

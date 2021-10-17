@@ -47,7 +47,13 @@ const CreateProfile = ({
       setPreviewImagePath(userData.imagePath);
       setImageFile(null);
     },
-    [userData.email, userData.imagePath, userData.nickname]
+    [
+      userData.email,
+      userData.imagePath,
+      userData.nickname,
+      setEmail,
+      setNickname,
+    ]
   );
 
   const onSubmitCreateProfile = useCallback(
