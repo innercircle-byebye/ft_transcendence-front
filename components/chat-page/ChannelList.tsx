@@ -11,11 +11,12 @@ const ChannelList: VFC = () => {
     dedupingInterval: 2000, // 2초
   });
   const { data: channelData } = useSWR<IChannel[]>(
-    'http://localhost:3000/api/channels',
-    // userData ? 'http://localhost:3000/api/channels' : null,
+    userData ? 'http://localhost:3000/api/channels' : null,
     fetcher
   );
   const [channelCollapse, setChannelCollapse] = useState(false);
+  const clickedChannel =
+    router.pathname === '/chat/channel/[id]' && router.query.id;
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
@@ -85,15 +86,12 @@ const ChannelList: VFC = () => {
               <Link href={`/chat/channel/${channel.id}`} key={channel.name}>
                 <a>
                   <span
-                    className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300`}
-                  >
-                    {/* <span
                     className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
-                      clickedChannel === channel.id.toString()
+                      clickedChannel && clickedChannel === channel.id.toString()
                         ? 'bg-sky-200'
                         : ''
                     }`}
-                  > */}
+                  >
                     # {channel.name}
                     {channel.private && (
                       <svg

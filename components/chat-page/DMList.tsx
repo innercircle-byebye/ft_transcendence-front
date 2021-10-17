@@ -1,10 +1,13 @@
 import { IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
-import { useCallback, useState, VFC } from 'react';
+import React, { useCallback, useState, VFC } from 'react';
 import useSWR from 'swr';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 const DMList: VFC = () => {
+  const router = useRouter();
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
     dedupingInterval: 2000, // 2초
   });
@@ -12,8 +15,10 @@ const DMList: VFC = () => {
     userData ? 'http://localhost:3000/api/members' : null,
     fetcher
   );
-
   const [channelCollapse, setChannelCollapse] = useState(false);
+  const clickedMember = router.pathname === '/chat/dm/[id]' && router.query.id;
+
+  console.log(router.query.id);
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
@@ -61,31 +66,42 @@ const DMList: VFC = () => {
         {!channelCollapse &&
           memberData?.map((member) => {
             return (
-              <span
+              <Link
+                href={`/chat/dm/${member.userId}`}
                 key={member.intraUsername}
-                className="w-full px-2 py-1 border-b-2 flex justify-between items-center hover:bg-gray-300"
               >
-                <div className="flex flex-row items-center space-x-1">
-                  <div className="relative bg-blue-300 w-5 h-5 rounded-full shadow-lg mr-2">
-                    <Image
-                      src={member.imagePath}
-                      alt="previewImage"
-                      objectFit="cover"
-                      layout="fill"
-                      className="rounded-full"
-                    />
-                  </div>
-                  {member.nickname}
-                  {member.intraUsername === userData?.intraUsername && (
-                    <span> (나)</span>
-                  )}
-                  {member.status === 'online' ? (
-                    <div className="w-2 h-2 rounded-full bg-green-600" />
-                  ) : (
-                    <div className="w-2 h-2 rounded-full bg-red-600" />
-                  )}
-                </div>
-              </span>
+                <a>
+                  <span
+                    className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
+                      clickedMember &&
+                      clickedMember === member.userId.toString()
+                        ? 'bg-sky-200'
+                        : ''
+                    }`}
+                  >
+                    <div className="flex flex-row items-center space-x-1">
+                      <div className="relative bg-blue-300 w-5 h-5 rounded-full shadow-lg mr-2">
+                        <Image
+                          src={member.imagePath}
+                          alt="previewImage"
+                          objectFit="cover"
+                          layout="fill"
+                          className="rounded-full"
+                        />
+                      </div>
+                      {member.nickname}
+                      {member.intraUsername === userData?.intraUsername && (
+                        <span> (나)</span>
+                      )}
+                      {member.status === 'online' ? (
+                        <div className="w-2 h-2 rounded-full bg-green-600" />
+                      ) : (
+                        <div className="w-2 h-2 rounded-full bg-red-600" />
+                      )}
+                    </div>
+                  </span>
+                </a>
+              </Link>
             );
           })}
       </div>

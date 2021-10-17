@@ -1,8 +1,11 @@
 import ChatLayout from '@/layouts/ChatLayout';
+import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
 
 const Channel = () => {
-  return <div>channel</div>;
+  const router = useRouter();
+
+  return <div>channel {router.query.id}</div>;
 };
 
 Channel.getLayout = function getLayout(page: ReactElement) {
