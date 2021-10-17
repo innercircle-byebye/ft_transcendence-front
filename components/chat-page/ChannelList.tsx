@@ -1,21 +1,18 @@
 import Link from 'next/link';
-import { IChannel, IUser } from "@/typings/db";
-import fetcher from "@/utils/fetcher";
-import { useRouter } from "next/router";
-import { useCallback, useState, VFC } from "react";
-import useSWR from "swr";
+import { IChannel, IUser } from '@/typings/db';
+import fetcher from '@/utils/fetcher';
+import { useRouter } from 'next/router';
+import { useCallback, useState, VFC } from 'react';
+import useSWR from 'swr';
 
-interface IProps {
-  clickedChannel: string | undefined;
-}
-
-const ChannelList: VFC<IProps> = ({ clickedChannel }) => {
+const ChannelList: VFC = () => {
   const router = useRouter();
-  const { data: userData } = useSWR<IUser>("/api/user/me", fetcher, {
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
     dedupingInterval: 2000, // 2초
   });
   const { data: channelData } = useSWR<IChannel[]>(
-    userData ? "http://localhost:3000/api/channels" : null,
+    'http://localhost:3000/api/channels',
+    // userData ? 'http://localhost:3000/api/channels' : null,
     fetcher
   );
   const [channelCollapse, setChannelCollapse] = useState(false);
@@ -88,8 +85,15 @@ const ChannelList: VFC<IProps> = ({ clickedChannel }) => {
               <Link href={`/chat/channel/${channel.id}`} key={channel.name}>
                 <a>
                   <span
-                    className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${clickedChannel === channel.id.toString() ? 'bg-sky-200' : ''}`}
+                    className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300`}
                   >
+                    {/* <span
+                    className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
+                      clickedChannel === channel.id.toString()
+                        ? 'bg-sky-200'
+                        : ''
+                    }`}
+                  > */}
                     # {channel.name}
                     {channel.private && (
                       <svg
@@ -128,7 +132,7 @@ const ChannelList: VFC<IProps> = ({ clickedChannel }) => {
           </svg>
         </div>
       </button>
-    </div >
+    </div>
   );
 };
 

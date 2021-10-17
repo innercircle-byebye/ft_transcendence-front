@@ -1,20 +1,16 @@
-import { IUser } from "@/typings/db";
-import fetcher from "@/utils/fetcher";
-import { useCallback, useState, VFC } from "react";
-import useSWR from "swr";
+import { IUser } from '@/typings/db';
+import fetcher from '@/utils/fetcher';
+import { useCallback, useState, VFC } from 'react';
+import useSWR from 'swr';
 import Image from 'next/image';
 
-interface IProps {
-  clickedDM: string | undefined;
-}
-
-const DMList: VFC<IProps> = ({ clickedDM }) => {
-  const { data: userData } = useSWR<IUser>("/api/user/me", fetcher, {
+const DMList: VFC = () => {
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
     dedupingInterval: 2000, // 2초
   });
   const { data: memberData } = useSWR<IUser[]>(
     userData ? 'http://localhost:3000/api/members' : null,
-    fetcher,
+    fetcher
   );
 
   const [channelCollapse, setChannelCollapse] = useState(false);
@@ -80,10 +76,14 @@ const DMList: VFC<IProps> = ({ clickedDM }) => {
                     />
                   </div>
                   {member.nickname}
-                  {member.intraUsername === userData?.intraUsername && <span> (나)</span>}
+                  {member.intraUsername === userData?.intraUsername && (
+                    <span> (나)</span>
+                  )}
                   {member.status === 'online' ? (
                     <div className="w-2 h-2 rounded-full bg-green-600" />
-                  ) : <div className="w-2 h-2 rounded-full bg-red-600" />}
+                  ) : (
+                    <div className="w-2 h-2 rounded-full bg-red-600" />
+                  )}
                 </div>
               </span>
             );

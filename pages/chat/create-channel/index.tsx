@@ -1,13 +1,7 @@
 import Navbar from '@/components/Navbar';
 import useInput from 'hooks/useInput';
 import { useRouter } from 'next/router';
-import React, {
-  ReactElement,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useCallback, useEffect, useState } from 'react';
 
 const CreateChannel = () => {
   const router = useRouter();
