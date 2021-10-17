@@ -1,5 +1,5 @@
 import Navbar from '@/components/Navbar';
-import useInput from 'hooks/useInput';
+import useInput from '@/hooks/useInput';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement,
