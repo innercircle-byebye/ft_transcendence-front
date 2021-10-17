@@ -1,7 +1,7 @@
 import { IUser } from '@/typings/db';
 import reissueToken from '@/utils/reissueTokens';
 import axios from 'axios';
-import useInput from 'hooks/useInput';
+import useInput from '@/hooks/useInput';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
