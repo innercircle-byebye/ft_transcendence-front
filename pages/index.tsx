@@ -44,18 +44,17 @@ const Home = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <AnnouncementList />
-        <ProfileCard userData={userData}/>
-        <h1 className={styles.title}>Welcome to Home Page!</h1>
-        <h2>{userData?.nickname}</h2>
-        <button
-          className="bg-sky-800 hover:bg-amber-600 hover:text-white text-white font-bold py-2 px-4 w-36 rounded-full"
-          onClick={onClickLogout}
-        >
-          LOGOUT
-        </button>
-      </main>
+      <h1 className={styles.title}>Welcome to Home Page!</h1>
+      <h2>{userData?.nickname}</h2>
+      <button
+        className="bg-sky-800 hover:bg-amber-600 hover:text-white text-white font-bold py-2 px-4 w-36 rounded-full"
+        onClick={onClickLogout}
+      >
+        LOGOUT
+      </button>
+
+      <AnnouncementList />
+      <ProfileCard userData={userData} />
     </div>
   );
 };

@@ -23,15 +23,19 @@ const AnnouncementList = () => {
       </div>
       <div className="flex flex-col space-y-4 mx-4 rounded-lg">
         {/* 향후 list 로 관리 scroll 기능으로 확장 예정 */}
+        <div className="h-8 overflow-y-auto space-y-3">
         {announcementData?.map((item: IAnnouncement) => (
           <div key={item.announcementId} className="bg-sky-200 rounded-md py-2">
               <a>{item.title}</a>
           </div>
         ))}
+        </div>
         {/* align-middle 이 적용되지 않아서 y축 padding 을 적용하여 text 를 중앙정렬시켰습니다. */}
+        {/*
         <div className="bg-sky-200 rounded-md py-2">list1</div>
         <div className="bg-sky-200 rounded-md py-2">list2</div>
         <div className="bg-sky-200 rounded-md py-2">list3</div>
+        */}
       </div>
     </div>
   );
