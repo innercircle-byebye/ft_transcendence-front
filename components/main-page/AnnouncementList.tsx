@@ -1,7 +1,6 @@
 import { IAnnouncement } from "@/typings/db";
 import fetcher from "@/utils/fetcher";
 import { SpeakerphoneIcon } from "@heroicons/react/outline";
-import axios from "axios";
 import useSWR from "swr";
 
 const AnnouncementList = () => {
@@ -26,7 +25,7 @@ const AnnouncementList = () => {
         <div className="h-8 overflow-y-auto space-y-3">
         {announcementData?.map((item: IAnnouncement) => (
           <div key={item.announcementId} className="bg-sky-200 rounded-md py-2">
-              <a>{item.title}</a>
+              <a data-toggle="modal" href="#AnnouncementModal">{item.title}</a>
           </div>
         ))}
         </div>
