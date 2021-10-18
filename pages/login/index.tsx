@@ -1,7 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
 const Login = ({
   login_auth_url,
@@ -52,12 +52,12 @@ const Login = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const refresh_token = process.env.REFRESH_TOKEN || "";
+  const refresh_token = process.env.REFRESH_TOKEN || '';
 
   if (context.req.cookies[refresh_token]) {
     return {
       redirect: {
-        destination: "/",
+        destination: '/',
         permanent: false,
       },
     };
