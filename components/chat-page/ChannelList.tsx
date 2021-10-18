@@ -1,9 +1,12 @@
+import Link from 'next/link';
 import { IChannel, IUser } from "@/typings/db";
 import fetcher from "@/utils/fetcher";
+import { useRouter } from "next/router";
 import { useCallback, useState, VFC } from "react";
 import useSWR from "swr";
 
-const ChannelList: VFC = ({}) => {
+const ChannelList: VFC = ({ }) => {
+  const router = useRouter();
   const { data: userData } = useSWR<IUser>("/api/user/me", fetcher, {
     dedupingInterval: 2000, // 2초
   });
@@ -13,8 +16,6 @@ const ChannelList: VFC = ({}) => {
   );
   const [channelCollapse, setChannelCollapse] = useState(false);
 
-  const onClickCreateNew = useCallback(() => {}, []);
-
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
   }, []);
@@ -22,20 +23,22 @@ const ChannelList: VFC = ({}) => {
   return (
     <div className="border-2 border-sky-700 bg-sky-50 rounded-lg w-full h-auto p-3 space-y-3">
       <div className="border-2 border-gray-500 bg-white rounded-2xl p-2 flex flex-row items-center space-x-2">
-        <button onClick={onClickCreateNew}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-10 w-10 text-sky-700 ml-1"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+        <Link href={`${router.pathname}/create-channel`}>
+          <a>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-10 w-10 text-sky-700 ml-1"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </a>
+        </Link>
         <div>Create New</div>
       </div>
       <div className="text-gray-800 font-semibold text-xl flex items-center">
@@ -118,7 +121,7 @@ const ChannelList: VFC = ({}) => {
           </svg>
         </div>
       </button>
-    </div>
+    </div >
   );
 };
 
