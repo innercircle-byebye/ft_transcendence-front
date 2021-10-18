@@ -1,10 +1,10 @@
-import { IUser } from '@/typings/db';
-import fetcher from '@/utils/fetcher';
 import React, { useCallback, useState, VFC } from 'react';
 import useSWR from 'swr';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import fetcher from '@/utils/fetcher';
+import { IUser } from '@/typings/db';
 
 const DMList: VFC = () => {
   const router = useRouter();
@@ -13,7 +13,7 @@ const DMList: VFC = () => {
   });
   const { data: memberData } = useSWR<IUser[]>(
     userData ? 'http://localhost:3000/api/members' : null,
-    fetcher
+    fetcher,
   );
   const [channelCollapse, setChannelCollapse] = useState(false);
   const clickedMember = router.pathname === '/chat/dm/[id]' && router.query.id;
@@ -63,9 +63,8 @@ const DMList: VFC = () => {
         DMs
       </div>
       <div className="flex flex-col space-y-1">
-        {!channelCollapse &&
-          memberData?.map((member) => {
-            return (
+        {!channelCollapse
+          && memberData?.map((member) => (
               <Link
                 href={`/chat/dm/${member.userId}`}
                 key={member.intraUsername}
@@ -73,8 +72,8 @@ const DMList: VFC = () => {
                 <a>
                   <span
                     className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
-                      clickedMember &&
-                      clickedMember === member.userId.toString()
+                      clickedMember
+                      && clickedMember === member.userId.toString()
                         ? 'bg-sky-200'
                         : ''
                     }`}
@@ -102,8 +101,7 @@ const DMList: VFC = () => {
                   </span>
                 </a>
               </Link>
-            );
-          })}
+          ))}
       </div>
       <button className="w-full bg-sky-700 text-sky-100 hover:bg-gray-300 hover:text-sky-700 flex flex-row justify-between items-center rounded-full px-3 py-1">
         <div>Search members</div>

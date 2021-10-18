@@ -3,8 +3,7 @@ import DMList from '@/components/chat-page/DMList';
 import Navbar from '@/components/Navbar';
 import React, { FC } from 'react';
 
-const ChatLayout: FC = ({ children }) => {
-  return (
+const ChatLayout: FC = ({ children }) => (
     <div className="h-screen flex flex-col">
       <div className="flex-initial">
         <Navbar />
@@ -19,7 +18,6 @@ const ChatLayout: FC = ({ children }) => {
         <main className="flex-1">{children}</main>
       </div>
     </div>
-  );
-};
+);
 
 export default ChatLayout;

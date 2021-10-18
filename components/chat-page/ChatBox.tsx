@@ -1,4 +1,6 @@
-import { ReactNode, useCallback, useEffect, useRef, VFC } from 'react';
+import {
+  ReactNode, useCallback, useEffect, useRef, VFC,
+} from 'react';
 import Image from 'next/image';
 import autosize from 'autosize';
 import { MentionsInput, Mention, SuggestionDataItem } from 'react-mentions';
@@ -24,9 +26,9 @@ const ChatBox: VFC<IProps> = ({
     dedupingInterval: 2000, // 2초
   });
   const { data: memberData } = useSWR<IUser[]>(
-    // userData ? '/api/members' : null,
-    '/api/members',
-    fetcher
+    userData ? '/api/members' : null,
+    // '/api/members',
+    fetcher,
   );
 
   const onKeydownChat = useCallback(
@@ -38,7 +40,7 @@ const ChatBox: VFC<IProps> = ({
         }
       }
     },
-    [onSubmitChat]
+    [onSubmitChat],
   );
 
   const renderSuggestion = useCallback(
@@ -47,9 +49,9 @@ const ChatBox: VFC<IProps> = ({
       search: string,
       highlightedDisplay: ReactNode,
       index: number,
-      focus: boolean
+      focus: boolean,
     ): ReactNode => {
-      if (!memberData) return;
+      if (!memberData) return null;
       return (
         <button
           className={`px-1 py-2 flex items-center w-full space-x-2 ${
@@ -67,7 +69,7 @@ const ChatBox: VFC<IProps> = ({
         </button>
       );
     },
-    [memberData]
+    [memberData],
   );
 
   useEffect(() => {

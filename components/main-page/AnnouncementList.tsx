@@ -1,6 +1,6 @@
-import { SpeakerphoneIcon } from "@heroicons/react/outline";
-const AnnouncementList = () => {
-  return (
+import { SpeakerphoneIcon } from '@heroicons/react/outline';
+
+const AnnouncementList = () => (
     <div className="bg-gray-700 flex flex-col w-1/5 text-center py-6 space-y-6 rounded-2xl">
       {/* justify-center 를 사용하여 하위 element 들을 가운데 정렬, items-center 를 사용하여 icon 화면 정중앙으로 배치 */}
       <div className="flex flex-row h-1/5 space-x-6 text-white justify-center items-center">
@@ -17,7 +17,6 @@ const AnnouncementList = () => {
         <div className="bg-sky-200 rounded-md py-2">list3</div>
       </div>
     </div>
-  );
-};
+);
 
 export default AnnouncementList;

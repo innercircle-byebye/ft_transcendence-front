@@ -1,6 +1,6 @@
-import ChatLayout from '@/layouts/ChatLayout';
 import { useRouter } from 'next/router';
 import React, { ReactElement } from 'react';
+import ChatLayout from '@/layouts/ChatLayout';
 
 const DM = () => {
   const router = useRouter();

@@ -1,9 +1,9 @@
-import { IUser } from '@/typings/db';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import { IUser } from '@/typings/db';
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<IUser[]>
+  res: NextApiResponse<IUser[]>,
 ) {
   res.statusCode = 200;
   res.json([

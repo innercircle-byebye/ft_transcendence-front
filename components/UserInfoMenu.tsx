@@ -1,11 +1,9 @@
-import { Menu } from "@headlessui/react";
-import Link from "next/link";
-import { MenuIcon } from "@heroicons/react/solid";
+import { Menu } from '@headlessui/react';
+import { MenuIcon } from '@heroicons/react/solid';
 
 // DropdownMenuButton -> UserInfoMenu 로 변경하겠습니다.
 // const DropdownMenuButton = () => {
-const UserInfoMenu = () => {
-  return (
+const UserInfoMenu = () => (
     <div className="relative">
       <Menu>
         <Menu.Button>
@@ -15,21 +13,21 @@ const UserInfoMenu = () => {
         <Menu.Items className="absolute w-20 flex flex-col divide-y divide-gray-50 bg-white">
           <Menu.Item>
             {({ active }) => (
-              <a className={`${active && "bg-blue-500 text-white"}`} href="#">
+              <a className={`${active && 'bg-blue-500 text-white'}`} href="#">
                 Profile
               </a>
             )}
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <a className={`${active && "bg-blue-500 text-white"}`} href="#">
+              <a className={`${active && 'bg-blue-500 text-white'}`} href="#">
                 History
               </a>
             )}
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <a className={`${active && "bg-blue-500 text-white"}`} href="#">
+              <a className={`${active && 'bg-blue-500 text-white'}`} href="#">
                 Log out
               </a>
             )}
@@ -37,7 +35,6 @@ const UserInfoMenu = () => {
         </Menu.Items>
       </Menu>
     </div>
-  );
-};
+);
 
 export default UserInfoMenu;
