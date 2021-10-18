@@ -230,7 +230,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const userData: IUser = await axios
-    .get(`${process.env.BACK_API_PATH}/api/user/me`, {
+    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
