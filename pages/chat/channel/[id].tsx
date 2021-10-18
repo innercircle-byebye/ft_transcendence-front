@@ -1,12 +1,19 @@
 import ChatBox from '@/components/chat-page/ChatBox';
-import useInput from '@/hooks/useInput';
 import ChatLayout from '@/layouts/ChatLayout';
+import useInput from '@/hooks/useInput';
 import { useRouter } from 'next/router';
 import React, { ReactElement, useCallback } from 'react';
+import useSWR from 'swr';
+import fetcher from '@/utils/fetcher';
+import { IChannel } from '@/typings/db';
 
 const Channel = () => {
   const router = useRouter();
   const [chat, onChangeChat, setChat] = useInput('');
+  const { data: channelData } = useSWR<IChannel>(
+    `/api/channels?id=${router.query.id}`,
+    fetcher
+  );
 
   const onSubmitChat = useCallback(
     (e) => {
@@ -21,9 +28,7 @@ const Channel = () => {
 
   return (
     <>
-      <div className="font-semibold text-2xl pl-6">
-        # channel {router.query.id}
-      </div>
+      <div className="font-semibold text-2xl pl-6"># {channelData?.name}</div>
       <ChatBox
         chat={chat}
         onChangeChat={onChangeChat}
