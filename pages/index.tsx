@@ -8,6 +8,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import reissueToken from "@/utils/reissueTokens";
+import ProfileCard from "@/components/main-page/ProfileCard";
 
 const Home = ({
   userData,
@@ -43,6 +44,7 @@ const Home = ({
       </Head>
 
       <main className={styles.main}>
+        <ProfileCard userData={userData}/>
         <h1 className={styles.title}>Welcome to Home Page!</h1>
         <h2>{userData?.nickname}</h2>
         <button
