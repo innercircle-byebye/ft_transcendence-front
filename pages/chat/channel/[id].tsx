@@ -8,13 +8,16 @@ const Channel = () => {
   const router = useRouter();
   const [chat, onChangeChat, setChat] = useInput('');
 
-  const onSubmitChat = useCallback((e) => {
-    e.preventDefault();
-    if (chat?.trim()) {
-      const savedChat = chat;
-      // mutate 이후 post요청
-    }
-  }, []);
+  const onSubmitChat = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (chat?.trim()) {
+        const savedChat = chat;
+        // mutate 이후 post요청
+      }
+    },
+    [chat]
+  );
 
   return (
     <>

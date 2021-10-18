@@ -29,14 +29,17 @@ const ChatBox: VFC<IProps> = ({
     fetcher
   );
 
-  const onKeydownChat = useCallback((e) => {
-    if (e.key === 'Enter') {
-      if (!e.shiftKey) {
-        e.preventDefault();
-        onSubmitChat(e);
+  const onKeydownChat = useCallback(
+    (e) => {
+      if (e.key === 'Enter') {
+        if (!e.shiftKey) {
+          e.preventDefault();
+          onSubmitChat(e);
+        }
       }
-    }
-  }, []);
+    },
+    [onSubmitChat]
+  );
 
   const renderSuggestion = useCallback(
     (
@@ -64,7 +67,7 @@ const ChatBox: VFC<IProps> = ({
         </button>
       );
     },
-    []
+    [memberData]
   );
 
   useEffect(() => {
