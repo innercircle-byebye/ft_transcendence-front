@@ -44,7 +44,7 @@ const Home = ({
       </Head>
 
       <main className={styles.main}>
-        <ProfileCard userData={userData}/>
+        <ProfileCard userData={userData} />
         <h1 className={styles.title}>Welcome to Home Page!</h1>
         <h2>{userData?.nickname}</h2>
         <button
@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const userData: IUser = await axios
-    .get(`${process.env.BACK_API_PATH}/api/user/me`, {
+    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
