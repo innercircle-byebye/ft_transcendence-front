@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import reissueToken from "@/utils/reissueTokens";
 import AnnouncementList from "@/components/main-page/AnnouncementList";
+import ProfileCard from "@/components/main-page/ProfileCard";
 
 const Home = ({
   userData,
@@ -45,6 +46,7 @@ const Home = ({
 
       <main className={styles.main}>
         <AnnouncementList />
+        <ProfileCard userData={userData}/>
         <h1 className={styles.title}>Welcome to Home Page!</h1>
         <h2>{userData?.nickname}</h2>
         <button

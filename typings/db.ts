@@ -26,6 +26,12 @@ export interface IAnnouncement {
   isDeleted: boolean;
 }
 
+export interface IHistory {
+  count: number;
+  win: number;
+  lose: number;
+}
+
 export interface IMessage {
   message: string;
 }
