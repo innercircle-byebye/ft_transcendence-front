@@ -1,4 +1,4 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Data = {
   message: string;
@@ -6,8 +6,8 @@ type Data = {
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<Data>,
 ) {
   res.statusCode = 200;
-  res.json({ message: "logout success" });
+  res.json({ message: 'logout success' });
 }

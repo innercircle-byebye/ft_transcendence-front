@@ -1,8 +1,8 @@
-import { IHistory, IUser } from "@/typings/db";
-import fetcher from "@/utils/fetcher";
-import Image from "next/image";
-import { VFC } from "react";
-import useSWR from "swr";
+import Image from 'next/image';
+import { VFC } from 'react';
+import useSWR from 'swr';
+import fetcher from '@/utils/fetcher';
+import { IHistory, IUser } from '@/typings/db';
 
 interface Props {
   userData: IUser;
@@ -11,10 +11,10 @@ interface Props {
 const ProfileCard: VFC<Props> = ({ userData }) => {
   // test 전적 정보 받아오는 api 적용
   const { data: history } = useSWR<IHistory>(
-    `http://localhost:3000/api/history`,
-    fetcher
+    'http://localhost:3000/api/history',
+    fetcher,
   );
-  console.log("history:", history);
+  console.log('history:', history);
 
   return (
     <div className="bg-gray-200 flex flex-col w-1/5 space-y-2 text-center rounded-2xl">
@@ -32,7 +32,7 @@ const ProfileCard: VFC<Props> = ({ userData }) => {
       </div>
       <div className="p-1">{userData.nickname}</div>
       <div className="p-1">{`${history?.count}전 ${history?.win}승 ${history?.lose}패`}</div>
-      <div className="p-1">{`${Number(history?.win) / Number(history?.count) * 100}%`}</div>
+      <div className="p-1">{`${(Number(history?.win) / Number(history?.count)) * 100}%`}</div>
     </div>
   );
 };

@@ -1,35 +1,34 @@
-import { ReactElement } from "react";
-import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
-import MainLayout from "@/layouts/MainLayout";
-import styles from "@/styles/Home.module.css";
+import { ReactElement } from 'react';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import MainLayout from '@/layouts/MainLayout';
+import styles from '@/styles/Home.module.css';
 
 const dummyUserProfile = {
-  avatarURL: "https://picsum.photos/400/400",
-  username: "Fox",
+  avatarURL: 'https://picsum.photos/400/400',
+  username: 'Fox',
 };
 
 const dummyRankDatas = [
-  { rank: 1, username: "Jane", xp: 30000 },
-  { rank: 2, username: "John", xp: 20000 },
-  { rank: 3, username: "Tom1", xp: 20000 },
-  { rank: 4, username: "Tom2", xp: 20000 },
-  { rank: 5, username: "Tom3", xp: 20000 },
-  { rank: 6, username: "Tom4", xp: 20000 },
-  { rank: 7, username: "Tom5", xp: 20000 },
-  { rank: 8, username: "Tom6", xp: 20000 },
-  { rank: 9, username: "Tom7", xp: 20000 },
-  { rank: 10, username: "Tom8", xp: 20000 },
-  { rank: 11, username: "Tom9", xp: 20000 },
-  { rank: 12, username: "Tom10", xp: 20000 },
-  { rank: 13, username: "Tom11", xp: 20000 },
+  { rank: 1, username: 'Jane', xp: 30000 },
+  { rank: 2, username: 'John', xp: 20000 },
+  { rank: 3, username: 'Tom1', xp: 20000 },
+  { rank: 4, username: 'Tom2', xp: 20000 },
+  { rank: 5, username: 'Tom3', xp: 20000 },
+  { rank: 6, username: 'Tom4', xp: 20000 },
+  { rank: 7, username: 'Tom5', xp: 20000 },
+  { rank: 8, username: 'Tom6', xp: 20000 },
+  { rank: 9, username: 'Tom7', xp: 20000 },
+  { rank: 10, username: 'Tom8', xp: 20000 },
+  { rank: 11, username: 'Tom9', xp: 20000 },
+  { rank: 12, username: 'Tom10', xp: 20000 },
+  { rank: 13, username: 'Tom11', xp: 20000 },
 ];
 
-const dummyPaginationLinkTexts = ["<", "1", "2", "3", "4", "5", ">"];
+const dummyPaginationLinkTexts = ['<', '1', '2', '3', '4', '5', '>'];
 
-const Rank = () => {
-  return (
+const Rank = () => (
     <div className={styles.container}>
       <Head>
         <title>Rank - Pong&Chat</title>
@@ -93,8 +92,7 @@ const Rank = () => {
         </div>
       </div>
     </div>
-  );
-};
+);
 
 Rank.getLayout = function getLayout(page: ReactElement) {
   return <MainLayout>{page}</MainLayout>;

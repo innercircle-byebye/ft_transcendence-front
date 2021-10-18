@@ -1,6 +1,8 @@
-import Navbar from "@/components/Navbar";
-import { useRouter } from "next/router";
-import React, { ReactElement, useCallback, useEffect, useRef, useState } from "react";
+import { useRouter } from 'next/router';
+import React, {
+  ReactElement, useCallback, useEffect, useState,
+} from 'react';
+import Navbar from '@/components/Navbar';
 
 const CreateChannel = () => {
   const router = useRouter();
@@ -77,13 +79,13 @@ const CreateChannel = () => {
         <div>
           <button className="relative" onClick={onClickSwitch}>
             <div className="block bg-gray-600 w-14 h-8 rounded-full"></div>
-            {isPrivate ?
-              (<div className="absolute right-1 top-1 bg-red-400 w-6 h-6 rounded-full transition"></div>) :
-              (<div className="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>)}
+            {isPrivate
+              ? (<div className="absolute right-1 top-1 bg-red-400 w-6 h-6 rounded-full transition"></div>)
+              : (<div className="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>)}
           </button>
         </div>
-        {isPrivate &&
-          <>
+        {isPrivate
+          && <>
             <div className="ml-3 text-gray-700 font-medium">비밀번호</div>
             <div>
               <div className="flex flex-row items-center space-x-2">
@@ -121,7 +123,7 @@ const CreateChannel = () => {
       </div>
     </div>
   );
-}
+};
 
 CreateChannel.getLayout = function getLayout(page: ReactElement) {
   return (
@@ -135,6 +137,5 @@ CreateChannel.getLayout = function getLayout(page: ReactElement) {
     </div>
   );
 };
-
 
 export default CreateChannel;
