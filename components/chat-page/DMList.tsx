@@ -8,11 +8,12 @@ import { IUser } from '@/typings/db';
 
 const DMList: VFC = () => {
   const router = useRouter();
-  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
-    dedupingInterval: 2000, // 2초
-  });
+  // const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
+  //   dedupingInterval: 2000, // 2초
+  // });
   const { data: memberData } = useSWR<IUser[]>(
-    userData ? 'http://localhost:3000/api/members' : null,
+    // userData ? 'http://localhost:3000/api/members' : null,
+    'http://localhost:3000/api/members',
     fetcher,
   );
   const [channelCollapse, setChannelCollapse] = useState(false);
@@ -89,9 +90,9 @@ const DMList: VFC = () => {
                         />
                       </div>
                       {member.nickname}
-                      {member.intraUsername === userData?.intraUsername && (
+                      {/* {member.intraUsername === userData?.intraUsername && (
                         <span> (나)</span>
-                      )}
+                      )} */}
                       {member.status === 'online' ? (
                         <div className="w-2 h-2 rounded-full bg-green-600" />
                       ) : (

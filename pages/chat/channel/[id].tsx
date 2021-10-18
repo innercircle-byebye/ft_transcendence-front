@@ -11,7 +11,7 @@ const Channel = () => {
   const router = useRouter();
   const [chat, onChangeChat] = useInput('');
   const { data: channelData } = useSWR<IChannel>(
-    `/api/channels?id=${router.query.id}`,
+    `http://localhost:3000/api/channels?id=${router.query.id}`,
     fetcher,
   );
 

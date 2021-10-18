@@ -3,10 +3,9 @@ import { IChannel } from '@/typings/db';
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<IChannel[]>,
+  res: NextApiResponse<IChannel[] | IChannel>,
 ) {
-  res.statusCode = 200;
-  res.json([
+  const channelDatas = [
     {
       id: 1,
       name: 'general',
@@ -27,5 +26,13 @@ export default function handler(
       name: '길드2',
       private: false,
     },
-  ]);
+  ];
+
+  res.statusCode = 200;
+  const { id } = req.query;
+  if (id) {
+    res.json(channelDatas[+id - 1]);
+  } else {
+    res.json(channelDatas);
+  }
 }

@@ -3,17 +3,19 @@ import { useRouter } from 'next/router';
 import { useCallback, useState, VFC } from 'react';
 import useSWR from 'swr';
 import fetcher from '@/utils/fetcher';
-import { IChannel, IUser } from '@/typings/db';
+import { IChannel } from '@/typings/db';
 
 const ChannelList: VFC = () => {
   const router = useRouter();
-  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
-    dedupingInterval: 2000, // 2초
-  });
+  // const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
+  //   dedupingInterval: 2000, // 2초
+  // });
   const { data: channelData } = useSWR<IChannel[]>(
-    userData ? 'http://localhost:3000/api/channels' : null,
+    // userData ? 'http://localhost:3000/api/channels' : null,
+    'http://localhost:3000/api/channels',
     fetcher,
   );
+
   const [channelCollapse, setChannelCollapse] = useState(false);
   const clickedChannel = router.pathname === '/chat/channel/[id]' && router.query.id;
 
