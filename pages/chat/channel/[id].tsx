@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement, useCallback, useState } from 'react';
 import useSWR from 'swr';
 import ChatBox from '@/components/chat-page/ChatBox';
 import ChatLayout from '@/layouts/ChatLayout';
@@ -10,10 +10,15 @@ import { IChannel } from '@/typings/db';
 const Channel = () => {
   const router = useRouter();
   const [chat, onChangeChat, setChat] = useInput('');
+  const [showEmoji, setShowEmoji] = useState(false);
   const { data: channelData } = useSWR<IChannel>(
     `http://localhost:3000/api/channels?id=${router.query.id}`,
     fetcher,
   );
+
+  const onCloseEmoji = useCallback(() => {
+    setShowEmoji(false);
+  }, []);
 
   const onSubmitChat = useCallback(
     (e) => {
@@ -27,19 +32,21 @@ const Channel = () => {
   );
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="font-semibold text-2xl pl-6">
-        #
-        {' '}
-        {channelData?.name}
+    <div className="h-full flex flex-col" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
+      <div className="h-full flex flex-col">
+        <div className="font-semibold text-2xl pl-6">
+          {`# ${channelData?.name}`}
+        </div>
+        <div className="flex-1">Chat Zone</div>
+        <ChatBox
+          chat={chat}
+          onChangeChat={onChangeChat}
+          setChat={setChat}
+          onSubmitChat={onSubmitChat}
+          showEmoji={showEmoji}
+          setShowEmoji={setShowEmoji}
+        />
       </div>
-      <div className="flex-1">Chat Zone</div>
-      <ChatBox
-        chat={chat}
-        onChangeChat={onChangeChat}
-        setChat={setChat}
-        onSubmitChat={onSubmitChat}
-      />
     </div>
   );
 };

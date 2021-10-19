@@ -1,15 +1,16 @@
-import React, { Dispatch, SetStateAction, VFC } from 'react';
+import React, { VFC } from 'react';
 import { stripHexcode } from 'emojibase';
 import {
+  CanonicalEmoji,
   PathConfig,
 } from 'interweave-emoji';
 import EmojiPicker from 'interweave-emoji-picker';
 
 interface IProps {
-  setChat: Dispatch<SetStateAction<string>>;
+  onSelectEmoji: (e: CanonicalEmoji) => void;
 }
 
-const Emoji: VFC<IProps> = ({ setChat }) => {
+const Emoji: VFC<IProps> = ({ onSelectEmoji }) => {
   const emojiPath = (hexcode: string, { enlarged }: PathConfig) => `https://cdn.jsdelivr.net/gh/joypixels/emoji-assets@latest/png/${
     enlarged ? 64 : 32
   }/${stripHexcode(hexcode).toLowerCase()}.png`;
@@ -34,9 +35,7 @@ const Emoji: VFC<IProps> = ({ setChat }) => {
             emojiPadding={6}
             emojiPath={emojiPath}
             emojiSize={22}
-            onSelectEmoji={(e) => {
-              setChat((prev: string) => (prev + e.emoji));
-            }}
+            onSelectEmoji={onSelectEmoji}
             clearIcon={clearIcon}
             commonMode="recently-used"
             displayOrder={['groups', 'search', 'emojis']}

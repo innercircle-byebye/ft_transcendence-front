@@ -15,11 +15,13 @@ const UserInfoMenu = () => (
       <Menu.Items className="absolute w-20 flex flex-col divide-y divide-gray-50 bg-white">
         <Menu.Item>
           {({ active }) => (
-            <Link href="/">
-              <a className={`${active && 'bg-blue-500 text-white'}`}>
-                Profile
-              </a>
-            </Link>
+            <div className={`${active && 'bg-blue-500 text-white'}`}>
+              <Link href="/">
+                <a>
+                  Profile
+                </a>
+              </Link>
+            </div>
           )}
         </Menu.Item>
         <Menu.Item>
