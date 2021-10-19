@@ -1,8 +1,7 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement } from 'react';
 import Head from 'next/head';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import axios from 'axios';
-import { toast } from 'react-toastify';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { IUser } from '@/typings/db';
 import styles from '@/styles/Home.module.css';
@@ -14,6 +13,7 @@ import AnnouncementList from '@/components/main-page/AnnouncementList';
 const Home = ({
   userData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  /*
   const router = useRouter();
 
   const onClickLogout = useCallback(
@@ -31,6 +31,7 @@ const Home = ({
     },
     [router],
   );
+  */
 
   if (!userData) {
     return <div>로딩중...</div>;
@@ -46,12 +47,6 @@ const Home = ({
 
       <h1 className={styles.title}>Welcome to Home Page!</h1>
       <h2>{userData?.nickname}</h2>
-      <button
-        className="bg-sky-800 hover:bg-amber-600 hover:text-white text-white font-bold py-2 px-4 w-36 rounded-full"
-        onClick={onClickLogout}
-      >
-        LOGOUT
-      </button>
       <AnnouncementList />
       <ProfileCard userData={userData} />
     </div>

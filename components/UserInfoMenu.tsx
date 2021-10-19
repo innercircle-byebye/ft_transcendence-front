@@ -1,9 +1,30 @@
 import { Menu } from '@headlessui/react';
 import { MenuIcon } from '@heroicons/react/solid';
+import axios from 'axios';
+import router from 'next/router';
+import { useCallback } from 'react';
+import { toast } from 'react-toastify';
 
 // DropdownMenuButton -> UserInfoMenu 로 변경하겠습니다.
 // const DropdownMenuButton = () => {
-const UserInfoMenu = () => (
+const UserInfoMenu = () => {
+  const onClickLogout = useCallback(
+    (e) => {
+      e.preventDefault();
+      axios
+        .get('/auth/logout')
+        .then(() => {
+          router.push('/login');
+        })
+        .catch((error) => {
+          console.dir(error);
+          toast.error(error.response?.data, { position: 'bottom-center' });
+        });
+    },
+    [],
+  );
+
+  return (
     <div className="relative">
       <Menu>
         <Menu.Button>
@@ -28,13 +49,16 @@ const UserInfoMenu = () => (
           <Menu.Item>
             {({ active }) => (
               <a className={`${active && 'bg-blue-500 text-white'}`} href="#">
+                <button onClick={onClickLogout}>
                 Log out
+                </button>
               </a>
             )}
           </Menu.Item>
         </Menu.Items>
       </Menu>
     </div>
-);
+  );
+};
 
 export default UserInfoMenu;
