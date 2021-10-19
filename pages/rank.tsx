@@ -29,69 +29,69 @@ const dummyRankDatas = [
 const dummyPaginationLinkTexts = ['<', '1', '2', '3', '4', '5', '>'];
 
 const Rank = () => (
-    <div className={styles.container}>
-      <Head>
-        <title>Rank - Pong&Chat</title>
-        <meta name="description" content="Rank - Play pong game and Chat" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div className="grid gap-8 grid-cols-3 py-8 w-8/12 max-w-screen-xl h-full">
-        {/* 사용자 정보 */}
-        <div>
-          <div className="py-12 mb-6 rounded-md bg-gray-200">
-            <div className="flex justify-center mb-4">
-              <div className="w-72 h-72 rounded-full overflow-hidden">
-                <Image
-                  src={dummyUserProfile.avatarURL}
-                  width={300}
-                  height={300}
-                  alt="Avatar"
-                />
-              </div>
-            </div>
-            <div className="py-2 text-center">
-              <h2 className="text-5xl">{dummyUserProfile.username}</h2>
+  <div className={styles.container}>
+    <Head>
+      <title>Rank - Pong&Chat</title>
+      <meta name="description" content="Rank - Play pong game and Chat" />
+      <link rel="icon" href="/favicon.ico" />
+    </Head>
+    <div className="grid gap-8 grid-cols-3 py-8 w-8/12 max-w-screen-xl h-full">
+      {/* 사용자 정보 */}
+      <div>
+        <div className="py-12 mb-6 rounded-md bg-gray-200">
+          <div className="flex justify-center mb-4">
+            <div className="w-72 h-72 rounded-full overflow-hidden">
+              <Image
+                src={dummyUserProfile.avatarURL}
+                width={300}
+                height={300}
+                alt="Avatar"
+              />
             </div>
           </div>
-          <div className="flex justify-center">
-            <Link href="/">
-              <a className="px-2 py-1 rounded-md text-lg bg-amber-300 text-gray-700">
-                내 Rank 보기
-              </a>
-            </Link>
+          <div className="py-2 text-center">
+            <h2 className="text-5xl">{dummyUserProfile.username}</h2>
           </div>
         </div>
-        {/* 랭크 정보 */}
-        <div className="col-span-2 h-full">
-          <div className="mb-4">
-            <h1 className="text-4xl leading-10">Ranks</h1>
+        <div className="flex justify-center">
+          <Link href="/">
+            <a className="px-2 py-1 rounded-md text-lg bg-amber-300 text-gray-700">
+              내 Rank 보기
+            </a>
+          </Link>
+        </div>
+      </div>
+      {/* 랭크 정보 */}
+      <div className="col-span-2 h-full">
+        <div className="mb-4">
+          <h1 className="text-4xl leading-10">Ranks</h1>
+        </div>
+        <div className="p-4 rounded-md bg-gray-300 ">
+          <div className="text-lg">
+            <ul>
+              <li>Rank | Name | Point</li>
+              {dummyRankDatas.map((rankData) => (
+                <li key={rankData.username}>
+                  {`${rankData.rank} | ${rankData.username} | ${rankData.xp}`}
+                </li>
+              ))}
+            </ul>
           </div>
-          <div className="p-4 rounded-md bg-gray-300 ">
-            <div className="text-lg">
-              <ul>
-                <li>Rank | Name | Point</li>
-                {dummyRankDatas.map((rankData) => (
-                  <li key={rankData.username}>
-                    {rankData.rank} | {rankData.username} | {rankData.xp}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="flex justify-center">
-              <div className="inline-block rounded-md border border-gray-50 overflow-hidden bg-gray-50">
-                {dummyPaginationLinkTexts.map((paginationLinkText) => (
-                  <Link href="/" key={paginationLinkText}>
-                    <a className="mx-px px-2 py-1 bg-amber-300 text-gray-700">
-                      {paginationLinkText}
-                    </a>
-                  </Link>
-                ))}
-              </div>
+          <div className="flex justify-center">
+            <div className="inline-block rounded-md border border-gray-50 overflow-hidden bg-gray-50">
+              {dummyPaginationLinkTexts.map((paginationLinkText) => (
+                <Link href="/" key={paginationLinkText}>
+                  <a className="mx-px px-2 py-1 bg-amber-300 text-gray-700">
+                    {paginationLinkText}
+                  </a>
+                </Link>
+              ))}
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 );
 
 Rank.getLayout = function getLayout(page: ReactElement) {

@@ -48,6 +48,7 @@ const Home = ({
         <h1 className={styles.title}>Welcome to Home Page!</h1>
         <h2>{userData?.nickname}</h2>
         <button
+          type="button"
           className="bg-sky-800 hover:bg-amber-600 hover:text-white text-white font-bold py-2 px-4 w-36 rounded-full"
           onClick={onClickLogout}
         >
