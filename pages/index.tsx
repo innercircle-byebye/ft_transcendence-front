@@ -1,15 +1,15 @@
-import React, { ReactElement, useCallback } from 'react';
-import Head from 'next/head';
-import MainLayout from '@/layouts/MainLayout';
-import styles from '@/styles/Home.module.css';
-import { IUser } from '@/typings/db';
-import { useRouter } from 'next/router';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import reissueToken from '@/utils/reissueTokens';
-import ProfileCard from '@/components/main-page/ProfileCard';
-import AnnouncementList from '@/components/main-page/AnnouncementList';
+import React, { ReactElement, useCallback } from "react";
+import Head from "next/head";
+import MainLayout from "@/layouts/MainLayout";
+import styles from "@/styles/Home.module.css";
+import { IUser } from "@/typings/db";
+import { useRouter } from "next/router";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import reissueToken from "@/utils/reissueTokens";
+import ProfileCard from "@/components/main-page/ProfileCard";
+import AnnouncementList from "@/components/main-page/AnnouncementList";
 
 const Home = ({
   userData,
@@ -20,13 +20,13 @@ const Home = ({
     (e) => {
       e.preventDefault();
       axios
-        .get('/auth/logout')
+        .get("/auth/logout")
         .then(() => {
-          router.push('/login');
+          router.push("/login");
         })
         .catch((error) => {
           console.dir(error);
-          toast.error(error.response?.data, { position: 'bottom-center' });
+          toast.error(error.response?.data, { position: "bottom-center" });
         });
     },
     [router]
@@ -52,7 +52,6 @@ const Home = ({
       >
         LOGOUT
       </button>
-
       <AnnouncementList />
       <ProfileCard userData={userData} />
     </div>
@@ -60,14 +59,14 @@ const Home = ({
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
+  const access_token = process.env.ACCESS_TOKEN || "";
+  const refresh_token = process.env.REFRESH_TOKEN || "";
 
   if (
     !context.req.cookies[refresh_token] ||
     !context.req.cookies[access_token]
   ) {
-    return reissueToken(context, access_token, refresh_token, '/');
+    return reissueToken(context, access_token, refresh_token, "/");
   }
 
   const userData: IUser = await axios
@@ -82,7 +81,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (userData.status === process.env.STATUS_NOT_REGISTER) {
     return {
       redirect: {
-        destination: '/create-profile',
+        destination: "/create-profile",
         permanent: false,
       },
     };
