@@ -63,7 +63,9 @@ const CreateProfile = ({
       e.preventDefault();
       if (nickname && email && !emailError) {
         const formData = new FormData();
-        imageFile && formData.append('image', imageFile);
+        if (imageFile) {
+          formData.append('image', imageFile);
+        }
         formData.append('nickname', nickname);
         formData.append('email', email);
         axios

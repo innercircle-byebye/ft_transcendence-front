@@ -3,7 +3,6 @@ import React, {
   ReactElement,
   useCallback,
   useEffect,
-  useRef,
   useState,
 } from 'react';
 import Navbar from '@/components/Navbar';
