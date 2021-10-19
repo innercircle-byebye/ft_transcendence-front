@@ -25,7 +25,7 @@ const SearchUserNicknameInputBox = () => {
         value={userNickname}
       />
       <button type="button" className="absolute ml-52 h-full" onClick={onClickHandler}>
-        <SearchIcon className="hover:text-black w-full h-full"/>
+        <SearchIcon className="hover:text-black w-full h-full" />
       </button>
     </div>
   );

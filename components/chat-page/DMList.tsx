@@ -22,7 +22,7 @@ const DMList: VFC = () => {
   return (
     <div className="border-2 border-sky-700 bg-sky-50 rounded-lg w-full h-auto p-3 space-y-3">
       <div className="text-gray-800 font-semibold text-xl flex items-center">
-        <button onClick={toggleChannelCollapse} className="px-1">
+        <button type="button" onClick={toggleChannelCollapse} className="px-1">
           {channelCollapse ? (
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -60,30 +60,30 @@ const DMList: VFC = () => {
       <div className="flex flex-col space-y-1">
         {!channelCollapse
           && memberData?.map((member) => (
-              <span
-                key={member.intraUsername}
-                className="w-full px-2 py-1 border-b-2 flex justify-between items-center hover:bg-gray-300"
-              >
-                <div className="flex flex-row items-center space-x-1">
-                  <div className="relative bg-blue-300 w-5 h-5 rounded-full shadow-lg mr-2">
-                    <Image
-                      src={member.imagePath}
-                      alt="previewImage"
-                      objectFit="cover"
-                      layout="fill"
-                      className="rounded-full"
-                    />
-                  </div>
-                  {member.nickname}
-                  {member.intraUsername === userData?.intraUsername && <span> (나)</span>}
-                  {member.status === 'online' ? (
-                    <div className="w-2 h-2 rounded-full bg-green-600" />
-                  ) : <div className="w-2 h-2 rounded-full bg-red-600" />}
+            <span
+              key={member.intraUsername}
+              className="w-full px-2 py-1 border-b-2 flex justify-between items-center hover:bg-gray-300"
+            >
+              <div className="flex flex-row items-center space-x-1">
+                <div className="relative bg-blue-300 w-5 h-5 rounded-full shadow-lg mr-2">
+                  <Image
+                    src={member.imagePath}
+                    alt="previewImage"
+                    objectFit="cover"
+                    layout="fill"
+                    className="rounded-full"
+                  />
                 </div>
-              </span>
+                {member.nickname}
+                {member.intraUsername === userData?.intraUsername && <span> (나)</span>}
+                {member.status === 'online' ? (
+                  <div className="w-2 h-2 rounded-full bg-green-600" />
+                ) : <div className="w-2 h-2 rounded-full bg-red-600" />}
+              </div>
+            </span>
           ))}
       </div>
-      <button className="w-full bg-sky-700 text-sky-100 hover:bg-gray-300 hover:text-sky-700 flex flex-row justify-between items-center rounded-full px-3 py-1">
+      <button type="button" className="w-full bg-sky-700 text-sky-100 hover:bg-gray-300 hover:text-sky-700 flex flex-row justify-between items-center rounded-full px-3 py-1">
         <div>Search members</div>
         <div>
           <svg
