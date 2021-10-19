@@ -5,7 +5,7 @@ import fetcher from '@/utils/fetcher';
 
 const MyFriendsList = () => {
   // 이건 어떻게 해결해야합니까?
-  /*
+  /* axios 를 사용하면 userData type 이 array 가 아니라고 나옵니다.
   const userData: IUser[] = axios
     .get('http://localhost:3000/api/members')
     .then((response) => response.data);
