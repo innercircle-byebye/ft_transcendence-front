@@ -1,6 +1,5 @@
 import React, { ReactElement } from 'react';
 import Head from 'next/head';
-// import { useRouter } from 'next/router';
 import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { IUser } from '@/typings/db';
@@ -13,26 +12,6 @@ import AnnouncementList from '@/components/main-page/AnnouncementList';
 const Home = ({
   userData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  /*
-  const router = useRouter();
-
-  const onClickLogout = useCallback(
-    (e) => {
-      e.preventDefault();
-      axios
-        .get('/auth/logout')
-        .then(() => {
-          router.push('/login');
-        })
-        .catch((error) => {
-          console.dir(error);
-          toast.error(error.response?.data, { position: 'bottom-center' });
-        });
-    },
-    [router],
-  );
-  */
-
   if (!userData) {
     return <div>로딩중...</div>;
   }
