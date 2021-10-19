@@ -1,6 +1,9 @@
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useCallback, useEffect, useState,
+  ReactElement,
+  useCallback,
+  useEffect,
+  useState,
 } from 'react';
 import Navbar from '@/components/Navbar';
 import useInput from '@/hooks/useInput';
