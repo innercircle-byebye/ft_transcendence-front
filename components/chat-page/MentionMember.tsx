@@ -60,7 +60,7 @@ const MentionMember: VFC<IProps> = ({
 
   return (
     <MentionsInput
-      className="w-full textarea:p-2"
+      className="mentions-input"
       value={value}
       onChange={onChangeValue}
       onKeyPress={onKeyPress}
