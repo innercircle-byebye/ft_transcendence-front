@@ -9,7 +9,7 @@ import { IChannel } from '@/typings/db';
 
 const Channel = () => {
   const router = useRouter();
-  const [chat, onChangeChat] = useInput('');
+  const [chat, onChangeChat, setChat] = useInput('');
   const { data: channelData } = useSWR<IChannel>(
     `http://localhost:3000/api/channels?id=${router.query.id}`,
     fetcher,
@@ -27,14 +27,20 @@ const Channel = () => {
   );
 
   return (
-    <>
-      <div className="font-semibold text-2xl pl-6"># {channelData?.name}</div>
+    <div className="h-full flex flex-col">
+      <div className="font-semibold text-2xl pl-6">
+        #
+        {' '}
+        {channelData?.name}
+      </div>
+      <div className="flex-1">Chat Zone</div>
       <ChatBox
         chat={chat}
         onChangeChat={onChangeChat}
+        setChat={setChat}
         onSubmitChat={onSubmitChat}
       />
-    </>
+    </div>
   );
 };
 
