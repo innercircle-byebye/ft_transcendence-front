@@ -157,7 +157,6 @@ const CreateChannel = () => {
           </>
         )}
       </div>
-      <div>invite member</div>
       <div className="space-x-4">
         <button
           className="bg-gray-400 text-white py-3 px-8 rounded-full focus:outline-none focus:shadow-outline"
