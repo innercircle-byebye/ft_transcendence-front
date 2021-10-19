@@ -1,12 +1,14 @@
-import { IUser } from '@/typings/db';
-import reissueToken from '@/utils/reissueTokens';
 import axios from 'axios';
-import useInput from '@/hooks/useInput';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  useCallback, useEffect, useRef, useState,
+} from 'react';
 import { toast } from 'react-toastify';
+import useInput from '@/hooks/useInput';
+import reissueToken from '@/utils/reissueTokens';
+import { IUser } from '@/typings/db';
 
 const CreateProfile = ({
   userData,
@@ -15,10 +17,10 @@ const CreateProfile = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImagePath, setPreviewImagePath] = useState<string>(
-    userData.imagePath
+    userData.imagePath,
   );
   const [nickname, onChangeNickname, setNickname] = useInput<string>(
-    userData.nickname
+    userData.nickname,
   );
   const [email, onChangeEmail, setEmail] = useInput<string>(userData.email);
   const [emailError, setEmailError] = useState(false);
@@ -53,7 +55,7 @@ const CreateProfile = ({
       userData.nickname,
       setEmail,
       setNickname,
-    ]
+    ],
   );
 
   const onSubmitCreateProfile = useCallback(
@@ -79,12 +81,11 @@ const CreateProfile = ({
           });
       }
     },
-    [email, emailError, imageFile, nickname, router]
+    [email, emailError, imageFile, nickname, router],
   );
 
   useEffect(() => {
-    const emailForm =
-      /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+    const emailForm = /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
     setEmailError(!emailForm.test(email));
 
     if (imageFile) {
@@ -219,19 +220,19 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const refresh_token = process.env.REFRESH_TOKEN || '';
 
   if (
-    !context.req.cookies[refresh_token] ||
-    !context.req.cookies[access_token]
+    !context.req.cookies[refresh_token]
+    || !context.req.cookies[access_token]
   ) {
     return reissueToken(
       context,
       access_token,
       refresh_token,
-      '/create-profile'
+      '/create-profile',
     );
   }
 
   const userData: IUser = await axios
-    .get(`${process.env.BACK_API_PATH}/api/user/me`, {
+    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
@@ -251,7 +252,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      userData: userData,
+      userData,
     },
   };
 };

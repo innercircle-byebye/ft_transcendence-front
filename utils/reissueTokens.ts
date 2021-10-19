@@ -1,26 +1,26 @@
-import axios from "axios";
-import { GetServerSidePropsContext } from "next";
-import { ParsedUrlQuery } from "querystring";
+import axios from 'axios';
+import { GetServerSidePropsContext } from 'next';
+import { ParsedUrlQuery } from 'querystring';
 
 const reissueToken = async (
   context: GetServerSidePropsContext<ParsedUrlQuery>,
   access_token: string,
   refresh_token: string,
-  current_url: string
+  current_url: string,
 ) => {
   if (
-    context.req.cookies[refresh_token] &&
-    !context.req.cookies[access_token]
+    context.req.cookies[refresh_token]
+    && !context.req.cookies[access_token]
   ) {
     await axios
-      .get(`${process.env.BACK_API_PATH}/auth/refresh`, {
+      .get(`http://back-nestjs:${process.env.BACK_PORT}/auth/refresh`, {
         withCredentials: true,
         headers: {
           Cookie: `Refresh=${context.req.cookies[refresh_token]}`,
         },
       })
       .then((res) => {
-        context.res.setHeader("set-Cookie", res.headers["set-cookie"]);
+        context.res.setHeader('set-Cookie', res.headers['set-cookie']);
       })
       .catch((error) => {
         console.log(error);
@@ -34,7 +34,7 @@ const reissueToken = async (
   }
   return {
     redirect: {
-      destination: "/login",
+      destination: '/login',
       permanent: false,
     },
   };

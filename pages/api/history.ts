@@ -1,13 +1,16 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from 'next';
-
-type Data = {
-  name: string
-}
+import { IHistory } from '@/typings/db';
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>,
+  res: NextApiResponse<IHistory>,
 ) {
-  res.status(200).json({ name: 'John Doe' });
+  res.status(200).json(
+    {
+      count: 10,
+      win: 5,
+      lose: 5,
+    },
+  );
 }

@@ -1,3 +1,43 @@
 {
-  "extends": "next/core-web-vitals"
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": [
+    "airbnb-base",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:@next/next/recommended",
+    "eslint:recommended",
+    "next"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "plugins": ["react", "@typescript-eslint"],
+  "rules": {
+    "no-console": "off",
+    "camelcase": "off",
+    // ~26. _app.tsx 8번라인 page 사용하기 위함.
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error"],
+    // ~32. back-end와 동일.
+    "@typescript-eslint/interface-name-prefix": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/explicit-module-boundary-types": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    // ~35. index.tsx 15번 라인 getServerSideProps 사용하기 위함.
+    "no-use-before-define": "off",
+    "@typescript-eslint/no-use-before-define": ["error"],
+    // import @/... 사용하기 위함.
+    "react/jsx-filename-extension": [1, { "extensions": [".tsx", ".ts"] }],
+    // .tsx extension 생략하기 위함
+    "import/extensions": ["off"],
+    "import/no-unresolved": "off",
+    "import/no-extraneous-dependencies": "off"
+  }
 }

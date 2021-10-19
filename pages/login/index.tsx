@@ -1,12 +1,11 @@
-import Image from "next/image";
-import Link from "next/link";
-import React from "react";
-import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import Image from 'next/image';
+import Link from 'next/link';
+import React from 'react';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
 const Login = ({
   login_auth_url,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  return (
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => (
     <div className="w-screen h-screen bg-sky-700 flex justify-center items-center">
       <div className="flex flex-col items-center">
         <Image
@@ -48,16 +47,15 @@ const Login = ({
         </Link>
       </div>
     </div>
-  );
-};
+);
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const refresh_token = process.env.REFRESH_TOKEN || "";
+  const refresh_token = process.env.REFRESH_TOKEN || '';
 
   if (context.req.cookies[refresh_token]) {
     return {
       redirect: {
-        destination: "/",
+        destination: '/',
         permanent: false,
       },
     };

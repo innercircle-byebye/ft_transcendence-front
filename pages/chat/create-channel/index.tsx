@@ -1,5 +1,3 @@
-import Navbar from '@/components/Navbar';
-import useInput from '@/hooks/useInput';
 import { useRouter } from 'next/router';
 import React, {
   ReactElement,
@@ -8,6 +6,8 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import Navbar from '@/components/Navbar';
+import useInput from '@/hooks/useInput';
 
 const CreateChannel = () => {
   const router = useRouter();
@@ -28,7 +28,7 @@ const CreateChannel = () => {
       setPassword('');
       setInputPasswordType({ type: 'password', visible: false });
     },
-    [setPassword]
+    [setPassword],
   );
 
   const onClickPasswordEye = useCallback(() => {
