@@ -8,6 +8,7 @@ import { IUser } from '@/typings/db';
 
 const DMList: VFC = () => {
   const router = useRouter();
+  const { name } = router.query;
   // const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
   //   dedupingInterval: 2000, // 2초
   // });
@@ -17,9 +18,6 @@ const DMList: VFC = () => {
     fetcher,
   );
   const [channelCollapse, setChannelCollapse] = useState(false);
-  const clickedMember = router.pathname === '/chat/dm/[id]' && router.query.id;
-
-  console.log(router.query.id);
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
@@ -67,14 +65,14 @@ const DMList: VFC = () => {
         {!channelCollapse
           && memberData?.map((member) => (
             <Link
-              href={`/chat/dm/${member.userId}`}
+              href={`/chat/dm/${member.nickname}`}
               key={member.intraUsername}
             >
               <a>
                 <span
                   className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
-                    clickedMember
-                      && clickedMember === member.userId.toString()
+                    name
+                      && name === member.nickname
                       ? 'bg-sky-200'
                       : ''
                   }`}

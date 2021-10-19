@@ -29,9 +29,10 @@ export default function handler(
   ];
 
   res.statusCode = 200;
-  const { id } = req.query;
-  if (id) {
-    res.json(channelDatas[+id - 1]);
+  const { name } = req.query;
+  if (name) {
+    const fitChannel = channelDatas.filter((v) => v.name === name);
+    res.json(fitChannel[0]);
   } else {
     res.json(channelDatas);
   }
