@@ -2,17 +2,17 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ["cdn.intra.42.fr", "picsum.photos"],
+    domains: ['cdn.intra.42.fr', 'picsum.photos'],
   },
   async rewrites() {
     return [
       {
-        source: "/api/:path*",
-        destination: "http://back-nestjs:3005/api/:path*",
+        source: '/api/:path*',
+        destination: 'http://back-nestjs:3005/api/:path*',
       },
       {
-        source: "/auth/:path*",
-        destination: "http://back-nestjs:3005/auth/:path*",
+        source: '/auth/:path*',
+        destination: 'http://back-nestjs:3005/auth/:path*',
       },
     ];
   },

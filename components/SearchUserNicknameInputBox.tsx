@@ -1,15 +1,16 @@
-import { SearchIcon } from "@heroicons/react/solid";
-import React, { useState } from "react";
+import { SearchIcon } from '@heroicons/react/solid';
+import React, { useState } from 'react';
 
 const SearchUserNicknameInputBox = () => {
-  const [userNickname, setUserNickname] = useState("");
+  const [userNickname, setUserNickname] = useState('');
 
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) =>{
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUserNickname(event.target.value);
-  }
+  };
 
-  const onClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
-    console.log("User Nickname:", userNickname);
+  // const onClickHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
+  const onClickHandler = () => {
+    console.log('User Nickname:', userNickname);
     // 향후 State User 를 사용하여 <Link href={`/profile/${User}`} /> 이렇게 하면 될듯?!
   };
 

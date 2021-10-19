@@ -1,8 +1,8 @@
-import Link from "next/link";
-import Image from "next/image";
-import React, { VFC } from "react";
-import SearchUserNicknameInputBox from "./SearchUserNicknameInputBox";
-import UserInfoMenu from "./UserInfoMenu";
+import Link from 'next/link';
+import Image from 'next/image';
+import React, { VFC } from 'react';
+import SearchUserNicknameInputBox from './SearchUserNicknameInputBox';
+import UserInfoMenu from './UserInfoMenu';
 
 interface IListItem {
   name: string;
@@ -13,10 +13,10 @@ interface IListItem {
 const Navbar: VFC = () => {
   // list 향후 State 로 관리해야합니다.
   const navigationList: IListItem[] = [
-    { name: "HOME", href: "/", current: true },
-    { name: "PLAY", href: "/", current: false },
-    { name: "RANK", href: "/", current: false },
-    { name: "CHAT", href: "/chat", current: false },
+    { name: 'HOME', href: '/', current: true },
+    { name: 'PLAY', href: '/', current: false },
+    { name: 'RANK', href: '/', current: false },
+    { name: 'CHAT', href: '/chat', current: false },
   ];
 
   return (
@@ -26,8 +26,8 @@ const Navbar: VFC = () => {
         <Image
           src="/Logo.png"
           alt="Logo"
-          width={"100"}
-          height={"21"}
+          width={'100'}
+          height={'21'}
           objectFit="contain"
         />
       </div>

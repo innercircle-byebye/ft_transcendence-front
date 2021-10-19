@@ -1,13 +1,11 @@
-import React, { FC } from "react";
-import Navbar from "@/components/Navbar";
+import React, { FC } from 'react';
+import Navbar from '@/components/Navbar';
 
-const MainLayout: FC = ({ children }) => {
-  return (
+const MainLayout: FC = ({ children }) => (
     <>
       <Navbar />
       <main>{children}</main>
     </>
-  );
-};
+);
 
 export default MainLayout;

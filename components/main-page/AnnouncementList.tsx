@@ -1,16 +1,16 @@
-import { IAnnouncement } from "@/typings/db";
-import fetcher from "@/utils/fetcher";
-import { SpeakerphoneIcon } from "@heroicons/react/outline";
-import { useState } from "react";
-import useSWR from "swr";
-import AnnouncementModal from "./AnnouncementModal";
+import { useState } from 'react';
+import useSWR from 'swr';
+import { SpeakerphoneIcon } from '@heroicons/react/outline';
+import fetcher from '@/utils/fetcher';
+import { IAnnouncement } from '@/typings/db';
+import AnnouncementModal from './AnnouncementModal';
 
 const AnnouncementList = () => {
   // api 호출
   // GET http://localhost:3005/api/admin/announcement
   const { data: announcementData } = useSWR<IAnnouncement[]>( // api 의 결과값이 array
-    "/api/admin/announcement",
-    fetcher
+    '/api/admin/announcement',
+    fetcher,
   );
 
   const [clickedIndex, setClickedIndex] = useState<number | null>(null);

@@ -1,11 +1,11 @@
-import { IUser } from "@/typings/db";
-import fetcher from "@/utils/fetcher";
-import { useCallback, useState, VFC } from "react";
-import useSWR from "swr";
+import { useCallback, useState, VFC } from 'react';
 import Image from 'next/image';
+import useSWR from 'swr';
+import fetcher from '@/utils/fetcher';
+import { IUser } from '@/typings/db';
 
 const DMList: VFC = () => {
-  const { data: userData } = useSWR<IUser>("/api/user/me", fetcher, {
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
     dedupingInterval: 2000, // 2초
   });
   const { data: memberData } = useSWR<IUser[]>(
@@ -58,9 +58,8 @@ const DMList: VFC = () => {
         DMs
       </div>
       <div className="flex flex-col space-y-1">
-        {!channelCollapse &&
-          memberData?.map((member) => {
-            return (
+        {!channelCollapse
+          && memberData?.map((member) => (
               <span
                 key={member.intraUsername}
                 className="w-full px-2 py-1 border-b-2 flex justify-between items-center hover:bg-gray-300"
@@ -82,8 +81,7 @@ const DMList: VFC = () => {
                   ) : <div className="w-2 h-2 rounded-full bg-red-600" />}
                 </div>
               </span>
-            );
-          })}
+          ))}
       </div>
       <button className="w-full bg-sky-700 text-sky-100 hover:bg-gray-300 hover:text-sky-700 flex flex-row justify-between items-center rounded-full px-3 py-1">
         <div>Search members</div>

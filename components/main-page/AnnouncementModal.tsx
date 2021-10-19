@@ -1,6 +1,6 @@
-import { IAnnouncement } from "@/typings/db";
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment, useState, VFC } from "react";
+import { Fragment, VFC } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { IAnnouncement } from '@/typings/db';
 
 interface IProps {
   item: IAnnouncement;
