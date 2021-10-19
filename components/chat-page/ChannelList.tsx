@@ -1,18 +1,18 @@
 import Link from 'next/link';
-import { IChannel, IUser } from "@/typings/db";
-import fetcher from "@/utils/fetcher";
-import { useRouter } from "next/router";
-import { useCallback, useState, VFC } from "react";
-import useSWR from "swr";
+import { useRouter } from 'next/router';
+import { useCallback, useState, VFC } from 'react';
+import useSWR from 'swr';
+import fetcher from '@/utils/fetcher';
+import { IChannel, IUser } from '@/typings/db';
 
-const ChannelList: VFC = ({ }) => {
+const ChannelList: VFC = () => {
   const router = useRouter();
-  const { data: userData } = useSWR<IUser>("/api/user/me", fetcher, {
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
     dedupingInterval: 2000, // 2초
   });
   const { data: channelData } = useSWR<IChannel[]>(
-    userData ? "http://localhost:3000/api/channels" : null,
-    fetcher
+    userData ? 'http://localhost:3000/api/channels' : null,
+    fetcher,
   );
   const [channelCollapse, setChannelCollapse] = useState(false);
 
@@ -78,9 +78,8 @@ const ChannelList: VFC = ({ }) => {
         Channels
       </div>
       <div className="flex flex-col space-y-1">
-        {!channelCollapse &&
-          channelData?.map((channel) => {
-            return (
+        {!channelCollapse
+          && channelData?.map((channel) => (
               <span
                 key={channel.name}
                 className="w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300"
@@ -101,8 +100,7 @@ const ChannelList: VFC = ({ }) => {
                   </svg>
                 )}
               </span>
-            );
-          })}
+          ))}
       </div>
       <button className="w-full bg-sky-700 text-sky-100 hover:bg-gray-300 hover:text-sky-700 flex flex-row justify-between items-center rounded-full px-3 py-1">
         <div>Search Channels</div>

@@ -1,10 +1,9 @@
-import ChannelList from "@/components/chat-page/ChannelList";
-import DMList from "@/components/chat-page/DMList";
-import Navbar from "@/components/Navbar";
-import React, { FC } from "react";
+import React, { FC } from 'react';
+import ChannelList from '@/components/chat-page/ChannelList';
+import DMList from '@/components/chat-page/DMList';
+import Navbar from '@/components/Navbar';
 
-const ChatLayout: FC = ({ children }) => {
-  return (
+const ChatLayout: FC = ({ children }) => (
     <div className="h-screen flex flex-col">
       <div className="flex-initial">
       <Navbar />
@@ -21,7 +20,6 @@ const ChatLayout: FC = ({ children }) => {
         <main>{children}</main>
       </div>
     </div>
-  );
-};
+);
 
 export default ChatLayout;

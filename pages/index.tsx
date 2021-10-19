@@ -1,12 +1,12 @@
 import React, { ReactElement, useCallback } from 'react';
 import Head from 'next/head';
-import MainLayout from '@/layouts/MainLayout';
-import styles from '@/styles/Home.module.css';
-import { IUser } from '@/typings/db';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { IUser } from '@/typings/db';
+import styles from '@/styles/Home.module.css';
+import MainLayout from '@/layouts/MainLayout';
 import reissueToken from '@/utils/reissueTokens';
 import ProfileCard from '@/components/main-page/ProfileCard';
 
@@ -28,7 +28,7 @@ const Home = ({
           toast.error(error.response?.data, { position: 'bottom-center' });
         });
     },
-    [router]
+    [router],
   );
 
   if (!userData) {
@@ -63,8 +63,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const refresh_token = process.env.REFRESH_TOKEN || '';
 
   if (
-    !context.req.cookies[refresh_token] ||
-    !context.req.cookies[access_token]
+    !context.req.cookies[refresh_token]
+    || !context.req.cookies[access_token]
   ) {
     return reissueToken(context, access_token, refresh_token, '/');
   }

@@ -6,11 +6,11 @@ const reissueToken = async (
   context: GetServerSidePropsContext<ParsedUrlQuery>,
   access_token: string,
   refresh_token: string,
-  current_url: string
+  current_url: string,
 ) => {
   if (
-    context.req.cookies[refresh_token] &&
-    !context.req.cookies[access_token]
+    context.req.cookies[refresh_token]
+    && !context.req.cookies[access_token]
   ) {
     await axios
       .get(`http://back-nestjs:${process.env.BACK_PORT}/auth/refresh`, {
