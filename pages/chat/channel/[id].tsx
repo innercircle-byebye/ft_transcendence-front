@@ -28,7 +28,9 @@ const Channel = () => {
 
   return (
     <>
-      <div className="font-semibold text-2xl pl-6"># {channelData?.name}</div>
+      <div className="font-semibold text-2xl pl-6">
+        {`# ${channelData?.name}`}
+      </div>
       <ChatBox
         chat={chat}
         onChangeChat={onChangeChat}

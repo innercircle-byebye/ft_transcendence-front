@@ -5,7 +5,7 @@ import ChatLayout from '@/layouts/ChatLayout';
 const DM = () => {
   const router = useRouter();
 
-  return <div>dm {router.query.id}</div>;
+  return <div>{`dm ${router.query.id}`}</div>;
 };
 
 DM.getLayout = function getLayout(page: ReactElement) {

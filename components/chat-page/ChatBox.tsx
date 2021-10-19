@@ -54,6 +54,7 @@ const ChatBox: VFC<IProps> = ({
       if (!memberData) return null;
       return (
         <button
+          type="button"
           className={`px-1 py-2 flex items-center w-full space-x-2 ${
             focus ? 'text-bold bg-sky-800 text-white' : 'bg-white'
           }`}
