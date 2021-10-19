@@ -6,6 +6,7 @@ import {
   useCallback, useEffect, useRef, useState,
 } from 'react';
 import { toast } from 'react-toastify';
+import useInput from '@/hooks/useInput';
 import reissueToken from '@/utils/reissueTokens';
 import { IUser } from '@/typings/db';
 
@@ -18,8 +19,10 @@ const CreateProfile = ({
   const [previewImagePath, setPreviewImagePath] = useState<string>(
     userData.imagePath,
   );
-  const [nickname, setNickname] = useState(userData.nickname);
-  const [email, setEmail] = useState(userData.email);
+  const [nickname, onChangeNickname, setNickname] = useInput<string>(
+    userData.nickname,
+  );
+  const [email, onChangeEmail, setEmail] = useInput<string>(userData.email);
   const [emailError, setEmailError] = useState(false);
 
   const onClickUploadImage = useCallback((e) => {
@@ -38,14 +41,6 @@ const CreateProfile = ({
     }
   }, []);
 
-  const onChangeNickname = useCallback((e) => {
-    setNickname(e.target.value);
-  }, []);
-
-  const onChangeEmail = useCallback((e) => {
-    setEmail(e.target.value);
-  }, []);
-
   const onClickReset = useCallback(
     (e) => {
       e.preventDefault();
@@ -54,7 +49,13 @@ const CreateProfile = ({
       setPreviewImagePath(userData.imagePath);
       setImageFile(null);
     },
-    [userData.email, userData.imagePath, userData.nickname],
+    [
+      userData.email,
+      userData.imagePath,
+      userData.nickname,
+      setEmail,
+      setNickname,
+    ],
   );
 
   const onSubmitCreateProfile = useCallback(
@@ -62,7 +63,9 @@ const CreateProfile = ({
       e.preventDefault();
       if (nickname && email && !emailError) {
         const formData = new FormData();
-        if (imageFile) { formData.append('image', imageFile); }
+        if (imageFile) {
+          formData.append('image', imageFile);
+        }
         formData.append('nickname', nickname);
         formData.append('email', email);
         axios
