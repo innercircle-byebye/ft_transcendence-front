@@ -1,28 +1,24 @@
 import { FC } from 'react';
-import Image from 'next/image';
-import { IChat, IUser } from '@/typings/db';
+// import Image from 'next/image';
+import { IChat } from '@/typings/db';
 
 interface Props {
   chatData: IChat;
 }
 
-const ChatItem: FC<Props> = ({ chatData }) => {
-  const user: IUser = chatData.User;
-
-  return (
-    <div className="flex flex-row">
-      <div className="relative bg-blue-300 w-5 h-5 rounded-full shadow-lg mr-2">
-        <Image
-          src={user.imagePath}
-          alt="previewImage"
-          objectFit="cover"
-          layout="fill"
-          className="rounded-full"
-        />
-      </div>
-      {`${chatData.createdAt} ${user.nickname} ${chatData.content}`}
-    </div>
-  );
-};
+const ChatItem: FC<Props> = ({ chatData }) => (
+  <div className="flex flex-row">
+    {/* <div className="relative bg-blue-300 w-5 h-5 rounded-full shadow-lg mr-2">
+      <Image
+        src={user.imagePath}
+        alt="previewImage"
+        objectFit="cover"
+        layout="fill"
+        className="rounded-full"
+      />
+    </div> */}
+    {`${chatData.createdAt} ${chatData.userId} ${chatData.content}`}
+  </div>
+);
 
 export default ChatItem;

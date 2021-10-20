@@ -37,11 +37,11 @@ export interface IChannel {
 
 export interface IChat {
   // 채널의 채팅
-  id: number;
-  UserId: number;
-  User: IUser; // 보낸 사람
+  channelChatId: number;
+  userId: number;
+  channelId: number;
   content: string;
   createdAt: Date;
-  ChannelId: number;
-  Channel: IChannel;
+  lastModifiedAt: Date;
+  deletedAt: Date | null;
 }

@@ -23,7 +23,7 @@ const Channel = () => {
     `/api/channel/${name}`, fetcher,
   );
   const { data: chatDatas, mutate: mutateChat } = useSWR<IChat[]>(
-    `/api/${name}/chat`, fetcher,
+    `/api/channel/${name}/chat`, fetcher,
   );
 
   const onCloseEmoji = useCallback(() => {
@@ -37,20 +37,21 @@ const Channel = () => {
         const savedChat = chat;
         mutateChat((prevChatData) => {
           prevChatData?.unshift({
-            id: (chatDatas[0]?.id || 0) + 1,
+            channelChatId: (chatDatas[0]?.channelChatId || 0) + 1,
+            userId: userData.userId,
+            channelId: channelData.channelId,
             content: savedChat,
-            UserId: userData.userId,
-            User: userData,
             createdAt: new Date(),
-            ChannelId: channelData.channelId,
-            Channel: channelData,
+            lastModifiedAt: new Date(),
+            deletedAt: null,
           });
           return prevChatData;
         }, false).then(() => {
           // 읽지 않은 메시지 처리하기 추가
           setChat('');
         });
-        axios.post(`/api/${channelData.name}/chat`, {
+        axios.post(`/api/channel/${channelData.name}/chat`, {
+          withCredentials: true,
           content: savedChat,
         }).catch(console.error);
       }
@@ -60,12 +61,9 @@ const Channel = () => {
 
   const onMessage = useCallback(
     (data: IChat) => {
-      console.log(data.Channel.name);
-      console.log(data);
-      console.log(name);
       if (
-        data.Channel.name === name
-        && (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.UserId !== userData?.userId)
+        data.channelId === channelData?.channelId
+        && (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.userId !== userData?.userId)
       ) {
         mutateChat((chatData) => {
           chatData?.unshift(data);
@@ -73,7 +71,7 @@ const Channel = () => {
         }, false);
       }
     },
-    [name, userData?.userId, mutateChat],
+    [channelData?.channelId, userData?.userId, mutateChat],
   );
 
   useEffect(() => {
@@ -90,7 +88,14 @@ const Channel = () => {
           {`# ${channelData?.name}`}
         </div>
         <div className="flex-1">
-          { chatDatas?.map((chatData) => <ChatItem key={chatData.id} chatData={chatData} />) }
+          {
+            chatDatas?.map((chatData) => (
+              <ChatItem
+                key={chatData.channelChatId}
+                chatData={chatData}
+              />
+            ))
+          }
         </div>
         <ChatBox
           chat={chat}
