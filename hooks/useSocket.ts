@@ -1,7 +1,7 @@
 import io, { Socket } from 'socket.io-client';
 import { useCallback } from 'react';
 
-const backUrl = 'http://back-nestjs:3005';
+const backUrl = 'http://localhost:3005';
 
 const sockets: { [key: string]: Socket } = {};
 
