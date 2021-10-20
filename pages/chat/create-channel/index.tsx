@@ -48,10 +48,13 @@ const CreateChannel = () => {
 
   const onClickSave = useCallback(() => {
     axios.post(`/api/channel/${channelName}`, {
+      withCredentials: true,
       password: null,
       maxParticipantNum: maxMemberNum,
+    }).then(() => {
+      router.push('/chat');
     });
-  }, [channelName, maxMemberNum]);
+  }, [channelName, maxMemberNum, router]);
 
   useEffect(() => {
     if (maxMemberNum < 3) {
