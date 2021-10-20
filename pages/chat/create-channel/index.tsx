@@ -49,7 +49,7 @@ const CreateChannel = () => {
   const onClickSave = useCallback(() => {
     axios.post(`/api/channel/${channelName}`, {
       password: null,
-      maxParticipantNm: maxMemberNum,
+      maxParticipantNum: maxMemberNum,
     });
   }, [channelName, maxMemberNum]);
 
