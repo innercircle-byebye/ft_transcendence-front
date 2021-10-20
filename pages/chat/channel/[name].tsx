@@ -42,7 +42,7 @@ const Channel = () => {
             UserId: userData.userId,
             User: userData,
             createdAt: new Date(),
-            ChannelId: channelData.id,
+            ChannelId: channelData.channelId,
             Channel: channelData,
           });
           return prevChatData;
