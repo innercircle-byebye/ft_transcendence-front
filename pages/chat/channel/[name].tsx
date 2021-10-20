@@ -20,11 +20,10 @@ const Channel = () => {
   const [socket] = useSocket('/chat');
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
   const { data: channelData } = useSWR<IChannel>(
-    `http://localhost:3000/api/channels?name=${router.query.name}`,
-    fetcher,
+    `/api/channel/${name}`, fetcher,
   );
   const { data: chatDatas, mutate: mutateChat } = useSWR<IChat[]>(
-    'http://localhost:3000/api/chats', fetcher,
+    `/api/${name}/chat`, fetcher,
   );
 
   const onCloseEmoji = useCallback(() => {
@@ -51,7 +50,7 @@ const Channel = () => {
           // 읽지 않은 메시지 처리하기 추가
           setChat('');
         });
-        axios.post(`/api/chat/channels/${channelData.name}/chats`, {
+        axios.post(`/api/${channelData.name}/chat`, {
           content: savedChat,
         }).catch(console.error);
       }
@@ -61,6 +60,9 @@ const Channel = () => {
 
   const onMessage = useCallback(
     (data: IChat) => {
+      console.log(data.Channel.name);
+      console.log(data);
+      console.log(name);
       if (
         data.Channel.name === name
         && (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.UserId !== userData?.userId)
