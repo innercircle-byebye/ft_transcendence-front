@@ -1,5 +1,7 @@
 import { useRouter } from 'next/router';
-import React, { ReactElement, useCallback, useState } from 'react';
+import React, {
+  ReactElement, useCallback, useEffect, useState,
+} from 'react';
 import useSWR from 'swr';
 import axios from 'axios';
 import ChatBox from '@/components/chat-page/ChatBox';
@@ -8,11 +10,14 @@ import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IChat, IUser } from '@/typings/db';
 import ChatItem from '@/components/chat-page/ChatItem';
+import useSocket from '@/hooks/useSocket';
 
 const Channel = () => {
   const router = useRouter();
+  const { name } = router.query;
   const [chat, onChangeChat, setChat] = useInput('');
   const [showEmoji, setShowEmoji] = useState(false);
+  const [socket] = useSocket('/chat');
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
   const { data: channelData } = useSWR<IChannel>(
     `http://localhost:3000/api/channels?name=${router.query.name}`,
@@ -53,6 +58,28 @@ const Channel = () => {
     },
     [channelData, chat, chatDatas, mutateChat, setChat, userData],
   );
+
+  const onMessage = useCallback(
+    (data: IChat) => {
+      if (
+        data.Channel.name === name
+        && (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.UserId !== userData?.userId)
+      ) {
+        mutateChat((chatData) => {
+          chatData?.unshift(data);
+          return chatData;
+        }, false);
+      }
+    },
+    [name, userData?.userId, mutateChat],
+  );
+
+  useEffect(() => {
+    socket?.on('message', onMessage);
+    return () => {
+      socket?.off('message', onMessage);
+    };
+  }, [socket, onMessage]);
 
   return (
     <div className="h-full flex flex-col" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
