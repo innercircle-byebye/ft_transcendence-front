@@ -88,10 +88,7 @@ const Channel = () => {
           {`# ${channelData?.name}`}
         </div>
         <div className="flex-1">
-          {
-          chatDatas?.map((chatData) => <ChatItem key={chatData.id} chatData={chatData} />)
-        }
-
+          { chatDatas?.map((chatData) => <ChatItem key={chatData.id} chatData={chatData} />) }
         </div>
         <ChatBox
           chat={chat}
