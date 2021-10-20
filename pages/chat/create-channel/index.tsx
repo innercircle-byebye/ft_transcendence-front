@@ -6,6 +6,7 @@ import React, {
   useRef,
   useState,
 } from 'react';
+import axios from 'axios';
 import Navbar from '@/components/Navbar';
 import useInput from '@/hooks/useInput';
 import MentionMember from '@/components/chat-page/MentionMember';
@@ -44,6 +45,13 @@ const CreateChannel = () => {
   const onClickCancel = useCallback(() => {
     router.back();
   }, [router]);
+
+  const onClickSave = useCallback(() => {
+    axios.post(`/api/channel/${channelName}`, {
+      password: null,
+      maxParticipantNm: maxMemberNum,
+    });
+  }, [channelName, maxMemberNum]);
 
   useEffect(() => {
     if (maxMemberNum < 3) {
@@ -178,7 +186,8 @@ const CreateChannel = () => {
         </button>
         <button
           className="bg-amber-600 text-white py-3 px-10 rounded-full focus:outline-none focus:shadow-outline"
-          type="submit"
+          type="button"
+          onClick={onClickSave}
         >
           SAVE
         </button>
