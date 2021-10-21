@@ -94,12 +94,12 @@ const CreateChannel = () => {
         />
         <div className="ml-3 text-gray-700 font-medium">Public / Private</div>
         <div>
-          <button className="relative" onClick={onClickSwitch}>
-            <div className="block bg-gray-600 w-14 h-8 rounded-full"></div>
+          <button type="button" className="relative" onClick={onClickSwitch}>
+            <div className="block bg-gray-600 w-14 h-8 rounded-full" />
             {isPrivate ? (
-              <div className="absolute right-1 top-1 bg-red-400 w-6 h-6 rounded-full transition"></div>
+              <div className="absolute right-1 top-1 bg-red-400 w-6 h-6 rounded-full transition" />
             ) : (
-              <div className="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+              <div className="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition" />
             )}
           </button>
         </div>
@@ -116,7 +116,7 @@ const CreateChannel = () => {
                   placeholder="****"
                   maxLength={4}
                 />
-                <span onClick={onClickPasswordEye}>
+                <button type="button" onClick={onClickPasswordEye}>
                   {inputPasswordType.visible ? (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -146,7 +146,7 @@ const CreateChannel = () => {
                       />
                     </svg>
                   )}
-                </span>
+                </button>
               </div>
               {!isValidPassword && (
                 <div className="absolute items-center text-red-500 text-xs italic">

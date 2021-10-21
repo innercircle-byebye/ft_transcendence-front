@@ -4,7 +4,7 @@
     "es2021": true
   },
   "extends": [
-    "airbnb-base",
+    "airbnb",
     "plugin:@typescript-eslint/recommended",
     "plugin:@next/next/recommended",
     "eslint:recommended",
@@ -38,6 +38,12 @@
     // .tsx extension 생략하기 위함
     "import/extensions": ["off"],
     "import/no-unresolved": "off",
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "react/jsx-props-no-spreading": "off",
+    "jsx-a11y/anchor-is-valid": [ "error", {
+      "components": [ "Link" ],
+      "specialLink": [ "hrefLeft", "hrefRight" ],
+      "aspects": [ "invalidHref", "preferButton" ]
+    }]
   }
 }
