@@ -15,6 +15,17 @@ export interface IUser {
   deletedAt: string | null;
 }
 
+export interface IAnnouncement {
+  announcementId: number;
+  adminId: number;
+  title: string;
+  content: string;
+  createdAt: string;
+  lastModifiedAt: string;
+  deletedAt: string | null;
+  isDeleted: boolean;
+}
+
 export interface IHistory {
   count: number;
   win: number;
