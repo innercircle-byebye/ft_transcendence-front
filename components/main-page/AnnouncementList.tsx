@@ -24,18 +24,19 @@ const AnnouncementList = () => {
   };
 
   return (
-    <div className="bg-gray-700 flex flex-col w-1/5 text-center py-6 space-y-6 rounded-2xl">
+    <div className="bg-gray-700 flex flex-col w-1/5 h-1/4 text-center py-6 space-y-6 rounded-2xl">
       <div className="flex flex-row h-1/5 space-x-6 text-white justify-center items-center">
         <div className="w-4 h-4">
           <SpeakerphoneIcon />
         </div>
         <div>Announcement</div>
       </div>
-      <div className="flex flex-col space-y-4 mx-4 rounded-lg">
-        <div className="h-8 overflow-y-auto space-y-3">
+      <div className="flex flex-col space-y-4 mx-4 rounded-lg h-3/4">
+        <div className="overflow-y-auto space-y-3">
           {announcementData?.map((item: IAnnouncement) => (
             <div className="bg-sky-200 rounded-md" key={item.announcementId}>
               <button
+                type="button"
                 className="w-full py-2"
                 onClick={() => onClickMethod(item.announcementId)}
               >

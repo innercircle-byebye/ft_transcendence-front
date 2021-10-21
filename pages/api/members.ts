@@ -24,7 +24,7 @@ export default function handler(
       deletedAt: null,
     },
     {
-      userId: 1,
+      userId: 2,
       email: 'cbaek@student.42.fr',
       intraUsername: 'cbaek',
       nickname: 'cbaek',
@@ -40,7 +40,7 @@ export default function handler(
       deletedAt: null,
     },
     {
-      userId: 1,
+      userId: 3,
       email: 'kycho@student.42.fr',
       intraUsername: 'kycho',
       nickname: 'kycho',
@@ -56,7 +56,7 @@ export default function handler(
       deletedAt: null,
     },
     {
-      userId: 1,
+      userId: 4,
       email: 'mykang@student.42.fr',
       intraUsername: 'mykang',
       nickname: 'mykang',
@@ -72,7 +72,7 @@ export default function handler(
       deletedAt: null,
     },
     {
-      userId: 1,
+      userId: 5,
       email: 'sucho@student.42.fr',
       intraUsername: 'sucho',
       nickname: 'sucho',

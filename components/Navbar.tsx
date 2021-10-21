@@ -26,8 +26,8 @@ const Navbar: VFC = () => {
         <Image
           src="/Logo.png"
           alt="Logo"
-          width={'100'}
-          height={'21'}
+          width="100"
+          height="21"
           objectFit="contain"
         />
       </div>

@@ -23,11 +23,8 @@ const Home = ({
         <meta name="description" content="Play pong game and Chat" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <h1 className={styles.title}>Welcome to Home Page!</h1>
-      <h2>{userData?.nickname}</h2>
-      <AnnouncementList />
       <ProfileCard userData={userData} />
+      <AnnouncementList />
     </div>
   );
 };
