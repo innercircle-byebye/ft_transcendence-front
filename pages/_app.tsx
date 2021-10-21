@@ -22,21 +22,23 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const router = useRouter();
   const { pathname } = router;
-  const [namespace, setNamespace] = useState<string | undefined>(undefined);
+  const [namespace, setNamespace] = useState('');
   const [socket, disconnect] = useSocket(namespace);
 
   useEffect(() => {
-    if (pathname === '/chat') {
+    if (pathname.slice(0, 5) === '/chat') {
+      // console.log(`pathname ${pathname}`);
       setNamespace('chat');
     } else {
-      setNamespace(undefined);
+      setNamespace('');
     }
-  }, [namespace, pathname, socket]);
+  }, [pathname]);
 
   useEffect(() => () => {
     disconnect();
-    console.log(`disconnect ${namespace}`);
-  }, [disconnect, namespace]);
+    // console.log(`disconnect '${namespace}'`);
+  },
+  [disconnect, namespace]);
 
   return getLayout(
     <Component {...pageProps} />,
