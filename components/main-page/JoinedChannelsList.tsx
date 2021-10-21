@@ -15,7 +15,7 @@ const JoinedChannelsList = () => {
       {/* content list */}
       <div className="flex flex-col space-y-1 mx-4 py-2">
         {channelData?.map((item: IChannel) => (
-          <button key={item.id} className="bg-amber-200 rounded-md w-full py-1 px-2 flex justify-between">
+          <button type="button" key={item.id} className="bg-amber-200 rounded-md w-full py-1 px-2 flex justify-between">
             <div>{item.name}</div>
             <div>count</div>
           </button>
