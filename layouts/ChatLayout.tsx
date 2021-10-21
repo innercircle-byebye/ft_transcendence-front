@@ -16,8 +16,7 @@ const ChatLayout: FC = ({ children }) => {
       socket?.emit('joinChannel', channelName);
     }
     return () => {
-      // console.log(`leaveChannel ${channelName}`);
-      socket?.emit('leaveChannel', channelName);
+      if (channelName) { socket?.emit('leaveChannel', channelName); }
     };
   }, [channelName, router.pathname, socket]);
 
