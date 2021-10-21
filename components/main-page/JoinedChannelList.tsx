@@ -2,7 +2,7 @@ import useSWR from 'swr';
 import { IChannel } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 
-const JoinedChannelsList = () => {
+const JoinedChannelList = () => {
   const { data: channelData } = useSWR<IChannel[]>(
     'http://localhost:3000/api/channels',
     fetcher,
@@ -25,4 +25,4 @@ const JoinedChannelsList = () => {
   );
 };
 
-export default JoinedChannelsList;
+export default JoinedChannelList;
