@@ -3,18 +3,21 @@ import { useRouter } from 'next/router';
 import { useCallback, useState, VFC } from 'react';
 import useSWR from 'swr';
 import fetcher from '@/utils/fetcher';
-import { IChannel, IUser } from '@/typings/db';
+import { IChannel } from '@/typings/db';
 
 const ChannelList: VFC = () => {
   const router = useRouter();
-  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
-    dedupingInterval: 2000, // 2초
-  });
+  // const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
+  //   dedupingInterval: 2000, // 2초
+  // });
   const { data: channelData } = useSWR<IChannel[]>(
-    userData ? 'http://localhost:3000/api/channels' : null,
+    // userData ? 'http://localhost:3000/api/channels' : null,
+    'http://localhost:3000/api/channels',
     fetcher,
   );
+
   const [channelCollapse, setChannelCollapse] = useState(false);
+  const clickedChannel = router.pathname === '/chat/channel/[id]' && router.query.id;
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
@@ -23,7 +26,7 @@ const ChannelList: VFC = () => {
   return (
     <div className="border-2 border-sky-700 bg-sky-50 rounded-lg w-full h-auto p-3 space-y-3">
       <div className="border-2 border-gray-500 bg-white rounded-2xl p-2 flex flex-row items-center space-x-2">
-        <Link href={`${router.pathname}/create-channel`}>
+        <Link href="/chat/create-channel">
           <a>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -80,28 +83,35 @@ const ChannelList: VFC = () => {
       <div className="flex flex-col space-y-1">
         {!channelCollapse
           && channelData?.map((channel) => (
-            <span
-              key={channel.name}
-              className="w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300"
-            >
-              #
-              {' '}
-              {channel.name}
-              {channel.private && (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              )}
-            </span>
+            <Link href={`/chat/channel/${channel.id}`} key={channel.name}>
+              <a>
+                <span
+                  className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
+                    clickedChannel && clickedChannel === channel.id.toString()
+                      ? 'bg-sky-200'
+                      : ''
+                  }`}
+                >
+                  #
+                  {' '}
+                  {channel.name}
+                  {channel.private && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  )}
+                </span>
+              </a>
+            </Link>
           ))}
       </div>
       <button type="button" className="w-full bg-sky-700 text-sky-100 hover:bg-gray-300 hover:text-sky-700 flex flex-row justify-between items-center rounded-full px-3 py-1">
