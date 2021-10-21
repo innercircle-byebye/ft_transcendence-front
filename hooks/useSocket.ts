@@ -5,25 +5,25 @@ const backUrl = 'http://back-nestjs:3095';
 
 const sockets: { [key: string]: Socket } = {};
 
-const useSocket = (workspace?: string): [Socket | undefined, () => void] => {
+const useSocket = (namespace?: string): [Socket | undefined, () => void] => {
   const disconnect = useCallback(() => {
-    if (workspace) {
-      sockets[workspace].disconnect();
-      delete sockets[workspace];
+    if (namespace) {
+      sockets[namespace].disconnect();
+      delete sockets[namespace];
     }
-  }, [workspace]);
+  }, [namespace]);
 
-  if (!workspace) {
+  if (!namespace) {
     return [undefined, disconnect];
   }
 
-  if (!sockets[workspace]) {
-    sockets[workspace] = io(`${backUrl}/ws-${workspace}`, {
+  if (!sockets[namespace]) {
+    sockets[namespace] = io(`${backUrl}/ws-${namespace}`, {
       transports: ['websocket'],
     });
   }
 
-  return [sockets[workspace], disconnect];
+  return [sockets[namespace], disconnect];
 };
 
 export default useSocket;
