@@ -11,7 +11,7 @@ const ChannelList: VFC = () => {
     dedupingInterval: 2000, // 2초
   });
   const { data: channelData } = useSWR<IChannel[]>(
-    userData ? '/api/channel' : null,
+    userData ? '/api/channel/me' : null,
     fetcher,
   );
 
