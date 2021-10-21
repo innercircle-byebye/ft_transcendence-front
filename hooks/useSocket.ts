@@ -18,7 +18,7 @@ const useSocket = (namespace?: string): [Socket | undefined, () => void] => {
   }
 
   if (!sockets[namespace]) {
-    sockets[namespace] = io(`${backUrl}/ws-${namespace}`, {
+    sockets[namespace] = io(`${backUrl}/${namespace}`, {
       transports: ['websocket'],
     });
   }
