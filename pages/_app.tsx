@@ -34,11 +34,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     }
   }, [pathname]);
 
-  useEffect(() => () => {
-    disconnect();
+  useEffect(() => {
+    console.log(`socket ${socket}`);
+    return () => {
+      disconnect();
     // console.log(`disconnect '${namespace}'`);
-  },
-  [disconnect, namespace]);
+    };
+  }, [disconnect, namespace, socket]);
 
   return getLayout(
     <Component {...pageProps} />,
