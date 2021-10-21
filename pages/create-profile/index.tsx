@@ -124,6 +124,7 @@ const CreateProfile = ({
               />
             ) : null}
             <button
+              type="button"
               onClick={onClickUploadImage}
               className="w-56 h-56 rounded-full cursor-pointer opacity-20 hover:opacity-80"
             >
@@ -138,8 +139,10 @@ const CreateProfile = ({
             />
           </div>
           <div className="mb-4 w-64">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Nickname
+            <label htmlFor="nickname">
+              <div className="block text-gray-700 text-sm font-bold mb-2">
+                Nickname
+              </div>
               <button
                 className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="button"
@@ -149,15 +152,15 @@ const CreateProfile = ({
               >
                 Reset
               </button>
+              <input
+                id="nickname"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                type="text"
+                placeholder={userData.nickname}
+                value={nickname}
+                onChange={onChangeNickname}
+              />
             </label>
-            <input
-              name="nickname"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              type="text"
-              placeholder={userData.nickname}
-              value={nickname}
-              onChange={onChangeNickname}
-            />
             {!nickname && (
               <p className="text-red-500 text-xs italic">
                 닉네임을 입력해주세요.
@@ -165,8 +168,10 @@ const CreateProfile = ({
             )}
           </div>
           <div className="mb-6 w-64">
-            <label className="block text-gray-700 text-sm font-bold mb-2">
-              Email
+            <label htmlFor="email">
+              <div className="block text-gray-700 text-sm font-bold mb-2">
+                Email
+              </div>
               <button
                 className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="button"
@@ -176,15 +181,15 @@ const CreateProfile = ({
               >
                 Reset
               </button>
+              <input
+                id="email"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                type="email"
+                placeholder={userData.email}
+                value={email}
+                onChange={onChangeEmail}
+              />
             </label>
-            <input
-              name="email"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              type="email"
-              placeholder={userData.email}
-              value={email}
-              onChange={onChangeEmail}
-            />
             {!email && (
               <p className="text-red-500 text-xs italic">
                 이메일을 입력해주세요.

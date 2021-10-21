@@ -16,7 +16,7 @@ const Navbar: VFC = () => {
     { name: 'HOME', href: '/', current: true },
     { name: 'PLAY', href: '/', current: false },
     { name: 'RANK', href: '/', current: false },
-    { name: 'CHAT', href: '/', current: false },
+    { name: 'CHAT', href: '/chat', current: false },
   ];
 
   return (
@@ -26,8 +26,8 @@ const Navbar: VFC = () => {
         <Image
           src="/Logo.png"
           alt="Logo"
-          width={'100'}
-          height={'21'}
+          width="100"
+          height="21"
           objectFit="contain"
         />
       </div>
