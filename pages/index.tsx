@@ -6,8 +6,8 @@ import { IUser } from '@/typings/db';
 import styles from '@/styles/Home.module.css';
 import MainLayout from '@/layouts/MainLayout';
 import reissueToken from '@/utils/reissueTokens';
-// import ProfileCard from '@/components/main-page/ProfileCard';
-// import AnnouncementList from '@/components/main-page/AnnouncementList';
+import ProfileCard from '@/components/main-page/ProfileCard';
+import AnnouncementList from '@/components/main-page/AnnouncementList';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 
 const Home = ({
@@ -25,8 +25,8 @@ const Home = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <OnlineFriendList />
-      {/* <ProfileCard userData={userData} /> */}
-      {/* <AnnouncementList /> */}
+      <ProfileCard userData={userData} />
+      <AnnouncementList />
     </div>
   );
 };
