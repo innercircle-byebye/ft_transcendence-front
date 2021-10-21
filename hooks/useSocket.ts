@@ -5,7 +5,7 @@ const backUrl = 'http://localhost:3005';
 
 const sockets: { [key: string]: Socket } = {};
 
-const useSocket = (workspace?: string): [Socket | undefined, () => void] => {
+const useSocket = (workspace: string | null): [Socket | undefined, () => void] => {
   const disconnect = useCallback(() => {
     if (workspace) {
       sockets[workspace].disconnect();
