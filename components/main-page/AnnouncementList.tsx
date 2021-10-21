@@ -34,7 +34,7 @@ const AnnouncementList = () => {
       <div className="flex flex-col space-y-4 mx-4 rounded-lg h-3/4">
         <div className="overflow-y-auto space-y-3">
           {announcementData?.map((item: IAnnouncement) => (
-            <div className="bg-sky-200 rounded-md" key={item.announcementId}>
+            <div className="bg-sky-200 rounded-md text-xs font-light" key={item.announcementId}>
               <button
                 type="button"
                 className="w-full py-2"
@@ -46,6 +46,7 @@ const AnnouncementList = () => {
                   isShow={clickedIndex === item.announcementId}
                   onCloseModal={onCloseModal}
                 />
+                {/* <a>{item.lastModifiedAt}</a> */}
               </button>
             </div>
           ))}
