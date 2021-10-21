@@ -17,7 +17,7 @@ const Channel = () => {
   const { name } = router.query;
   const [chat, onChangeChat, setChat] = useInput('');
   const [showEmoji, setShowEmoji] = useState(false);
-  const [socket] = useSocket('/chat');
+  const [socket] = useSocket('chat');
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
   const { data: channelData } = useSWR<IChannel>(
     `/api/channel/${name}`, fetcher,
@@ -80,6 +80,11 @@ const Channel = () => {
       socket?.off('message', onMessage);
     };
   }, [socket, onMessage]);
+
+  useEffect(() => {
+    console.log(`name change ${name}`);
+    socket?.emit('', '');
+  }, [name, socket]);
 
   return (
     <div className="h-full flex flex-col" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
