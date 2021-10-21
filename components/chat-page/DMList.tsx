@@ -65,14 +65,23 @@ const DMList: VFC = () => {
         {!channelCollapse
           && memberData?.map((member) => (
             <Link
+<<<<<<< HEAD
               href={`/chat/dm/${member.nickname}`}
+=======
+              href={`/chat/dm/${member.userId}`}
+>>>>>>> develop
               key={member.intraUsername}
             >
               <a>
                 <span
                   className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
+<<<<<<< HEAD
                     name
                       && name === member.nickname
+=======
+                    clickedMember
+                      && clickedMember === member.userId.toString()
+>>>>>>> develop
                       ? 'bg-sky-200'
                       : ''
                   }`}
