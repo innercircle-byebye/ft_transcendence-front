@@ -8,7 +8,7 @@ import useSocket from '@/hooks/useSocket';
 const ChatLayout: FC = ({ children }) => {
   const router = useRouter();
   const channelName = router.pathname === '/chat/channel/[name]' ? router.query.name : null;
-  const [socket] = useSocket('chat');
+  const { socket } = useSocket('chat');
 
   useEffect(() => {
     if (channelName) {

@@ -23,24 +23,19 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
   const { pathname } = router;
   const [namespace, setNamespace] = useState('');
-  const [socket, disconnect] = useSocket(namespace);
+  const { disconnect } = useSocket(namespace);
 
   useEffect(() => {
     if (pathname.slice(0, 5) === '/chat') {
-      // console.log(`pathname ${pathname}`);
       setNamespace('chat');
     } else {
       setNamespace('');
     }
   }, [pathname]);
 
-  useEffect(() => {
-    console.log(`socket ${socket}`);
-    return () => {
-      disconnect();
-    // console.log(`disconnect '${namespace}'`);
-    };
-  }, [disconnect, namespace, socket]);
+  useEffect(() => () => {
+    disconnect();
+  }, [disconnect, namespace]);
 
   return getLayout(
     <Component {...pageProps} />,
