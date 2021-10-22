@@ -12,7 +12,7 @@ const Channel = () => {
   const [chat, onChangeChat, setChat] = useInput('');
   const [showEmoji, setShowEmoji] = useState(false);
   const { data: channelData } = useSWR<IChannel>(
-    `http://localhost:3000/api/channels?id=${router.query.id}`,
+    `http://localhost:3000/api/channels?name=${router.query.name}`,
     fetcher,
   );
 

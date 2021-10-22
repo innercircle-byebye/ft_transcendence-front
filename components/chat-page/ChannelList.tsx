@@ -17,7 +17,10 @@ const ChannelList: VFC = () => {
   );
 
   const [channelCollapse, setChannelCollapse] = useState(false);
-  const clickedChannel = router.pathname === '/chat/channel/[id]' && router.query.id;
+  const { name } = router.query;
+  // const [clickedChannel] = useState<string | string[] | undefined>(router.query.name);
+
+  // console.log(`name${name}`);
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
@@ -83,11 +86,11 @@ const ChannelList: VFC = () => {
       <div className="flex flex-col space-y-1">
         {!channelCollapse
           && channelData?.map((channel) => (
-            <Link href={`/chat/channel/${channel.id}`} key={channel.name}>
+            <Link href={`/chat/channel/${channel.name}`} key={channel.name}>
               <a>
                 <span
                   className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
-                    clickedChannel && clickedChannel === channel.id.toString()
+                    name && typeof name === 'string' && name === channel.name
                       ? 'bg-sky-200'
                       : ''
                   }`}
@@ -96,18 +99,18 @@ const ChannelList: VFC = () => {
                   {' '}
                   {channel.name}
                   {channel.private && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
                   )}
                 </span>
               </a>
