@@ -1,5 +1,4 @@
 import React, { ReactElement } from 'react';
-import Head from 'next/head';
 import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { IUser } from '@/typings/db';
@@ -18,11 +17,6 @@ const Home = ({
 
   return (
     <div>
-      <Head>
-        <title>Pong&Chat</title>
-        <meta name="description" content="Play pong game and Chat" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
       <OnlineFriendList />
       <ProfileCard userData={userData} />
       <AnnouncementList />
