@@ -49,25 +49,29 @@ const CreateChannel = () => {
   const onClickSave = useCallback(() => {
     axios.post(`/api/channel/${channelName}`, {
       withCredentials: true,
-      password: null,
+      password: password === '' ? null : password,
       maxParticipantNum: maxMemberNum,
     }).then(() => {
       router.push('/chat');
     });
-  }, [channelName, maxMemberNum, router]);
+  }, [channelName, maxMemberNum, password, router]);
 
   useEffect(() => {
     if (maxMemberNum < 3) {
       setMaxMemberNum(3);
+    } else if (maxMemberNum > 100) {
+      setMaxMemberNum(100);
     }
+  }, [maxMemberNum, setMaxMemberNum]);
 
+  useEffect(() => {
     const passwordPattern = /^[0123456789]{4}$/;
     if (password && passwordPattern.test(password)) {
       setIsValidPassword(true);
     } else {
       setIsValidPassword(false);
     }
-  }, [maxMemberNum, password, setMaxMemberNum]);
+  }, [password]);
 
   return (
     <div className="w-screen h-full flex flex-col items-center space-y-20">
@@ -104,6 +108,7 @@ const CreateChannel = () => {
           className="px-6 py-2 w-24 rounded-full bg-gray-100 text-xl"
           type="number"
           min={3}
+          max={100}
           value={maxMemberNum}
           onChange={onChangeMaxMemberNum}
         />
