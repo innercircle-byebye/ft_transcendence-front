@@ -17,7 +17,7 @@ const Channel = () => {
   const channelName = router.query.name;
   const [chat, onChangeChat, setChat] = useInput('');
   const [showEmoji, setShowEmoji] = useState(false);
-  const [socket] = useSocket('chat');
+  const { socket } = useSocket('chat');
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
   const { data: channelData } = useSWR<IChannel>(
     `/api/channel/${channelName}`, fetcher,
