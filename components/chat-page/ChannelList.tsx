@@ -84,7 +84,7 @@ const ChannelList: VFC = () => {
       <div className="flex flex-col space-y-1">
         {!channelCollapse
           && channelData?.map((channel) => (
-            <Link key={channel.name} href={`/chat/channel/${channel.name}`}>
+            <Link key={channel.channelId} href={`/chat/channel/${channel.name}`}>
               <a>
                 <span
                   className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${

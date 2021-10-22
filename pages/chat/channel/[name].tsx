@@ -36,8 +36,8 @@ const Channel = () => {
       if (chat?.trim() && chatDatas && channelData && userData) {
         const savedChat = chat;
         mutateChat((prevChatData) => {
-          prevChatData?.unshift({
-            channelChatId: (chatDatas[0]?.channelChatId || 0) + 1,
+          prevChatData?.push({
+            channelChatId: (chatDatas[chatDatas.length - 1]?.channelChatId || 0) + 1,
             userId: userData.userId,
             channelId: channelData.channelId,
             content: savedChat,
@@ -63,7 +63,7 @@ const Channel = () => {
     (data: IChat) => {
       if (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.userId !== userData?.userId) {
         mutateChat((chatData) => {
-          chatData?.unshift(data);
+          chatData?.push(data);
           return chatData;
         }, false);
       }
