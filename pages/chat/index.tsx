@@ -31,7 +31,7 @@ const Chat = () => {
       <div className="font-semibold text-2xl">
         채널 목록
       </div>
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+      <div className="flex flex-wrap gap-4">
         {channelData.map((data) => {
           if (myChannelData.filter((v) => v.channelId === data.channelId).length) { return null; }
           return (
