@@ -7,9 +7,13 @@ import React, {
   useState,
 } from 'react';
 import axios from 'axios';
+import useSWR from 'swr';
+import regexifyString from 'regexify-string';
 import Navbar from '@/components/Navbar';
 import useInput from '@/hooks/useInput';
 import MentionMember from '@/components/chat-page/MentionMember';
+import fetcher from '@/utils/fetcher';
+import { IUser } from '@/typings/db';
 
 const CreateChannel = () => {
   const router = useRouter();
@@ -17,13 +21,20 @@ const CreateChannel = () => {
   const [maxMemberNum, onChangeMaxMemberNum, setMaxMemberNum] = useInput(3);
   const [isPrivate, setIsPrivate] = useState(false);
   const [password, onChangePassword, setPassword] = useInput('');
-  const [isValidPassword, setIsValidPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const [inputPasswordType, setInputPasswordType] = useState({
     type: 'password',
     visible: false,
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [inviteMemberNickname, onChangeInviteMemberNickname] = useInput('');
+  const [inviteMember, onChangeInviteMember, setInviteMember] = useInput('');
+  const [inviteMembers, setInviteMembers] = useState<string[]>([]);
+  const [inviteNumError, setInviteNumError] = useState(false);
+  const { data: userData } = useSWR('/api/user/me', fetcher);
+  const { data: memberData } = useSWR<IUser[]>(
+    userData ? '/api/user/all' : null,
+    fetcher,
+  );
 
   const onClickSwitch = useCallback(
     (e) => {
@@ -56,6 +67,32 @@ const CreateChannel = () => {
     });
   }, [channelName, maxMemberNum, password, router]);
 
+  const onSubmitInviteMember = useCallback((e) => {
+    e.preventDefault();
+    const result = regexifyString({
+      input: inviteMember,
+      pattern: /@\[(.+?)]\((\d+?)\)|\n/g,
+      decorator(match) {
+        const arr: string[] | null = match.match(/@\[(.+?)]\((\d+?)\)/);
+        if (arr) {
+          return (arr[1]);
+        }
+        return '';
+      },
+    }).filter((v, id) => id % 2);
+    if (result.length) {
+      setInviteMembers((prev) => {
+        result.map((v) => prev.push(v as string));
+        return prev;
+      });
+      setInviteMember('');
+    }
+  }, [inviteMember, setInviteMember]);
+
+  const onClickRemoveInvite = useCallback((nickname: string) => {
+    setInviteMembers((prev) => prev.filter((v) => v !== nickname));
+  }, []);
+
   useEffect(() => {
     if (maxMemberNum < 3) {
       setMaxMemberNum(3);
@@ -67,11 +104,19 @@ const CreateChannel = () => {
   useEffect(() => {
     const passwordPattern = /^[0123456789]{4}$/;
     if (password && passwordPattern.test(password)) {
-      setIsValidPassword(true);
+      setPasswordError(false);
     } else {
-      setIsValidPassword(false);
+      setPasswordError(true);
     }
   }, [password]);
+
+  useEffect(() => {
+    if (maxMemberNum < inviteMembers.length) {
+      setInviteNumError(true);
+    } else {
+      setInviteNumError(false);
+    }
+  }, [inviteMembers, maxMemberNum]);
 
   return (
     <div className="w-screen h-full flex flex-col items-center space-y-20">
@@ -168,7 +213,7 @@ const CreateChannel = () => {
                   )}
                 </button>
               </div>
-              {!isValidPassword && (
+              {passwordError && (
                 <div className="absolute items-center text-red-500 text-xs italic">
                   비밀번호 숫자4자리 입력해주세요
                 </div>
@@ -176,14 +221,39 @@ const CreateChannel = () => {
             </div>
           </>
         )}
+        <div className="col-span-2 flex flex-col space-y-5 items-center">
+          <form className="w-80 flex items-center justify-evenly flex-row" onSubmit={onSubmitInviteMember}>
+            <div className="w-52 bg-gray-100 rounded-full pl-3 pt-1">
+              <MentionMember
+                trigger="@"
+                placeholder="@초대할 멤버 닉네임"
+                value={inviteMember}
+                onChangeValue={onChangeInviteMember}
+                inputRef={textareaRef}
+                data={
+                  memberData?.filter((v) => !inviteMembers.includes(v.nickname))
+                }
+              />
+              {inviteNumError && (
+              <div className="absolute items-center text-red-500 text-xs italic">
+                최대멤버수를 초과합니다.
+              </div>
+              )}
+            </div>
+            <button type="submit" className="bg-sky-700 text-white w-20 h-9 rounded-full">초대하기</button>
+          </form>
+          <div className="w-80 bg-sky-100 border-2 border-sky-700 rounded-lg p-2">
+            <div className="flex flex-row flex-wrap gap-2">
+              {inviteMembers.length ? inviteMembers.map((v) => (
+                <div key={v} className="flex flex-row">
+                  <div className="bg-amber-500 px-1">{v}</div>
+                  <button type="button" onClick={() => onClickRemoveInvite(v)}>&times;</button>
+                </div>
+              )) : <div className="text-gray-400 px-2">초대할 멤버 리스트</div>}
+            </div>
+          </div>
+        </div>
       </div>
-      <MentionMember
-        trigger=""
-        placeholder="초대할 멤버 닉네임"
-        value={inviteMemberNickname}
-        onChangeValue={onChangeInviteMemberNickname}
-        inputRef={textareaRef}
-      />
       <div className="space-x-4">
         <button
           className="bg-gray-400 text-white py-3 px-8 rounded-full focus:outline-none focus:shadow-outline"
