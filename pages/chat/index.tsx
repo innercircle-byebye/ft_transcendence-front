@@ -17,7 +17,7 @@ const Chat = () => {
         prevMyChannelData?.push(data);
         return prevMyChannelData;
       }, false).then(() => {
-        router.push('/chat');
+        router.push(`/chat/channel/${data.name}`);
       });
     });
   }, [mutateMyChannelData, router]);
