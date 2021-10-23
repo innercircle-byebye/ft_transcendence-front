@@ -61,7 +61,7 @@ const DMList: VFC = () => {
         </button>
         DMs
       </div>
-      <div className="flex flex-col space-y-1">
+      <div className="flex flex-col max-h-72 overflow-y-auto">
         {!channelCollapse
           && memberData?.map((member) => (
             <Link
@@ -70,7 +70,7 @@ const DMList: VFC = () => {
             >
               <a>
                 <span
-                  className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
+                  className={`w-full px-2 py-1.5 border-b-2 flex justify-between hover:bg-gray-300 ${
                     name
                       && name === member.nickname
                       ? 'bg-sky-200'
@@ -101,6 +101,7 @@ const DMList: VFC = () => {
               </a>
             </Link>
           ))}
+        {/* </div> */}
       </div>
       <button type="button" className="w-full bg-sky-700 text-sky-100 hover:bg-gray-300 hover:text-sky-700 flex flex-row justify-between items-center rounded-full px-3 py-1">
         <div>Search members</div>
