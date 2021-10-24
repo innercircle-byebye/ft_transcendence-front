@@ -15,6 +15,11 @@ import MentionMember from '@/components/chat-page/MentionMember';
 import fetcher from '@/utils/fetcher';
 import { IUser } from '@/typings/db';
 
+interface IInviteMember {
+  id: number;
+  nickname: string;
+}
+
 const CreateChannel = () => {
   const router = useRouter();
   const [channelName, onChangeChannelName] = useInput('');
@@ -28,7 +33,7 @@ const CreateChannel = () => {
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [inviteMember, onChangeInviteMember, setInviteMember] = useInput('');
-  const [inviteMembers, setInviteMembers] = useState<string[]>([]);
+  const [inviteMembers, setInviteMembers] = useState<IInviteMember[]>([]);
   const [inviteNumError, setInviteNumError] = useState(false);
   const { data: userData } = useSWR('/api/user/me', fetcher);
   const { data: memberData } = useSWR<IUser[]>(
@@ -62,35 +67,14 @@ const CreateChannel = () => {
       withCredentials: true,
       password: password === '' ? null : password,
       maxParticipantNum: maxMemberNum,
+      inviteMembers,
     }).then(() => {
       router.push('/chat');
     });
-  }, [channelName, maxMemberNum, password, router]);
+  }, [channelName, inviteMembers, maxMemberNum, password, router]);
 
-  const onSubmitInviteMember = useCallback((e) => {
-    e.preventDefault();
-    const result = regexifyString({
-      input: inviteMember,
-      pattern: /@\[(.+?)]\((\d+?)\)|\n/g,
-      decorator(match) {
-        const arr: string[] | null = match.match(/@\[(.+?)]\((\d+?)\)/);
-        if (arr) {
-          return (arr[1]);
-        }
-        return '';
-      },
-    }).filter((v, id) => id % 2);
-    if (result.length) {
-      setInviteMembers((prev) => {
-        result.map((v) => prev.push(v as string));
-        return prev;
-      });
-      setInviteMember('');
-    }
-  }, [inviteMember, setInviteMember]);
-
-  const onClickRemoveInvite = useCallback((nickname: string) => {
-    setInviteMembers((prev) => prev.filter((v) => v !== nickname));
+  const onClickRemoveInvite = useCallback((id: number) => {
+    setInviteMembers((prev) => prev.filter((v) => v.id !== id));
   }, []);
 
   useEffect(() => {
@@ -116,7 +100,23 @@ const CreateChannel = () => {
     } else {
       setInviteNumError(false);
     }
-  }, [inviteMembers, maxMemberNum]);
+  }, [inviteMembers.length, maxMemberNum]);
+
+  useEffect(() => {
+    regexifyString({
+      input: inviteMember,
+      pattern: /@\[(.+?)]\((\d+?)\)|\n/g,
+      decorator(match) {
+        const arr: string[] | null = match.match(/@\[(.+?)]\((\d+?)\)/);
+        if (arr && arr[1] && arr[2]) {
+          setInviteMembers([...inviteMembers, { id: +arr[2], nickname: arr[1] }]);
+          setInviteMember('');
+          return (arr[2]);
+        }
+        return '';
+      },
+    }).filter((v, id) => id % 2);
+  }, [inviteMember, inviteMembers, setInviteMember]);
 
   return (
     <div className="w-screen h-full flex flex-col items-center space-y-20">
@@ -222,16 +222,18 @@ const CreateChannel = () => {
           </>
         )}
         <div className="col-span-2 flex flex-col space-y-5 items-center">
-          <form className="w-80 flex items-center justify-evenly flex-row" onSubmit={onSubmitInviteMember}>
-            <div className="w-52 bg-gray-100 rounded-full pl-3 pt-1">
+          <form className="w-80 flex items-center justify-evenly flex-row">
+            <div className="w-48 bg-gray-100 rounded-full pl-3 pt-1">
               <MentionMember
-                trigger="@"
-                placeholder="@초대할 멤버 닉네임"
+                trigger=""
+                placeholder="초대할 멤버 닉네임"
                 value={inviteMember}
                 onChangeValue={onChangeInviteMember}
                 inputRef={textareaRef}
                 data={
-                  memberData?.filter((v) => !inviteMembers.includes(v.nickname))
+                  memberData?.filter(
+                    (v) => !inviteMembers.map((m) => m.id).includes(v.userId),
+                  )
                 }
               />
               {inviteNumError && (
@@ -240,14 +242,14 @@ const CreateChannel = () => {
               </div>
               )}
             </div>
-            <button type="submit" className="bg-sky-700 text-white w-20 h-9 rounded-full">초대하기</button>
+            <div className="text-gray-700">{`${inviteMembers.length}명`}</div>
           </form>
           <div className="w-80 bg-sky-100 border-2 border-sky-700 rounded-lg p-2">
             <div className="flex flex-row flex-wrap gap-2">
               {inviteMembers.length ? inviteMembers.map((v) => (
-                <div key={v} className="flex flex-row">
-                  <div className="bg-amber-500 px-1">{v}</div>
-                  <button type="button" onClick={() => onClickRemoveInvite(v)}>&times;</button>
+                <div key={v.id} className="flex flex-row">
+                  <div className="bg-amber-500 px-1">{v.nickname}</div>
+                  <button type="button" onClick={() => onClickRemoveInvite(v.id)}>&times;</button>
                 </div>
               )) : <div className="text-gray-400 px-2">초대할 멤버 리스트</div>}
             </div>
