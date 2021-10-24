@@ -1,5 +1,4 @@
 import { ReactElement } from 'react';
-import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import MainLayout from '@/layouts/MainLayout';
@@ -30,11 +29,6 @@ const dummyPaginationLinkTexts = ['<', '1', '2', '3', '4', '5', '>'];
 
 const Rank = () => (
   <div className={styles.container}>
-    <Head>
-      <title>Rank - Pong&Chat</title>
-      <meta name="description" content="Rank - Play pong game and Chat" />
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
     <div className="grid gap-8 grid-cols-3 py-8 w-8/12 max-w-screen-xl h-full">
       {/* 사용자 정보 */}
       <div>
