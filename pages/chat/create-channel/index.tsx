@@ -67,7 +67,7 @@ const CreateChannel = () => {
       withCredentials: true,
       password: password === '' ? null : password,
       maxParticipantNum: maxMemberNum,
-      inviteMembers,
+      inviteMemberIDs: inviteMembers.map((v) => v.id),
     }).then(() => {
       router.push('/chat');
     });
