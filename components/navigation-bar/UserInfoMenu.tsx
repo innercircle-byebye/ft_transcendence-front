@@ -49,13 +49,11 @@ const UserInfoMenu = () => {
           <Menu.Item>
             {({ active }) => (
               <div className={`${active && 'bg-blue-500 text-white'}`}>
-                <Link href="/">
-                  <a>
-                    <button type="button" onClick={onClickLogout}>
-                      Log out
-                    </button>
-                  </a>
-                </Link>
+                <a>
+                  <button type="button" onClick={onClickLogout}>
+                    Log out
+                  </button>
+                </a>
               </div>
             )}
           </Menu.Item>
