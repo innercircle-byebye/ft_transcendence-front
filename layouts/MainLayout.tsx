@@ -1,8 +1,6 @@
-// import React, { FC, useEffect, useState } from 'react';
+import React, { FC } from 'react';
 import Head from 'next/head';
-// import axios from 'axios';
 import useSWR from 'swr';
-import { FC } from 'react';
 import Navbar from '@/components/navigation-bar/Navbar';
 import { IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
