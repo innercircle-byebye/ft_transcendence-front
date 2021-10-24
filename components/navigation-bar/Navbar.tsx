@@ -10,7 +10,11 @@ interface IListItem {
   current: boolean;
 }
 
-const Navbar: VFC = () => {
+interface IProp {
+  userNickName: string;
+}
+
+const Navbar: VFC<IProp> = ({ userNickName }) => {
   // list 향후 State 로 관리해야합니다.
   const navigationList: IListItem[] = [
     { name: 'HOME', href: '/', current: true },
@@ -49,7 +53,7 @@ const Navbar: VFC = () => {
       </div>
       {/* ID 와 Dropdown button */}
       <div className="flex flex-auto flex-wrap justify-end">
-        <div className="mx-2">ID</div>
+        <div className="mx-2">{userNickName}</div>
         <UserInfoMenu />
       </div>
     </div>
