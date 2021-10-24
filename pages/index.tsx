@@ -1,9 +1,7 @@
 import React, { ReactElement } from 'react';
-import Head from 'next/head';
 import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { IUser } from '@/typings/db';
-import styles from '@/styles/Home.module.css';
 import MainLayout from '@/layouts/MainLayout';
 import reissueToken from '@/utils/reissueTokens';
 import ProfileCard from '@/components/main-page/ProfileCard';
@@ -18,12 +16,7 @@ const Home = ({
   }
 
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Pong&Chat</title>
-        <meta name="description" content="Play pong game and Chat" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <div>
       <OnlineFriendList />
       <ProfileCard userData={userData} />
       <AnnouncementList />
