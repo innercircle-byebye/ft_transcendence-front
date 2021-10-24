@@ -21,7 +21,7 @@ const UserInfoMenu = () => {
   }, []);
 
   return (
-    <div className="relative">
+    <div className="relative text-blue-900">
       <Menu>
         <Menu.Button>
           {/* MenuIcon size 를 어떻게 맞춰야하는지 모르겠습니다... */}
@@ -39,11 +39,11 @@ const UserInfoMenu = () => {
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <Link href="/">
-                <a className={`${active && 'bg-blue-500 text-white'}`}>
-                  History
-                </a>
-              </Link>
+              <div className={`${active && 'bg-blue-500 text-white'}`}>
+                <Link href="/">
+                  <a>History</a>
+                </Link>
+              </div>
             )}
           </Menu.Item>
           <Menu.Item>
