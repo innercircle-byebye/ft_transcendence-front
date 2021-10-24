@@ -1,6 +1,10 @@
 import Link from 'next/link';
 import type { VFC } from 'react';
 
+interface IProps {
+  userId: string;
+}
+
 const dummyRankDatas = [
   { rank: 1, nickname: 'Jane', xp: 30000 },
   { rank: 2, nickname: 'John', xp: 20000 },
@@ -19,11 +23,11 @@ const dummyRankDatas = [
 
 const dummyPaginationLinkTexts = ['<', '1', '2', '3', '4', '5', '>'];
 
-const RankContentRight: VFC = () => (
+const RankContentRight: VFC<IProps> = ({ userId }) => (
   <div className="p-4 rounded-md bg-gray-300 ">
     <div className="text-lg">
       <ul>
-        <li>Rank | Name | Point</li>
+        <li>{`Rank | Name | Point (temp: ${userId})`}</li>
         {dummyRankDatas.map((rankData) => (
           <li key={rankData.nickname}>
             {`${rankData.rank} | ${rankData.nickname} | ${rankData.xp}`}

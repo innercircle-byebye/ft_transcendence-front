@@ -9,6 +9,7 @@ import RankBoard from '@/components/rank-page/RankBoard';
 import ProfileCard from '@/components/rank-page/ProfileCard';
 
 const dummyUserProfile = {
+  userId: 'asdfghjkl',
   imagePath: 'https://picsum.photos/400/400',
   nickname: 'Fox',
 };
@@ -35,7 +36,7 @@ const Rank = () => (
         <div className="mb-4">
           <h1 className="text-4xl leading-10">Ranks</h1>
         </div>
-        <RankBoard />
+        <RankBoard userId={dummyUserProfile.userId} />
       </RankContentRight>
     </RankContentContainer>
   </PageContainer>
