@@ -15,7 +15,7 @@ const SearchUserNicknameInputBox = () => {
   };
 
   return (
-    <div className="mt-1 relative flex item-center rounded-md shadow-sm w-full">
+    <div className="mt-1 relative flex item-center rounded-md shadow-sm w-full text-gray-900">
       <input
         type="text"
         name="userNickName"
@@ -25,7 +25,7 @@ const SearchUserNicknameInputBox = () => {
         value={userNickname}
       />
       <button type="button" className="absolute ml-52 h-full" onClick={onClickHandler}>
-        <SearchIcon className="hover:text-black w-full h-full" />
+        <SearchIcon className="hover:text-black w-full h-full text-gray-900" />
       </button>
     </div>
   );
