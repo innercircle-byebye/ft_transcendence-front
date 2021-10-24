@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { SearchIcon } from '@heroicons/react/solid';
+// import router from 'next/router';
 
 const SearchUserNicknameInputBox = () => {
   const [userNickname, setUserNickname] = useState('');
@@ -8,21 +9,21 @@ const SearchUserNicknameInputBox = () => {
     setUserNickname(event.target.value);
   };
 
-  const onClickHandler = () => {
+  const onClickHandler = useCallback(() => {
     console.log('User Nickname:', userNickname);
-    // 향후 State User 를 사용하여 <Link href={`/profile/${User}`} /> 이렇게 하면 될듯?!
-  };
+    // if (userNickname !== '') {
+    //   router.push(`/profile/${userNickname}`);
+    // }
+  }, [userNickname]);
 
   const onKeyPressHandler = useCallback(
     (e) => {
       if (e.key === 'Enter') {
-        if (userNickname !== '') {
-          onClickHandler();
-        }
+        onClickHandler();
       }
     },
     // 이 부분이 없으면 계속 빈칸만 나옵니다...
-    [userNickname],
+    [onClickHandler],
   );
 
   return (
