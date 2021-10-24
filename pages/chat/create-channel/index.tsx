@@ -241,7 +241,7 @@ const CreateChannel = () => {
                 }
                 />
               </div>
-              {!inviteNumError && (
+              {inviteNumError && (
               <div className="absolute items-center text-red-500 text-xs italic">
                 최대멤버수를 초과합니다.
               </div>
