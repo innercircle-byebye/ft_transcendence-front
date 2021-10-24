@@ -14,8 +14,8 @@ const Navbar: VFC = () => {
   // list 향후 State 로 관리해야합니다.
   const navigationList: IListItem[] = [
     { name: 'HOME', href: '/', current: true },
-    { name: 'PLAY', href: '/', current: false },
-    { name: 'RANK', href: '/', current: false },
+    { name: 'PLAY', href: '/play', current: false },
+    { name: 'RANK', href: '/rank', current: false },
     { name: 'CHAT', href: '/chat', current: false },
   ];
 
