@@ -20,14 +20,14 @@ const Navbar: VFC = () => {
   ];
 
   return (
-    <div className="flex flex-row flex-wrap px-12 py-3 bg-blue-100 h-1/12">
+    <div className="flex flex-row flex-wrap px-12 py-3 bg-sky-700 h-1/12 text-white">
       {/* 이미지 */}
-      <div className="px-6 justify-start">
+      <div className="px-6">
         <Image
           src="/Logo.png"
           alt="Logo"
           width="100"
-          height="21"
+          height="20"
           objectFit="contain"
         />
       </div>

@@ -1,6 +1,6 @@
 import React, { FC } from 'react';
 import Head from 'next/head';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navigation-bar/Navbar';
 
 const MainLayout: FC = ({ children }) => (
   <>
