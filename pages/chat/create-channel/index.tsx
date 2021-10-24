@@ -3,10 +3,12 @@ import React, {
   ReactElement,
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import Navbar from '@/components/Navbar';
 import useInput from '@/hooks/useInput';
+import MentionMember from '@/components/chat-page/MentionMember';
 
 const CreateChannel = () => {
   const router = useRouter();
@@ -19,6 +21,8 @@ const CreateChannel = () => {
     type: 'password',
     visible: false,
   });
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [inviteMemberNickname, onChangeInviteMemberNickname] = useInput('');
 
   const onClickSwitch = useCallback(
     (e) => {
@@ -157,7 +161,13 @@ const CreateChannel = () => {
           </>
         )}
       </div>
-      <div>invite member</div>
+      <MentionMember
+        trigger=""
+        placeholder="초대할 멤버 닉네임"
+        value={inviteMemberNickname}
+        onChangeValue={onChangeInviteMemberNickname}
+        inputRef={textareaRef}
+      />
       <div className="space-x-4">
         <button
           className="bg-gray-400 text-white py-3 px-8 rounded-full focus:outline-none focus:shadow-outline"

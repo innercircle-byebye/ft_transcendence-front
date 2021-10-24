@@ -1,5 +1,6 @@
 import '@/styles/globals.css';
 import '@/styles/emoji.css';
+import '@/styles/mention.css';
 import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
 import { ReactElement, ReactNode } from 'react';
