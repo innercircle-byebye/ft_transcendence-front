@@ -1,27 +1,30 @@
-import Link from 'next/link';
 import type { VFC } from 'react';
+import RankPagination from '@/components/rank-page/RankPagination';
 
 interface IProps {
   userId: string;
 }
 
 const dummyRankDatas = [
-  { rank: 1, nickname: 'Jane', xp: 30000 },
-  { rank: 2, nickname: 'John', xp: 20000 },
-  { rank: 3, nickname: 'Tom1', xp: 20000 },
-  { rank: 4, nickname: 'Tom2', xp: 20000 },
-  { rank: 5, nickname: 'Tom3', xp: 20000 },
-  { rank: 6, nickname: 'Tom4', xp: 20000 },
-  { rank: 7, nickname: 'Tom5', xp: 20000 },
-  { rank: 8, nickname: 'Tom6', xp: 20000 },
-  { rank: 9, nickname: 'Tom7', xp: 20000 },
-  { rank: 10, nickname: 'Tom8', xp: 20000 },
-  { rank: 11, nickname: 'Tom9', xp: 20000 },
-  { rank: 12, nickname: 'Tom10', xp: 20000 },
-  { rank: 13, nickname: 'Tom11', xp: 20000 },
+  { rankId: 1, nickname: 'Jane', experience: 30000 },
+  { rankId: 2, nickname: 'John', experience: 20000 },
+  { rankId: 3, nickname: 'Tom1', experience: 20000 },
+  { rankId: 4, nickname: 'Tom2', experience: 20000 },
+  { rankId: 5, nickname: 'Tom3', experience: 20000 },
+  { rankId: 6, nickname: 'Tom4', experience: 20000 },
+  { rankId: 7, nickname: 'Tom5', experience: 20000 },
+  { rankId: 8, nickname: 'Tom6', experience: 20000 },
+  { rankId: 9, nickname: 'Tom7', experience: 20000 },
+  { rankId: 10, nickname: 'Tom8', experience: 20000 },
+  { rankId: 11, nickname: 'Tom9', experience: 20000 },
+  { rankId: 12, nickname: 'Tom10', experience: 20000 },
+  { rankId: 13, nickname: 'Tom11', experience: 20000 },
 ];
 
-const dummyPaginationLinkTexts = ['<', '1', '2', '3', '4', '5', '>'];
+const paginationData = {
+  totalPage: 5,
+  currentPage: 1,
+};
 
 const RankContentRight: VFC<IProps> = ({ userId }) => (
   <div className="p-4 rounded-md bg-gray-300 ">
@@ -30,21 +33,13 @@ const RankContentRight: VFC<IProps> = ({ userId }) => (
         <li>{`Rank | Name | Point (temp: ${userId})`}</li>
         {dummyRankDatas.map((rankData) => (
           <li key={rankData.nickname}>
-            {`${rankData.rank} | ${rankData.nickname} | ${rankData.xp}`}
+            {`${rankData.rankId} | ${rankData.nickname} | ${rankData.experience}`}
           </li>
         ))}
       </ul>
     </div>
     <div className="flex justify-center">
-      <div className="inline-block rounded-md border border-gray-50 overflow-hidden bg-gray-50">
-        {dummyPaginationLinkTexts.map((paginationLinkText) => (
-          <Link href="/" key={paginationLinkText}>
-            <a className="mx-px px-2 py-1 bg-amber-300 text-gray-700">
-              {paginationLinkText}
-            </a>
-          </Link>
-        ))}
-      </div>
+      <RankPagination paginationData={paginationData} />
     </div>
   </div>
 );
