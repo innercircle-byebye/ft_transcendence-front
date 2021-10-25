@@ -13,11 +13,6 @@ interface IListItem {
   current: boolean;
 }
 
-// interface IProp {
-//   userNickName: string;
-// }
-
-// const Navbar: VFC<IProp> = ({ userNickName }) => {
 const Navbar: VFC = () => {
   // list 향후 State 로 관리해야합니다.
   const navigationList: IListItem[] = [

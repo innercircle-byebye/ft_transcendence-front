@@ -1,14 +1,13 @@
 import React, {
   Dispatch,
   FormEventHandler,
-  ReactNode, SetStateAction, useCallback, useEffect, useRef, VFC,
+  SetStateAction, useCallback, useEffect, useRef, VFC,
 } from 'react';
-import Image from 'next/image';
 import autosize from 'autosize';
-import { MentionsInput, Mention, SuggestionDataItem } from 'react-mentions';
-import useSWR from 'swr';
 import { CanonicalEmoji } from 'interweave-emoji';
+import useSWR from 'swr';
 import Emoji from './Emoji';
+import MentionMember from './MentionMember';
 import { IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 
@@ -31,15 +30,12 @@ const ChatBox: VFC<IProps> = ({
   setShowEmoji,
   placeholder,
 }) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
-    dedupingInterval: 2000, // 2초
-  });
   const { data: memberData } = useSWR<IUser[]>(
-    userData ? '/api/members' : null,
-    // '/api/members',
+    // userData ? '/api/members' : null,
+    '/api/members',
     fetcher,
   );
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const stopPropagation = useCallback((e) => {
     e.stopPropagation();
@@ -66,36 +62,6 @@ const ChatBox: VFC<IProps> = ({
     [onSubmitChat],
   );
 
-  const renderSuggestion = useCallback(
-    (
-      suggestion: SuggestionDataItem,
-      search: string,
-      highlightedDisplay: ReactNode,
-      index: number,
-      focus: boolean,
-    ): ReactNode => {
-      if (!memberData) return null;
-      return (
-        <button
-          type="button"
-          className={`px-1 py-2 flex items-center w-full space-x-2 ${
-            focus ? 'text-bold bg-sky-800 text-white' : 'bg-white'
-          }`}
-        >
-          <Image
-            src={memberData[index].imagePath}
-            alt={memberData[index].nickname}
-            width={20}
-            height={20}
-            className="rounded-full"
-          />
-          <span>{highlightedDisplay}</span>
-        </button>
-      );
-    },
-    [memberData],
-  );
-
   useEffect(() => {
     if (textareaRef.current) {
       autosize(textareaRef.current);
@@ -109,27 +75,15 @@ const ChatBox: VFC<IProps> = ({
         className="w-full rounded-sm text-xl bg-sky-200 border border-sky-700"
         onSubmit={onSubmitChat}
       >
-        <MentionsInput
-          className="w-full textarea:p-2"
+        <MentionMember
+          trigger="@"
           value={chat}
-          onChange={onChangeChat}
+          onChangeValue={onChangeChat}
           onKeyPress={onKeydownChat}
           placeholder={placeholder}
           inputRef={textareaRef}
-          allowSuggestionsAboveCursor
-        >
-          <Mention
-            appendSpaceOnAdd
-            trigger="@"
-            data={
-              memberData?.map((v) => ({
-                id: v.userId,
-                display: v.nickname,
-              })) || []
-            }
-            renderSuggestion={renderSuggestion}
-          />
-        </MentionsInput>
+          data={memberData}
+        />
         <div className="relative flex items-center border-t-2 border-gray-700 bg-white h-12">
           <div role="button" tabIndex={0} onClick={stopPropagation} onKeyPress={stopPropagation}>
             <div>
