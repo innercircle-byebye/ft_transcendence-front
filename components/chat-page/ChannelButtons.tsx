@@ -5,7 +5,7 @@ import fetcher from '@/utils/fetcher';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
 import InviteMemberModal from './InviteMemberModal';
 import MembersModal from './MembersModal';
-import SettingModal from './SettingModal';
+import SettingModal from './ChatInfoModal';
 
 const ChannelButtons = () => {
   const router = useRouter();
@@ -93,7 +93,13 @@ const ChannelButtons = () => {
         channelMemberData={channelMemberData}
       />
       )}
-      {showSettingModal && <SettingModal />}
+      {showSettingModal && (
+      <SettingModal
+        userData={userData}
+        channelData={channelData}
+        channelMemberData={channelMemberData}
+      />
+      )}
     </div>
   );
 };
