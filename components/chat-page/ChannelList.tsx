@@ -3,16 +3,15 @@ import { useRouter } from 'next/router';
 import { useCallback, useState, VFC } from 'react';
 import useSWR from 'swr';
 import fetcher from '@/utils/fetcher';
-import { IChannel } from '@/typings/db';
+import { IChannel, IUser } from '@/typings/db';
 
 const ChannelList: VFC = () => {
   const router = useRouter();
-  // const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
-  //   dedupingInterval: 2000, // 2초
-  // });
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
+    dedupingInterval: 2000, // 2초
+  });
   const { data: channelData } = useSWR<IChannel[]>(
-    // userData ? 'http://localhost:3000/api/channels' : null,
-    'http://localhost:3000/api/channels',
+    userData ? '/api/channel' : null,
     fetcher,
   );
 
@@ -98,7 +97,7 @@ const ChannelList: VFC = () => {
                   #
                   {' '}
                   {channel.name}
-                  {channel.private && (
+                  {channel.password && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"

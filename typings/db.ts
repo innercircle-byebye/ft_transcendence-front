@@ -37,18 +37,22 @@ export interface IMessage {
 }
 
 export interface IChannel {
-  id: number;
+  channelId: number;
   name: string;
-  private: boolean; // 비공개 채널 여부, 강좌에서는 모두 false(공개)
+  password: string;
+  maxParticipantNum: number;
+  readonly createdAt: Date;
+  readonly lastModifiedAt: Date;
+  deletedAt: Date;
 }
 
 export interface IChat {
   // 채널의 채팅
-  id: number;
-  UserId: number;
-  User: IUser; // 보낸 사람
+  channelChatId: number;
+  userId: number;
+  channelId: number;
   content: string;
   createdAt: Date;
-  ChannelId: number;
-  Channel: IChannel;
+  lastModifiedAt: Date;
+  deletedAt: Date | null;
 }
