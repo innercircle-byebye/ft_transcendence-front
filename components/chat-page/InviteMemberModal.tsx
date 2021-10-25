@@ -1,31 +1,55 @@
 import React, {
-  useCallback, useEffect, useRef, useState,
+  useCallback, useEffect, useRef, useState, VFC,
 } from 'react';
 import regexifyString from 'regexify-string';
 import useSWR from 'swr';
+import { useRouter } from 'next/router';
 import useInput from '@/hooks/useInput';
 import MentionMember from './MentionMember';
 import fetcher from '@/utils/fetcher';
-import { IUser } from '@/typings/db';
+import { IChannel, IUser } from '@/typings/db';
 
 interface IInviteMember {
   id: number;
   nickname: string;
 }
 
-const InviteMemberModal = () => {
+const InviteMemberModal: VFC = () => {
+  const router = useRouter();
+  const channelName = router.query.name;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [inviteMember, onChangeInviteMember, setInviteMember] = useInput('');
   const [inviteMembers, setInviteMembers] = useState<IInviteMember[]>([]);
+  const [inviteNumError, setInviteNumError] = useState(false);
   const { data: userData } = useSWR('/api/user/me', fetcher);
   const { data: memberData } = useSWR<IUser[]>(
     userData ? '/api/user/all' : null,
     fetcher,
   );
+  const { data: channelData } = useSWR<IChannel>(
+    userData ? `/api/channel/${channelName}` : null, fetcher,
+  );
+  const { data: channelMemberData } = useSWR<IUser[]>(
+    userData ? `/api/channel/${channelName}/member` : null, fetcher,
+  );
 
   const onClickRemoveInvite = useCallback((id: number) => {
     setInviteMembers((prev) => prev.filter((v) => v.id !== id));
   }, []);
+
+  const onClickInvite = useCallback(() => {
+    console.log('invite members');
+  }, []);
+
+  useEffect(() => {
+    if (channelData?.maxParticipantNum && channelMemberData?.length) {
+      if (channelData.maxParticipantNum < inviteMembers.length + channelMemberData?.length) {
+        setInviteNumError(true);
+      } else {
+        setInviteNumError(false);
+      }
+    }
+  }, [channelData?.maxParticipantNum, channelMemberData?.length, inviteMembers.length]);
 
   useEffect(() => {
     regexifyString({
@@ -44,8 +68,8 @@ const InviteMemberModal = () => {
   }, [inviteMember, inviteMembers, setInviteMember]);
 
   return (
-    <div className="absolute bg-sky-700 top-7 right-0 w-72 h-60 flex flex-col items-center p-4">
-      <div className="text-2xl font-bold text-white pb-1">멤버 초대하기</div>
+    <div className="absolute bg-sky-700 top-7 right-0 w-auto h-auto flex flex-col items-center p-6 space-y-4">
+      <div className="text-2xl font-bold text-gray-200 pb-1">멤버 초대하기</div>
       <div className="w-36 bg-gray-100 rounded-full">
         <div className="flex flex-row pl-4">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mt-2.5 text-sky-700" viewBox="0 0 20 20" fill="currentColor">
@@ -59,14 +83,26 @@ const InviteMemberModal = () => {
             inputRef={textareaRef}
             data={
                   memberData?.filter(
-                    (v) => !inviteMembers.map((m) => m.id).includes(v.userId),
+                    (v) => !inviteMembers.map((m) => m.id).includes(v.userId)
+                    && !channelMemberData?.map((m) => m.userId).includes(v.userId),
                   )
                 }
           />
         </div>
+        {inviteNumError
+        && (
+        <>
+          <div className="absolute items-center text-gray-300 text-sm font-bold italic">
+            최대멤버수를 초과합니다.
+          </div>
+          <div className="absolute items-center text-red-500 text-sm font-semibold italic">
+            최대멤버수를 초과합니다.
+          </div>
+        </>
+        )}
       </div>
       <div className="w-60 bg-sky-100 border-2 border-sky-700 rounded-lg p-2">
-        <div className="flex flex-row flex-wrap gap-2">
+        <div className="flex flex-row flex-wrap gap-2 max-h-14 overflow-y-auto">
           {inviteMembers.length ? inviteMembers.map((v) => (
             <div key={v.id} className="flex flex-row">
               <div className="bg-amber-500 px-1">{v.nickname}</div>
@@ -75,6 +111,7 @@ const InviteMemberModal = () => {
           )) : <div className="text-gray-400 px-2">초대할 멤버 리스트</div>}
         </div>
       </div>
+      <button type="button" className="bg-amber-500 px-3 py-2 rounded-full" onClick={onClickInvite} disabled={inviteNumError}>초대하기</button>
     </div>
   );
 };
