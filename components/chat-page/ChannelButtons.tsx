@@ -1,5 +1,8 @@
 import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
+import useSWR from 'swr';
+import fetcher from '@/utils/fetcher';
+import { IChannel, IUser } from '@/typings/db';
 import InviteMemberModal from './InviteMemberModal';
 import MembersModal from './MembersModal';
 import SettingModal from './SettingModal';
@@ -10,6 +13,17 @@ const ChannelButtons = () => {
   const [showInviteMemberModal, setShowInviteMemberModal] = useState(false);
   const [showMembersModal, setShowMembersModal] = useState(false);
   const [showSettingModal, setShowSettingModal] = useState(false);
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
+  const { data: memberData } = useSWR<IUser[]>(
+    userData ? '/api/user/all' : null,
+    fetcher,
+  );
+  const { data: channelData } = useSWR<IChannel>(
+    userData ? `/api/channel/${channelName}` : null, fetcher,
+  );
+  const { data: channelMemberData } = useSWR<IUser[]>(
+    userData ? `/api/channel/${channelName}/member` : null, fetcher,
+  );
 
   const onClickInviteMemberIcon = useCallback(() => {
     setShowInviteMemberModal((prev) => !prev);
@@ -39,6 +53,10 @@ const ChannelButtons = () => {
     setShowSettingModal(false);
   }, [channelName]);
 
+  if (!userData || !memberData || !channelData || !channelMemberData) {
+    return <div>로딩중...</div>;
+  }
+
   return (
     <div className="relative flex flex-row">
       <button type="button" className={`hover:bg-sky-700 hover:text-white p-1 ${showInviteMemberModal ? 'bg-sky-700 text-white' : ''}`} onClick={onClickInviteMemberIcon}>
@@ -61,8 +79,20 @@ const ChannelButtons = () => {
           <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
         </svg>
       </button>
-      {showInviteMemberModal && <InviteMemberModal />}
-      {showMembersModal && <MembersModal />}
+      {showInviteMemberModal && (
+      <InviteMemberModal
+        memberData={memberData}
+        channelData={channelData}
+        channelMemberData={channelMemberData}
+      />
+      )}
+      {showMembersModal && (
+      <MembersModal
+        userData={userData}
+        channelData={channelData}
+        channelMemberData={channelMemberData}
+      />
+      )}
       {showSettingModal && <SettingModal />}
     </div>
   );

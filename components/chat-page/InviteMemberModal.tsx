@@ -2,11 +2,8 @@ import React, {
   useCallback, useEffect, useRef, useState, VFC,
 } from 'react';
 import regexifyString from 'regexify-string';
-import useSWR from 'swr';
-import { useRouter } from 'next/router';
 import useInput from '@/hooks/useInput';
 import MentionMember from './MentionMember';
-import fetcher from '@/utils/fetcher';
 import { IChannel, IUser } from '@/typings/db';
 
 interface IInviteMember {
@@ -14,24 +11,17 @@ interface IInviteMember {
   nickname: string;
 }
 
-const InviteMemberModal: VFC = () => {
-  const router = useRouter();
-  const channelName = router.query.name;
+interface IProps {
+  memberData: IUser[];
+  channelData: IChannel;
+  channelMemberData: IUser[]
+}
+
+const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMemberData }) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [inviteMember, onChangeInviteMember, setInviteMember] = useInput('');
   const [inviteMembers, setInviteMembers] = useState<IInviteMember[]>([]);
   const [inviteNumError, setInviteNumError] = useState(false);
-  const { data: userData } = useSWR('/api/user/me', fetcher);
-  const { data: memberData } = useSWR<IUser[]>(
-    userData ? '/api/user/all' : null,
-    fetcher,
-  );
-  const { data: channelData } = useSWR<IChannel>(
-    userData ? `/api/channel/${channelName}` : null, fetcher,
-  );
-  const { data: channelMemberData } = useSWR<IUser[]>(
-    userData ? `/api/channel/${channelName}/member` : null, fetcher,
-  );
 
   const onClickRemoveInvite = useCallback((id: number) => {
     setInviteMembers((prev) => prev.filter((v) => v.id !== id));
