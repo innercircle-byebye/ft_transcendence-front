@@ -11,6 +11,7 @@ import fetcher from '@/utils/fetcher';
 import { IChannel, IChat, IUser } from '@/typings/db';
 import ChatItem from '@/components/chat-page/ChatItem';
 import useSocket from '@/hooks/useSocket';
+import ChannelButtons from '@/components/chat-page/ChannelButtons';
 
 const Channel = () => {
   const router = useRouter();
@@ -79,10 +80,13 @@ const Channel = () => {
   }, [socket, onMessage]);
 
   return (
-    <div className="h-full flex flex-col" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
+    <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
       <div className="h-full flex flex-col">
-        <div className="font-semibold text-2xl pl-6">
-          {`# ${channelData?.name}`}
+        <div className="flex flex-row justify-between items-end">
+          <div className="font-semibold text-2xl">
+            {`# ${channelData?.name}`}
+          </div>
+          <ChannelButtons />
         </div>
         <div className="flex-1">
           {
