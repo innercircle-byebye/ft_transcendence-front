@@ -64,10 +64,13 @@ const CreateChannel = () => {
 
   const onClickSave = useCallback(() => {
     axios.post(`/api/channel/${channelName}`, {
-      withCredentials: true,
       password: password === '' ? null : password,
       maxParticipantNum: maxMemberNum,
       inviteMemberIDs: inviteMembers.map((v) => v.id),
+    }, {
+      headers: {
+        withCredentials: 'true',
+      },
     }).then(() => {
       router.push('/chat');
     });

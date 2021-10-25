@@ -52,8 +52,11 @@ const Channel = () => {
           setChat('');
         });
         axios.post(`/api/channel/${channelData.name}/chat`, {
-          withCredentials: true,
           content: savedChat,
+        }, {
+          headers: {
+            withCredentials: 'true',
+          },
         }).catch(console.error);
       }
     },
