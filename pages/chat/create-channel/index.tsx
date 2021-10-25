@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useState,
 } from 'react';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navigation-bar/Navbar';
 import useInput from '@/hooks/useInput';
 
 const CreateChannel = () => {

@@ -1,8 +1,11 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import React, { VFC } from 'react';
+import useSWR from 'swr';
 import SearchUserNicknameInputBox from './SearchUserNicknameInputBox';
 import UserInfoMenu from './UserInfoMenu';
+import { IUser } from '@/typings/db';
+import fetcher from '@/utils/fetcher';
 
 interface IListItem {
   name: string;
@@ -10,11 +13,12 @@ interface IListItem {
   current: boolean;
 }
 
-interface IProp {
-  userNickName: string;
-}
+// interface IProp {
+//   userNickName: string;
+// }
 
-const Navbar: VFC<IProp> = ({ userNickName }) => {
+// const Navbar: VFC<IProp> = ({ userNickName }) => {
+const Navbar: VFC = () => {
   // list 향후 State 로 관리해야합니다.
   const navigationList: IListItem[] = [
     { name: 'HOME', href: '/', current: true },
@@ -22,6 +26,9 @@ const Navbar: VFC<IProp> = ({ userNickName }) => {
     { name: 'RANK', href: '/rank', current: false },
     { name: 'CHAT', href: '/chat', current: false },
   ];
+
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
+  console.log('userData:', userData);
 
   return (
     <div className="flex flex-row flex-wrap px-12 py-3 bg-sky-700 h-1/12 text-white">
@@ -53,7 +60,7 @@ const Navbar: VFC<IProp> = ({ userNickName }) => {
       </div>
       {/* ID 와 Dropdown button */}
       <div className="flex flex-auto flex-wrap justify-end">
-        <div className="mx-2">{userNickName}</div>
+        <div className="mx-2">{userData?.nickname}</div>
         <UserInfoMenu />
       </div>
     </div>
