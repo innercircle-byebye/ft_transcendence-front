@@ -8,7 +8,7 @@ import ChatBox from '@/components/chat-page/ChatBox';
 import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
-import { IChannel, IChat, IUser } from '@/typings/db';
+import { IChannel, IChannelChat, IUser } from '@/typings/db';
 import ChatItem from '@/components/chat-page/ChatItem';
 import useSocket from '@/hooks/useSocket';
 
@@ -22,7 +22,7 @@ const Channel = () => {
   const { data: channelData } = useSWR<IChannel>(
     `/api/channel/${channelName}`, fetcher,
   );
-  const { data: chatDatas, mutate: mutateChat } = useSWR<IChat[]>(
+  const { data: chatDatas, mutate: mutateChat } = useSWR<IChannelChat[]>(
     `/api/channel/${channelName}/chat`, fetcher,
   );
 
@@ -60,7 +60,7 @@ const Channel = () => {
   );
 
   const onMessage = useCallback(
-    (data: IChat) => {
+    (data: IChannelChat) => {
       if (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.userId !== userData?.userId) {
         mutateChat((chatData) => {
           chatData?.push(data);

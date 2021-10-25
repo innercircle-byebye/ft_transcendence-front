@@ -96,7 +96,7 @@ const ChannelList: VFC = () => {
                   #
                   {' '}
                   {channel.name}
-                  {channel.password && (
+                  {channel.isPrivate && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
