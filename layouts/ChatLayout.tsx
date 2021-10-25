@@ -1,9 +1,26 @@
+import React, { FC, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import ChannelList from '@/components/chat-page/ChannelList';
 import DMList from '@/components/chat-page/DMList';
 import Navbar from '@/components/Navbar';
-import React, { FC } from 'react';
+import useSocket from '@/hooks/useSocket';
 
-const ChatLayout: FC = ({ children }) => (
+const ChatLayout: FC = ({ children }) => {
+  const router = useRouter();
+  const channelName = router.pathname === '/chat/channel/[name]' ? router.query.name : null;
+  const { socket } = useSocket('chat');
+
+  useEffect(() => {
+    if (channelName) {
+      // console.log(`joinChannel ${channelName}`);
+      socket?.emit('joinChannel', channelName);
+    }
+    return () => {
+      if (channelName) { socket?.emit('leaveChannel', channelName); }
+    };
+  }, [channelName, router.pathname, socket]);
+
+  return (
     <div className="h-screen flex flex-col">
       <div className="flex-initial">
         <Navbar />
@@ -18,6 +35,7 @@ const ChatLayout: FC = ({ children }) => (
         <main className="flex-1">{children}</main>
       </div>
     </div>
-);
+  );
+};
 
 export default ChatLayout;

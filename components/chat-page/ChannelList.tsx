@@ -1,23 +1,24 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useState, VFC } from 'react';
+import {
+  useCallback, useState, VFC,
+} from 'react';
 import useSWR from 'swr';
 import fetcher from '@/utils/fetcher';
-import { IChannel } from '@/typings/db';
+import { IChannel, IUser } from '@/typings/db';
 
 const ChannelList: VFC = () => {
   const router = useRouter();
-  // const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
-  //   dedupingInterval: 2000, // 2초
-  // });
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
+    dedupingInterval: 2000, // 2초
+  });
   const { data: channelData } = useSWR<IChannel[]>(
-    // userData ? 'http://localhost:3000/api/channels' : null,
-    'http://localhost:3000/api/channels',
+    userData ? '/api/channel/me' : null,
     fetcher,
   );
 
   const [channelCollapse, setChannelCollapse] = useState(false);
-  const clickedChannel = router.pathname === '/chat/channel/[id]' && router.query.id;
+  const channelName = router.query.name;
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
@@ -80,14 +81,14 @@ const ChannelList: VFC = () => {
         </button>
         Channels
       </div>
-      <div className="flex flex-col space-y-1">
+      <div className="flex flex-col max-h-72 overflow-y-auto">
         {!channelCollapse
           && channelData?.map((channel) => (
-            <Link href={`/chat/channel/${channel.id}`} key={channel.name}>
+            <Link key={channel.channelId} href={`/chat/channel/${channel.name}`}>
               <a>
                 <span
-                  className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
-                    clickedChannel && clickedChannel === channel.id.toString()
+                  className={`w-full px-2 py-1.5 border-b-2 flex justify-between hover:bg-gray-300 ${
+                    channelName && typeof channelName === 'string' && channelName === channel.name
                       ? 'bg-sky-200'
                       : ''
                   }`}
@@ -95,19 +96,19 @@ const ChannelList: VFC = () => {
                   #
                   {' '}
                   {channel.name}
-                  {channel.private && (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
+                  {channel.password && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
                   )}
                 </span>
               </a>

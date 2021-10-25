@@ -1,11 +1,11 @@
-const colors = require("tailwindcss/colors");
+const colors = require('tailwindcss/colors');
 
 module.exports = {
   purge: [],
   darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {
-      opacity: ["group-hover"],
+      opacity: ['group-hover'],
     },
     colors: {
       sky: colors.sky,
@@ -15,6 +15,9 @@ module.exports = {
       gray: colors.gray,
       red: colors.red,
       green: colors.green,
+      yellow: colors.yellow,
+      blueGray: colors.blueGray,
+      coolGray: colors.coolGray,
     },
   },
   variants: {
