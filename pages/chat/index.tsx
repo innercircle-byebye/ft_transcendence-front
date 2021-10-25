@@ -12,7 +12,7 @@ const Chat = () => {
   const { data: myChannelData, mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
   const onClickJoin = useCallback((data: IChannel) => {
-    axios.post(`/api/channel/${data.name}/join`).then(() => {
+    axios.post(`/api/channel/${data.name}/member`).then(() => {
       mutateMyChannelData((prevMyChannelData) => {
         prevMyChannelData?.push(data);
         return prevMyChannelData;
@@ -36,14 +36,9 @@ const Chat = () => {
           if (myChannelData.filter((v) => v.channelId === data.channelId).length) { return null; }
           return (
             <div key={data.channelId}>
-              <div className="relative flex items-center w-80 h-12 bg-blueGray-300 rounded-xl px-5 text-lg">
-                <div className="w-40 flex flex-row justify-between">
-                  <div>{`# ${data.name}`}</div>
-                  <div>{`1 / ${data.maxParticipantNum}`}</div>
-                </div>
-                <button type="button" onClick={() => onClickJoin(data)} className="absolute right-5 bg-amber-500 px-2 py-1 rounded-sm">
-                  입장하기
-                  {data.password && (
+              <div className="flex flex-row justify-between items-center w-80 h-12 bg-blueGray-300 rounded-xl px-5 text-lg">
+                <div>{`# ${data.name}`}</div>
+                {!data.isPrivate ? <div>{`1 / ${data.maxParticipantNum}`}</div> : (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-5 w-5"
@@ -56,8 +51,9 @@ const Chat = () => {
                       clipRule="evenodd"
                     />
                   </svg>
-                  )}
-
+                )}
+                <button type="button" onClick={() => onClickJoin(data)} className=" bg-amber-500 px-2 py-1 rounded-sm">
+                  입장하기
                 </button>
               </div>
             </div>
