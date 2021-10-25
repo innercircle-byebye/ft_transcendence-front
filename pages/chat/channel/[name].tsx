@@ -7,6 +7,7 @@ import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IChat, IUser } from '@/typings/db';
+import ChatItem from '@/components/chat-page/ChatItem';
 
 const Channel = () => {
   const router = useRouter();
@@ -17,7 +18,7 @@ const Channel = () => {
     `http://localhost:3000/api/channels?name=${router.query.name}`,
     fetcher,
   );
-  const { data: chatData, mutate: mutateChat } = useSWR<IChat[]>(
+  const { data: chatDatas, mutate: mutateChat } = useSWR<IChat[]>(
     'http://localhost:3000/api/chats', fetcher,
   );
 
@@ -28,11 +29,11 @@ const Channel = () => {
   const onSubmitChat = useCallback(
     (e) => {
       e.preventDefault();
-      if (chat?.trim() && chatData && channelData && userData) {
+      if (chat?.trim() && chatDatas && channelData && userData) {
         const savedChat = chat;
         mutateChat((prevChatData) => {
           prevChatData?.unshift({
-            id: (chatData[0]?.id || 0) + 1,
+            id: (chatDatas[0]?.id || 0) + 1,
             content: savedChat,
             UserId: userData.userId,
             User: userData,
@@ -50,7 +51,7 @@ const Channel = () => {
         }).catch(console.error);
       }
     },
-    [channelData, chat, chatData, mutateChat, setChat, userData],
+    [channelData, chat, chatDatas, mutateChat, setChat, userData],
   );
 
   return (
@@ -59,7 +60,12 @@ const Channel = () => {
         <div className="font-semibold text-2xl pl-6">
           {`# ${channelData?.name}`}
         </div>
-        <div className="flex-1">Chat Zone</div>
+        <div className="flex-1">
+          {
+          chatDatas?.map((chatData) => <ChatItem key={chatData.id} chatData={chatData} />)
+        }
+
+        </div>
         <ChatBox
           chat={chat}
           onChangeChat={onChangeChat}
