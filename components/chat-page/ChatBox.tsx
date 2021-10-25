@@ -5,8 +5,11 @@ import React, {
 } from 'react';
 import autosize from 'autosize';
 import { CanonicalEmoji } from 'interweave-emoji';
+import useSWR from 'swr';
 import Emoji from './Emoji';
 import MentionMember from './MentionMember';
+import { IUser } from '@/typings/db';
+import fetcher from '@/utils/fetcher';
 
 interface IProps {
   chat: string;
@@ -27,6 +30,11 @@ const ChatBox: VFC<IProps> = ({
   setShowEmoji,
   placeholder,
 }) => {
+  const { data: memberData } = useSWR<IUser[]>(
+    // userData ? '/api/members' : null,
+    '/api/members',
+    fetcher,
+  );
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const stopPropagation = useCallback((e) => {
@@ -74,6 +82,7 @@ const ChatBox: VFC<IProps> = ({
           onKeyPress={onKeydownChat}
           placeholder={placeholder}
           inputRef={textareaRef}
+          data={memberData}
         />
         <div className="relative flex items-center border-t-2 border-gray-700 bg-white h-12">
           <div role="button" tabIndex={0} onClick={stopPropagation} onKeyPress={stopPropagation}>

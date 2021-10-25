@@ -2,32 +2,22 @@ import React, {
   ReactNode, RefObject, useCallback, VFC,
 } from 'react';
 import { Mention, MentionsInput, SuggestionDataItem } from 'react-mentions';
-import useSWR from 'swr';
 import Image from 'next/image';
-import fetcher from '@/utils/fetcher';
 import { IUser } from '@/typings/db';
 
 interface IProps {
   trigger: string;
   value: string;
   onChangeValue: (e: any) => void;
+  data: IUser[] | undefined;
   inputRef: RefObject<HTMLTextAreaElement> | ((instance: HTMLInputElement | null) => void);
   onKeyPress?: (e: any) => void;
   placeholder?: string;
 }
 
 const MentionMember: VFC<IProps> = ({
-  trigger, value, onChangeValue, onKeyPress, inputRef, placeholder,
+  trigger, value, onChangeValue, data, inputRef, onKeyPress, placeholder,
 }) => {
-  // const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
-  //   dedupingInterval: 2000, // 2초
-  // });
-  const { data: memberData } = useSWR<IUser[]>(
-    // userData ? '/api/members' : null,
-    '/api/members',
-    fetcher,
-  );
-
   const renderSuggestion = useCallback(
     (
       suggestion: SuggestionDataItem,
@@ -36,7 +26,7 @@ const MentionMember: VFC<IProps> = ({
       index: number,
       focus: boolean,
     ): ReactNode => {
-      if (!memberData) return null;
+      if (!data) return null;
       return (
         <button
           type="button"
@@ -45,8 +35,8 @@ const MentionMember: VFC<IProps> = ({
           }`}
         >
           <Image
-            src={memberData[index].imagePath}
-            alt={memberData[index].nickname}
+            src={data[index].imagePath}
+            alt={data[index].nickname}
             width={20}
             height={20}
             className="rounded-full"
@@ -55,7 +45,7 @@ const MentionMember: VFC<IProps> = ({
         </button>
       );
     },
-    [memberData],
+    [data],
   );
 
   return (
@@ -72,7 +62,7 @@ const MentionMember: VFC<IProps> = ({
         appendSpaceOnAdd
         trigger={trigger}
         data={
-              memberData?.map((v) => ({
+              data?.map((v) => ({
                 id: v.userId,
                 display: v.nickname,
               })) || []

@@ -7,9 +7,18 @@ import React, {
   useState,
 } from 'react';
 import axios from 'axios';
+import useSWR from 'swr';
+import regexifyString from 'regexify-string';
 import Navbar from '@/components/Navbar';
 import useInput from '@/hooks/useInput';
 import MentionMember from '@/components/chat-page/MentionMember';
+import fetcher from '@/utils/fetcher';
+import { IUser } from '@/typings/db';
+
+interface IInviteMember {
+  id: number;
+  nickname: string;
+}
 
 const CreateChannel = () => {
   const router = useRouter();
@@ -17,13 +26,20 @@ const CreateChannel = () => {
   const [maxMemberNum, onChangeMaxMemberNum, setMaxMemberNum] = useInput(3);
   const [isPrivate, setIsPrivate] = useState(false);
   const [password, onChangePassword, setPassword] = useInput('');
-  const [isValidPassword, setIsValidPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
   const [inputPasswordType, setInputPasswordType] = useState({
     type: 'password',
     visible: false,
   });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [inviteMemberNickname, onChangeInviteMemberNickname] = useInput('');
+  const [inviteMember, onChangeInviteMember, setInviteMember] = useInput('');
+  const [inviteMembers, setInviteMembers] = useState<IInviteMember[]>([]);
+  const [inviteNumError, setInviteNumError] = useState(false);
+  const { data: userData } = useSWR('/api/user/me', fetcher);
+  const { data: memberData } = useSWR<IUser[]>(
+    userData ? '/api/user/all' : null,
+    fetcher,
+  );
 
   const onClickSwitch = useCallback(
     (e) => {
@@ -51,10 +67,15 @@ const CreateChannel = () => {
       withCredentials: true,
       password: password === '' ? null : password,
       maxParticipantNum: maxMemberNum,
+      inviteMemberIDs: inviteMembers.map((v) => v.id),
     }).then(() => {
       router.push('/chat');
     });
-  }, [channelName, maxMemberNum, password, router]);
+  }, [channelName, inviteMembers, maxMemberNum, password, router]);
+
+  const onClickRemoveInvite = useCallback((id: number) => {
+    setInviteMembers((prev) => prev.filter((v) => v.id !== id));
+  }, []);
 
   useEffect(() => {
     if (maxMemberNum < 3) {
@@ -67,11 +88,35 @@ const CreateChannel = () => {
   useEffect(() => {
     const passwordPattern = /^[0123456789]{4}$/;
     if (password && passwordPattern.test(password)) {
-      setIsValidPassword(true);
+      setPasswordError(false);
     } else {
-      setIsValidPassword(false);
+      setPasswordError(true);
     }
   }, [password]);
+
+  useEffect(() => {
+    if (maxMemberNum < inviteMembers.length) {
+      setInviteNumError(true);
+    } else {
+      setInviteNumError(false);
+    }
+  }, [inviteMembers.length, maxMemberNum]);
+
+  useEffect(() => {
+    regexifyString({
+      input: inviteMember,
+      pattern: /@\[(.+?)]\((\d+?)\)|\n/g,
+      decorator(match) {
+        const arr: string[] | null = match.match(/@\[(.+?)]\((\d+?)\)/);
+        if (arr && arr[1] && arr[2]) {
+          setInviteMembers([...inviteMembers, { id: +arr[2], nickname: arr[1] }]);
+          setInviteMember('');
+          return (arr[2]);
+        }
+        return '';
+      },
+    }).filter((v, id) => id % 2);
+  }, [inviteMember, inviteMembers, setInviteMember]);
 
   return (
     <div className="w-screen h-full flex flex-col items-center space-y-20">
@@ -168,7 +213,7 @@ const CreateChannel = () => {
                   )}
                 </button>
               </div>
-              {!isValidPassword && (
+              {passwordError && (
                 <div className="absolute items-center text-red-500 text-xs italic">
                   비밀번호 숫자4자리 입력해주세요
                 </div>
@@ -176,14 +221,46 @@ const CreateChannel = () => {
             </div>
           </>
         )}
+        <div className="col-span-2 flex flex-col space-y-5 items-center">
+          <form className="w-80 flex items-center justify-evenly flex-row">
+            <div className="w-56 bg-gray-100 rounded-full pl-3 pt-1">
+              <div className="flex flex-row justify-evenly">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mt-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <MentionMember
+                  trigger="@"
+                  placeholder="@초대할 멤버 닉네임"
+                  value={inviteMember}
+                  onChangeValue={onChangeInviteMember}
+                  inputRef={textareaRef}
+                  data={
+                  memberData?.filter(
+                    (v) => !inviteMembers.map((m) => m.id).includes(v.userId),
+                  )
+                }
+                />
+              </div>
+              {inviteNumError && (
+              <div className="absolute items-center text-red-500 text-xs italic">
+                최대멤버수를 초과합니다.
+              </div>
+              )}
+            </div>
+            <div className="text-gray-700">{`${inviteMembers.length}명`}</div>
+          </form>
+          <div className="w-80 bg-sky-100 border-2 border-sky-700 rounded-lg p-2">
+            <div className="flex flex-row flex-wrap gap-2">
+              {inviteMembers.length ? inviteMembers.map((v) => (
+                <div key={v.id} className="flex flex-row">
+                  <div className="bg-amber-500 px-1">{v.nickname}</div>
+                  <button type="button" onClick={() => onClickRemoveInvite(v.id)}>&times;</button>
+                </div>
+              )) : <div className="text-gray-400 px-2">초대할 멤버 리스트</div>}
+            </div>
+          </div>
+        </div>
       </div>
-      <MentionMember
-        trigger=""
-        placeholder="초대할 멤버 닉네임"
-        value={inviteMemberNickname}
-        onChangeValue={onChangeInviteMemberNickname}
-        inputRef={textareaRef}
-      />
       <div className="space-x-4">
         <button
           className="bg-gray-400 text-white py-3 px-8 rounded-full focus:outline-none focus:shadow-outline"
