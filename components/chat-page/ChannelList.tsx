@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useCallback, useState, VFC } from 'react';
+import {
+  useCallback, useState, VFC,
+} from 'react';
 import useSWR from 'swr';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IUser } from '@/typings/db';
@@ -16,10 +18,7 @@ const ChannelList: VFC = () => {
   );
 
   const [channelCollapse, setChannelCollapse] = useState(false);
-  const { name } = router.query;
-  // const [clickedChannel] = useState<string | string[] | undefined>(router.query.name);
-
-  // console.log(`name${name}`);
+  const channelName = router.query.name;
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
@@ -85,11 +84,11 @@ const ChannelList: VFC = () => {
       <div className="flex flex-col space-y-1">
         {!channelCollapse
           && channelData?.map((channel) => (
-            <Link href={`/chat/channel/${channel.name}`} key={channel.name}>
+            <Link key={channel.channelId} href={`/chat/channel/${channel.name}`}>
               <a>
                 <span
                   className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
-                    name && typeof name === 'string' && name === channel.name
+                    channelName && typeof channelName === 'string' && channelName === channel.name
                       ? 'bg-sky-200'
                       : ''
                   }`}

@@ -14,16 +14,16 @@ import useSocket from '@/hooks/useSocket';
 
 const Channel = () => {
   const router = useRouter();
-  const { name } = router.query;
+  const channelName = router.query.name;
   const [chat, onChangeChat, setChat] = useInput('');
   const [showEmoji, setShowEmoji] = useState(false);
   const { socket } = useSocket('chat');
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
   const { data: channelData } = useSWR<IChannel>(
-    `/api/channel/${name}`, fetcher,
+    `/api/channel/${channelName}`, fetcher,
   );
   const { data: chatDatas, mutate: mutateChat } = useSWR<IChat[]>(
-    `/api/channel/${name}/chat`, fetcher,
+    `/api/channel/${channelName}/chat`, fetcher,
   );
 
   const onCloseEmoji = useCallback(() => {
@@ -36,8 +36,8 @@ const Channel = () => {
       if (chat?.trim() && chatDatas && channelData && userData) {
         const savedChat = chat;
         mutateChat((prevChatData) => {
-          prevChatData?.unshift({
-            channelChatId: (chatDatas[0]?.channelChatId || 0) + 1,
+          prevChatData?.push({
+            channelChatId: (chatDatas[chatDatas.length - 1]?.channelChatId || 0) + 1,
             userId: userData.userId,
             channelId: channelData.channelId,
             content: savedChat,
@@ -61,17 +61,14 @@ const Channel = () => {
 
   const onMessage = useCallback(
     (data: IChat) => {
-      if (
-        data.channelId === channelData?.channelId
-        && (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.userId !== userData?.userId)
-      ) {
+      if (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.userId !== userData?.userId) {
         mutateChat((chatData) => {
-          chatData?.unshift(data);
+          chatData?.push(data);
           return chatData;
         }, false);
       }
     },
-    [channelData?.channelId, userData?.userId, mutateChat],
+    [userData?.userId, mutateChat],
   );
 
   useEffect(() => {
@@ -80,11 +77,6 @@ const Channel = () => {
       socket?.off('message', onMessage);
     };
   }, [socket, onMessage]);
-
-  useEffect(() => {
-    console.log(`name change ${name}`);
-    socket?.emit('', '');
-  }, [name, socket]);
 
   return (
     <div className="h-full flex flex-col" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
