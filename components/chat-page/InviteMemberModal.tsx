@@ -4,7 +4,7 @@ import React, {
 import regexifyString from 'regexify-string';
 import useInput from '@/hooks/useInput';
 import MentionMember from './MentionMember';
-import { IChannel, IUser } from '@/typings/db';
+import { IChannel, IChannelMember, IUser } from '@/typings/db';
 
 interface IInviteMember {
   id: number;
@@ -14,7 +14,7 @@ interface IInviteMember {
 interface IProps {
   memberData: IUser[];
   channelData: IChannel;
-  channelMemberData: IUser[]
+  channelMemberData: IChannelMember[]
 }
 
 const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMemberData }) => {
@@ -59,7 +59,7 @@ const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMember
 
   return (
     <div className="absolute bg-sky-700 top-7 right-0 w-auto h-auto flex flex-col items-center p-6 space-y-4">
-      <div className="text-2xl font-bold text-gray-200 pb-1">멤버 초대하기</div>
+      <div className="text-2xl font-bold text-amber-50 pb-1">멤버 초대하기</div>
       <div className="w-36 bg-gray-100 rounded-full">
         <div className="flex flex-row pl-4">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mt-2.5 text-sky-700" viewBox="0 0 20 20" fill="currentColor">

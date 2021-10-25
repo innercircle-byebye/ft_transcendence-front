@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import { useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import fetcher from '@/utils/fetcher';
-import { IChannel, IUser } from '@/typings/db';
+import { IChannel, IChannelMember, IUser } from '@/typings/db';
 import InviteMemberModal from './InviteMemberModal';
 import MembersModal from './MembersModal';
 import SettingModal from './SettingModal';
@@ -21,7 +21,7 @@ const ChannelButtons = () => {
   const { data: channelData } = useSWR<IChannel>(
     userData ? `/api/channel/${channelName}` : null, fetcher,
   );
-  const { data: channelMemberData } = useSWR<IUser[]>(
+  const { data: channelMemberData } = useSWR<IChannelMember[]>(
     userData ? `/api/channel/${channelName}/member` : null, fetcher,
   );
 
