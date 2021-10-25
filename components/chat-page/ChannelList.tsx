@@ -81,13 +81,13 @@ const ChannelList: VFC = () => {
         </button>
         Channels
       </div>
-      <div className="flex flex-col space-y-1">
+      <div className="flex flex-col max-h-72 overflow-y-auto">
         {!channelCollapse
           && channelData?.map((channel) => (
             <Link key={channel.channelId} href={`/chat/channel/${channel.name}`}>
               <a>
                 <span
-                  className={`w-full px-2 py-1 border-b-2 flex justify-between hover:bg-gray-300 ${
+                  className={`w-full px-2 py-1.5 border-b-2 flex justify-between hover:bg-gray-300 ${
                     channelName && typeof channelName === 'string' && channelName === channel.name
                       ? 'bg-sky-200'
                       : ''
