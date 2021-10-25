@@ -57,3 +57,20 @@ export interface IChannelChat {
   lastModifiedAt: Date;
   deletedAt: Date | null;
 }
+
+export interface IChannelUser {
+  nickname: string;
+  imagePath: string;
+}
+
+export interface IChannelMember {
+  userId: number;
+  channelId: number;
+  mutedDate: Date;
+  banDate: Date;
+  isAdmin: boolean;
+  createdAt: Date;
+  lastModifiedAt: Date;
+  deletedAt: Date;
+  user: IChannelUser;
+}
