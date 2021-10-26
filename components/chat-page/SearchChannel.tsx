@@ -37,10 +37,10 @@ const SearchChannel: VFC<IProps> = ({ channelData }) => {
 
   return (
     <>
-      <div className="w-full bg-sky-50 border-2 border-sky-700 flex flex-row items-center rounded-full px-3 py-1 space-x-3">
+      <div className="w-full bg-sky-700 border-2 border-sky-700 flex flex-row items-center rounded-full px-3 py-1 space-x-3">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6 text-sky-700"
+          className="h-6 w-6 text-white"
           viewBox="0 0 20 20"
           fill="currentColor"
         >
@@ -50,7 +50,7 @@ const SearchChannel: VFC<IProps> = ({ channelData }) => {
             clipRule="evenodd"
           />
         </svg>
-        <input type="text" value={searchChannelName} onChange={onChangeSearchChannelName} placeholder="Search Channel" className="bg-sky-50 w-full outline-none" />
+        <input type="text" value={searchChannelName} onChange={onChangeSearchChannelName} placeholder="Search Channel" className="bg-sky-700 text-white w-full outline-none" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 max-h-96 overflow-y-auto p-3">
         {channelData.map((data) => {
