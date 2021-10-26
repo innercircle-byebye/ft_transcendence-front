@@ -65,7 +65,8 @@ const DMList: VFC = () => {
         {!channelCollapse
           && memberData?.map((member) => (
             <Link
-              href={`/chat/dm/${member.nickname}`}
+              // href={`/chat/dm/${member.nickname}`}
+              href={`/chat/dm/${member.userId}`}
               key={member.intraUsername}
             >
               <a>
