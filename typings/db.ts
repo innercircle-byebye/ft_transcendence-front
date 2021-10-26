@@ -56,3 +56,13 @@ export interface IChat {
   lastModifiedAt: Date;
   deletedAt: Date | null;
 }
+
+export interface IDMChat {
+  // DM 의 채팅
+  dmId: number;
+  sender: string;
+  receiver: string;
+  content: string;
+  createAt: Date;
+  lastModifiedAt: Date;
+}
