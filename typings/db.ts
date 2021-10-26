@@ -60,8 +60,8 @@ export interface IChat {
 export interface IDMChat {
   // DM 의 채팅
   dmId: number;
-  sender: string;
-  receiver: string;
+  sender: IUser;
+  receiver: IUser;
   content: string;
   createAt: Date;
   lastModifiedAt: Date;
