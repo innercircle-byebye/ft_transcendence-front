@@ -1,9 +1,11 @@
 import React, {
   useCallback, useEffect, useState, VFC,
 } from 'react';
+import useSWR from 'swr';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
 import SwitchPublicPrivate from './SwitchPublicPrivate';
 import useInput from '@/hooks/useInput';
+import fetcher from '@/utils/fetcher';
 
 interface IProps {
   userData: IUser;
@@ -15,16 +17,19 @@ const SettingModal: VFC<IProps> = ({
   userData, channelData, channelMemberData,
 }) => {
   const [channelName, onChangeChannelName, setChannelName] = useInput(channelData.name);
+  const [channelNameError, setChannelNameError] = useState(false);
   const [
     maxMemberNum, onChangeMaxMemberNum, setMaxMemberNum,
   ] = useInput(channelData.maxParticipantNum);
   const [isPrivate, setIsPrivate] = useState(channelData.isPrivate);
   const [password, onChangePassword, setPassword] = useInput('');
+  const [passwordError, setPasswordError] = useState(false);
   const [changePassword, setChangePassword] = useState(!channelData.isPrivate);
   const [ownerNickname] = useState(channelMemberData?.find((data) => (
     data.userId === channelData?.ownerId
   ))?.user.nickname);
   const [isChannelOwner] = useState(userData.userId === channelData?.ownerId);
+  const { data: channelListData } = useSWR<IChannel[]>('/api/channel', fetcher);
 
   const onClickReset = useCallback(() => {
     setChannelName(channelData.name);
@@ -35,6 +40,15 @@ const SettingModal: VFC<IProps> = ({
     channelData.isPrivate, channelData.maxParticipantNum, channelData.name,
     setChannelName, setMaxMemberNum,
   ]);
+
+  useEffect(() => {
+    const equalChannel = channelListData?.find((data) => data.name === channelName);
+    if (equalChannel && equalChannel.channelId !== channelData.channelId) {
+      setChannelNameError(true);
+    } else {
+      setChannelNameError(false);
+    }
+  }, [channelData.channelId, channelListData, channelName]);
 
   useEffect(() => {
     if (channelData.isPrivate && !isPrivate) {
@@ -51,13 +65,25 @@ const SettingModal: VFC<IProps> = ({
       <div className="bg-amber-50 rounded-xl flex flex-col space-y-1 px-3 py-2 w-96 h-auto">
         <div className="grid grid-cols-2 gap-1 items-center">
           <div className="ml-3 text-gray-700 font-medium">채널명</div>
-          <input
-            className="w-44 px-6 py-2 rounded-full bg-gray-700 text-white font-medium"
-            type="text"
-            value={channelName}
-            onChange={onChangeChannelName}
-            disabled={!isChannelOwner}
-          />
+          <div className={`relative ${!channelName.length || channelNameError ? 'pb-3' : ''}`}>
+            <input
+              className="w-44 px-6 py-2 rounded-full bg-gray-700 text-white font-medium"
+              type="text"
+              value={channelName}
+              onChange={onChangeChannelName}
+              disabled={!isChannelOwner}
+            />
+            {!channelName.length && (
+            <div className="absolute text-red-500 text-xs italic">
+              채널명을 입력해주세요
+            </div>
+            )}
+            {channelNameError && (
+            <div className="absolute text-red-500 text-xs italic">
+              이미 존재하는 채널명입니다.
+            </div>
+            )}
+          </div>
           <div className="ml-3 text-gray-700 font-medium">최대멤버수</div>
           <input
             className="px-6 py-2 w-24 rounded-full bg-gray-700 text-white font-medium"
@@ -75,6 +101,8 @@ const SettingModal: VFC<IProps> = ({
             password={password}
             onChangePassword={onChangePassword}
             setPassword={setPassword}
+            passwordError={passwordError}
+            setPasswordError={setPasswordError}
             isPrivateChannel={channelData.isPrivate}
             changePassword={changePassword}
             setChangePassword={setChangePassword}
@@ -91,6 +119,7 @@ const SettingModal: VFC<IProps> = ({
               <button
                 className="bg-amber-600 text-white py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
                 type="button"
+                disabled={channelNameError || passwordError}
               >
                 SAVE
               </button>
