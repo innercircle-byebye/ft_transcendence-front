@@ -215,7 +215,7 @@ const CreateChannel = () => {
           className="bg-amber-600 text-white py-3 px-10 rounded-full focus:outline-none focus:shadow-outline"
           type="button"
           onClick={onClickSave}
-          disabled={channelNameError || passwordError}
+          disabled={channelNameError || (isPrivate && passwordError)}
         >
           SAVE
         </button>
