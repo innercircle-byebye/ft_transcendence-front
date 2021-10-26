@@ -12,7 +12,7 @@ const Chat = () => {
   const { data: myChannelData, mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
   const onClickJoin = useCallback((data: IChannel) => {
-    axios.post(`/api/channel/${data.name}/join`, {}, {
+    axios.post(`/api/channel/${data.name}/member`, {}, {
       headers: {
         withCredentials: 'true',
       },
