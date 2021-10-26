@@ -45,7 +45,7 @@ const CreateChannel = () => {
     axios.post(`/api/channel/${channelName}`, {
       password: password === '' ? null : password,
       maxParticipantNum: maxMemberNum,
-      inviteMemberIDs: inviteMembers.map((v) => v.id),
+      invitedUsers: inviteMembers.map((v) => v.id),
     }, {
       headers: {
         withCredentials: 'true',
