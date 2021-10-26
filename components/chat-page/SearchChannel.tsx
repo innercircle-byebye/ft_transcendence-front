@@ -86,8 +86,13 @@ const SearchChannel: VFC<IProps> = ({ channelData }) => {
                     </Link>
                   )
                     : (
-                      <button type="button" onClick={() => onClickJoin(data)} className="flex items-center bg-amber-500 text-gray-900 px-3 py-2 rounded-xl text-xs sm:text-sm md:text-base">
-                        입장하기
+                      <button
+                        type="button"
+                        onClick={() => onClickJoin(data)}
+                        className={`${data.currentChatMemberCount === data.maxParticipantNum ? 'bg-red-500' : 'bg-amber-500'} flex items-center  text-gray-900 px-3 py-2 rounded-xl text-xs sm:text-sm md:text-base`}
+                        disabled={data.currentChatMemberCount === data.maxParticipantNum}
+                      >
+                        {data.currentChatMemberCount === data.maxParticipantNum ? '정원초과' : '입장하기'}
                       </button>
                     )}
                 </div>
