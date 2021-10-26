@@ -7,13 +7,12 @@ import useInput from '@/hooks/useInput';
 
 interface IProps {
   userData: IUser;
-  ownerNickname: string;
   channelData: IChannel;
   channelMemberData: IChannelMember[];
 }
 
 const SettingModal: VFC<IProps> = ({
-  userData, ownerNickname, channelData, channelMemberData,
+  userData, channelData, channelMemberData,
 }) => {
   const [channelName, onChangeChannelName, setChannelName] = useInput(channelData.name);
   const [
@@ -22,6 +21,10 @@ const SettingModal: VFC<IProps> = ({
   const [isPrivate, setIsPrivate] = useState(channelData.isPrivate);
   const [password, onChangePassword, setPassword] = useInput('');
   const [changePassword, setChangePassword] = useState(!channelData.isPrivate);
+  const [ownerNickname] = useState(channelMemberData?.find((data) => (
+    data.userId === channelData?.ownerId
+  ))?.user.nickname);
+  const [isChannelOwner] = useState(userData.userId === channelData?.ownerId);
 
   const onClickReset = useCallback(() => {
     setChannelName(channelData.name);
@@ -53,6 +56,7 @@ const SettingModal: VFC<IProps> = ({
             type="text"
             value={channelName}
             onChange={onChangeChannelName}
+            disabled={!isChannelOwner}
           />
           <div className="ml-3 text-gray-700 font-medium">최대멤버수</div>
           <input
@@ -62,8 +66,10 @@ const SettingModal: VFC<IProps> = ({
             max={100}
             value={maxMemberNum}
             onChange={onChangeMaxMemberNum}
+            disabled={!isChannelOwner}
           />
           <SwitchPublicPrivate
+            isChannelOwner={isChannelOwner}
             isPrivate={isPrivate}
             setIsPrivate={setIsPrivate}
             password={password}
@@ -73,21 +79,23 @@ const SettingModal: VFC<IProps> = ({
             changePassword={changePassword}
             setChangePassword={setChangePassword}
           />
-          <div className="col-span-2 flex justify-evenly pt-4">
-            <button
-              className="bg-gray-400 text-white py-2 px-3 rounded-full focus:outline-none focus:shadow-outline"
-              type="button"
-              onClick={onClickReset}
-            >
-              RESET
-            </button>
-            <button
-              className="bg-amber-600 text-white py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
-              type="button"
-            >
-              SAVE
-            </button>
-          </div>
+          {userData.userId === channelData.ownerId ? (
+            <div className="col-span-2 flex justify-evenly pt-4">
+              <button
+                className="bg-gray-400 text-white py-2 px-3 rounded-full focus:outline-none focus:shadow-outline"
+                type="button"
+                onClick={onClickReset}
+              >
+                RESET
+              </button>
+              <button
+                className="bg-amber-600 text-white py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
+                type="button"
+              >
+                SAVE
+              </button>
+            </div>
+          ) : <></>}
         </div>
       </div>
     </div>

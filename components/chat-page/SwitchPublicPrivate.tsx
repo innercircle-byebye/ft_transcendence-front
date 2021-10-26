@@ -3,6 +3,7 @@ import {
 } from 'react';
 
 interface IProps {
+  isChannelOwner?: boolean;
   isPrivate: boolean;
   setIsPrivate: Dispatch<SetStateAction<boolean>>;
   password: string;
@@ -14,7 +15,7 @@ interface IProps {
 }
 
 const CheckPublicPrivate: VFC<IProps> = ({
-  isPrivate, setIsPrivate, password, onChangePassword, setPassword,
+  isChannelOwner = true, isPrivate, setIsPrivate, password, onChangePassword, setPassword,
   isPrivateChannel, changePassword = true, setChangePassword,
 }) => {
   const [passwordError, setPasswordError] = useState(false);
@@ -25,12 +26,15 @@ const CheckPublicPrivate: VFC<IProps> = ({
 
   const onClickSwitch = useCallback(
     (e) => {
+      if (!isChannelOwner) {
+        return;
+      }
       e.preventDefault();
       setIsPrivate((prev) => !prev);
       setPassword('');
       setInputPasswordType({ type: 'password', visible: false });
     },
-    [setIsPrivate, setPassword],
+    [isChannelOwner, setIsPrivate, setPassword],
   );
 
   const onClickPasswordEye = useCallback(() => {
@@ -69,12 +73,12 @@ const CheckPublicPrivate: VFC<IProps> = ({
             <div className="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition" />
           )}
         </button>
-        {isPrivate && !changePassword
+        {isChannelOwner && isPrivate && !changePassword
         && <button type="button" onClick={onClickChangePassword} className="bg-gray-400 rounded-full px-1 text-sm">비밀번호변경</button>}
-        {isPrivate && isPrivateChannel && changePassword
+        {isChannelOwner && isPrivate && isPrivateChannel && changePassword
         && <button type="button" onClick={onClickCancelChangePassword} className="bg-gray-400 rounded-full px-1 text-sm">변경취소</button>}
       </div>
-      {isPrivate && changePassword && (
+      {isChannelOwner && isPrivate && changePassword && (
       <>
         <div className="ml-3 text-gray-700 font-medium">비밀번호</div>
         <div>

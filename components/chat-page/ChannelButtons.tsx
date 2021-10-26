@@ -1,11 +1,11 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
 import InviteMemberModal from './InviteMemberModal';
 import MembersModal from './MembersModal';
-import SettingModal from './ChatInfoModal';
+import ChatInfoModal from './ChatInfoModal';
 
 const ChannelButtons = () => {
   const router = useRouter();
@@ -24,9 +24,6 @@ const ChannelButtons = () => {
   const { data: channelMemberData } = useSWR<IChannelMember[]>(
     userData ? `/api/channel/${channelName}/member` : null, fetcher,
   );
-  const [ownerNickname] = useState(channelMemberData?.find((data) => (
-    data.userId === channelData?.ownerId
-  ))?.user.nickname);
 
   const onClickInviteMemberIcon = useCallback(() => {
     setShowInviteMemberModal((prev) => !prev);
@@ -56,7 +53,7 @@ const ChannelButtons = () => {
     setShowSettingModal(false);
   }, [channelName]);
 
-  if (!userData || !memberData || !channelData || !channelMemberData || !ownerNickname) {
+  if (!userData || !memberData || !channelData || !channelMemberData) {
     return <div>로딩중...</div>;
   }
 
@@ -92,15 +89,13 @@ const ChannelButtons = () => {
       {showMembersModal && (
       <MembersModal
         userData={userData}
-        ownerNickname={ownerNickname}
         channelData={channelData}
         channelMemberData={channelMemberData}
       />
       )}
       {showSettingModal && (
-      <SettingModal
+      <ChatInfoModal
         userData={userData}
-        ownerNickname={ownerNickname}
         channelData={channelData}
         channelMemberData={channelMemberData}
       />

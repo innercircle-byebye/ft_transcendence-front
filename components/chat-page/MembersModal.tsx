@@ -1,16 +1,19 @@
-import { VFC } from 'react';
+import { useState, VFC } from 'react';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
 
 interface IProps {
   userData: IUser;
-  ownerNickname: string;
   channelData: IChannel;
   channelMemberData: IChannelMember[];
 }
 
 const MembersModal: VFC<IProps> = ({
-  userData, ownerNickname, channelData, channelMemberData,
+  userData, channelData, channelMemberData,
 }) => {
+  const [ownerNickname] = useState(channelMemberData?.find((data) => (
+    data.userId === channelData?.ownerId
+  ))?.user.nickname);
+
   if (channelMemberData.length === 1) {
     return (
       <div className="absolute bg-sky-700 top-7 right-0 w-60 h-auto p-6 flex flex-col items-center">
