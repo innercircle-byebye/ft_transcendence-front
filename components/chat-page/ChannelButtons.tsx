@@ -24,6 +24,9 @@ const ChannelButtons = () => {
   const { data: channelMemberData } = useSWR<IChannelMember[]>(
     userData ? `/api/channel/${channelName}/member` : null, fetcher,
   );
+  const [ownerNickname] = useState(channelMemberData?.find((data) => (
+    data.userId === channelData?.ownerId
+  ))?.user.nickname);
 
   const onClickInviteMemberIcon = useCallback(() => {
     setShowInviteMemberModal((prev) => !prev);
@@ -53,7 +56,7 @@ const ChannelButtons = () => {
     setShowSettingModal(false);
   }, [channelName]);
 
-  if (!userData || !memberData || !channelData || !channelMemberData) {
+  if (!userData || !memberData || !channelData || !channelMemberData || !ownerNickname) {
     return <div>로딩중...</div>;
   }
 
@@ -89,6 +92,7 @@ const ChannelButtons = () => {
       {showMembersModal && (
       <MembersModal
         userData={userData}
+        ownerNickname={ownerNickname}
         channelData={channelData}
         channelMemberData={channelMemberData}
       />
@@ -96,6 +100,7 @@ const ChannelButtons = () => {
       {showSettingModal && (
       <SettingModal
         userData={userData}
+        ownerNickname={ownerNickname}
         channelData={channelData}
         channelMemberData={channelMemberData}
       />

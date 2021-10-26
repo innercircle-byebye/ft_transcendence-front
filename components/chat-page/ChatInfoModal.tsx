@@ -7,14 +7,14 @@ import useInput from '@/hooks/useInput';
 
 interface IProps {
   userData: IUser;
+  ownerNickname: string;
   channelData: IChannel;
   channelMemberData: IChannelMember[];
 }
 
-const SettingModal: VFC<IProps> = ({ channelData, channelMemberData }) => {
-  const ownerNickname = channelMemberData.find((data) => (
-    data.userId === channelData.ownerID
-  ))?.user.nickname;
+const SettingModal: VFC<IProps> = ({
+  userData, ownerNickname, channelData, channelMemberData,
+}) => {
   const [channelName, onChangeChannelName, setChannelName] = useInput(channelData.name);
   const [
     maxMemberNum, onChangeMaxMemberNum, setMaxMemberNum,
@@ -42,8 +42,8 @@ const SettingModal: VFC<IProps> = ({ channelData, channelMemberData }) => {
   return (
     <div className="absolute bg-sky-700 top-7 right-0 w-auto h-auto flex flex-col items-center px-6 py-3">
       <div className="text-2xl font-semibold text-amber-50">채널 옵션</div>
-      <div>
-        {`방장: ${ownerNickname}`}
+      <div className="text-amber-50">
+        {`방장: ${ownerNickname} ${userData.userId === channelData.ownerId ? '(나)' : ''}`}
       </div>
       <div className="bg-amber-50 rounded-xl flex flex-col space-y-1 px-3 py-2 w-96 h-auto">
         <div className="grid grid-cols-2 gap-1 items-center">
