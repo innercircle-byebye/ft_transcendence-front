@@ -58,7 +58,7 @@ const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMember
   }, [inviteMember, inviteMembers, setInviteMember]);
 
   return (
-    <div className="absolute bg-sky-700 top-7 right-0 w-auto h-auto flex flex-col items-center p-6 space-y-4">
+    <div className="absolute bg-sky-700 top-7 right-0 w-auto h-auto flex flex-col items-center p-6 space-y-3">
       <div className="text-2xl font-bold text-amber-50 pb-1">멤버 초대하기</div>
       <div className="w-36 bg-gray-100 rounded-full">
         <div className="flex flex-row pl-4">
