@@ -61,7 +61,7 @@ const SearchChannel: VFC<IProps> = ({ channelData }) => {
           }
           return (
             <div key={data.channelId}>
-              <div className="grid grid-cols-3 justify-items-center py-1 w-full h-auto border-2 border-sky-700 bg-sky-200 rounded-xl px-5 text-lg">
+              <div className="grid grid-cols-3 justify-items-center items-center w-full h-auto border-2 border-sky-700 bg-sky-200 rounded-xl px-5 py-2 text-lg">
                 <div className="w-full flex justify-start">{`# ${data.name}`}</div>
                 {!data.isPrivate ? <div>{`1 / ${data.maxParticipantNum}`}</div> : (
                   <svg
@@ -80,13 +80,13 @@ const SearchChannel: VFC<IProps> = ({ channelData }) => {
                 <div className="w-full flex justify-end">
                   {myChannelData.map((v) => v.channelId).includes(data.channelId) ? (
                     <Link href={`/chat/channel/${data.name}`}>
-                      <a className="flex items-center bg-green-500 text-gray-900 px-3 rounded-xl text-xs sm:text-sm md:text-base">
+                      <a className="flex items-center bg-green-500 text-gray-900 px-3 py-2 rounded-xl text-xs sm:text-sm md:text-base">
                         채팅하러가기
                       </a>
                     </Link>
                   )
                     : (
-                      <button type="button" onClick={() => onClickJoin(data)} className="flex items-center bg-amber-500 text-gray-900 px-3 rounded-xl text-xs sm:text-sm md:text-base">
+                      <button type="button" onClick={() => onClickJoin(data)} className="flex items-center bg-amber-500 text-gray-900 px-3 py-2 rounded-xl text-xs sm:text-sm md:text-base">
                         입장하기
                       </button>
                     )}
