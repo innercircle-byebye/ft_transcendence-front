@@ -38,7 +38,9 @@ export interface IMessage {
 
 export interface IChannel {
   channelId: number;
+  ownerID: number;
   name: string;
+  isPrivate: boolean;
   password: string;
   maxParticipantNum: number;
   readonly createdAt: Date;
@@ -46,8 +48,7 @@ export interface IChannel {
   deletedAt: Date;
 }
 
-export interface IChat {
-  // 채널의 채팅
+export interface IChannelChat {
   channelChatId: number;
   userId: number;
   channelId: number;

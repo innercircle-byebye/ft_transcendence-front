@@ -1,9 +1,9 @@
 import { FC } from 'react';
 // import Image from 'next/image';
-import { IChat } from '@/typings/db';
+import { IChannelChat } from '@/typings/db';
 
 interface Props {
-  chatData: IChat;
+  chatData: IChannelChat;
 }
 
 const ChatItem: FC<Props> = ({ chatData }) => (
