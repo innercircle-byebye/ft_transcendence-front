@@ -61,7 +61,7 @@ const SearchChannel: VFC<IProps> = ({ channelData }) => {
           }
           return (
             <div key={data.channelId}>
-              <div className="grid grid-cols-3 justify-items-center items-center w-full h-auto border-2 border-sky-700 bg-sky-200 rounded-xl px-5 py-2 text-lg">
+              <div className="grid grid-cols-3 justify-items-center items-center w-full h-auto border-2 border-coolGray-500 bg-coolGray-200 rounded-xl px-5 py-2 text-lg">
                 <div className="w-full flex justify-start">{`# ${data.name}`}</div>
                 {!data.isPrivate ? <div>{`1 / ${data.maxParticipantNum}`}</div> : (
                   <svg
