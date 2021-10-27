@@ -31,7 +31,7 @@ const SearchDM: VFC = () => {
             clipRule="evenodd"
           />
         </svg>
-        <input type="text" value={searchNickname} onChange={onChangeSearchNickname} placeholder="Search Channel" className="text-lg font-semibold text-sky-700 w-full outline-none" />
+        <input type="text" value={searchNickname} onChange={onChangeSearchNickname} placeholder="Search Nickname" className="text-lg font-semibold text-sky-700 w-full outline-none" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 max-h-96 overflow-y-auto p-3">
         {allUserData?.map((data) => {
