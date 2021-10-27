@@ -1,5 +1,7 @@
 import React, {
-  useCallback, useEffect, useState, VFC,
+  Dispatch,
+  SetStateAction,
+  useCallback, useEffect, VFC,
 } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
@@ -9,19 +11,19 @@ import useInput from '@/hooks/useInput';
 import { IChannel } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 import useSocket from '@/hooks/useSocket';
-import PasswordModal from '@/components/chat-page/PasswordModal';
 
 interface IProps {
   allChannelInitialData: IChannel[];
   myChannelInitialData: IChannel[];
+  setPrivateChannelToJoin: Dispatch<SetStateAction<IChannel | null>>;
 }
 
-const SearchChannel: VFC<IProps> = ({ allChannelInitialData, myChannelInitialData }) => {
+const SearchChannel: VFC<IProps> = ({
+  allChannelInitialData, myChannelInitialData, setPrivateChannelToJoin,
+}) => {
   const router = useRouter();
   const { socket } = useSocket('chat');
   const [searchChannelName, onChangeSearchChannelName] = useInput('');
-  const [password, onChangePassword] = useInput('');
-  const [privateChannelToJoin, setPrivateChannelToJoin] = useState<IChannel | null>(null);
   const { data: allChannelData, mutate: mutateAllChannelData } = useSWR<IChannel[]>('/api/channel', fetcher, {
     initialData: allChannelInitialData,
   });
@@ -46,7 +48,7 @@ const SearchChannel: VFC<IProps> = ({ allChannelInitialData, myChannelInitialDat
         });
       });
     }
-  }, [mutateMyChannelData, router]);
+  }, [mutateMyChannelData, router, setPrivateChannelToJoin]);
 
   const onChannelCreate = useCallback(
     (data: IChannel) => {
@@ -57,30 +59,6 @@ const SearchChannel: VFC<IProps> = ({ allChannelInitialData, myChannelInitialDat
     },
     [mutateAllChannelData],
   );
-
-  const onSubmitPassword = useCallback(() => {
-    if (privateChannelToJoin) {
-      axios.post(`/api/channel/${privateChannelToJoin.name}/member`, {
-        password,
-      }, {
-        headers: {
-          withCredentials: 'true',
-        },
-      }).then(() => {
-        mutateMyChannelData((prevMyChannelData) => {
-          prevMyChannelData?.push(privateChannelToJoin);
-          return prevMyChannelData;
-        }, false).then(() => {
-          router.push(`/chat/channel/${privateChannelToJoin.name}`);
-        });
-      });
-    }
-  }, [mutateMyChannelData, password, privateChannelToJoin, router]);
-
-  const onClosePasswordModal = useCallback((e) => {
-    e.preventDefault();
-    setPrivateChannelToJoin(null);
-  }, []);
 
   useEffect(() => {
     socket?.on('channelList', onChannelCreate);
@@ -161,16 +139,6 @@ const SearchChannel: VFC<IProps> = ({ allChannelInitialData, myChannelInitialDat
           })}
         </div>
       </div>
-      {privateChannelToJoin
-      && (
-      <PasswordModal
-        onSubmitPassword={onSubmitPassword}
-        channelName={privateChannelToJoin.name}
-        password={password}
-        onChangePassword={onChangePassword}
-        onCloseModal={onClosePasswordModal}
-      />
-      )}
     </>
   );
 };
