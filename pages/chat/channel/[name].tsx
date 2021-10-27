@@ -70,7 +70,7 @@ const Channel = () => {
 
   const onMessage = useCallback(
     (data: IChannelChat) => {
-      if (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.userId !== userData?.userId) {
+      if (data.userId !== userData?.userId) {
         mutateChat((chatData) => {
           chatData?.push(data);
           return chatData;
