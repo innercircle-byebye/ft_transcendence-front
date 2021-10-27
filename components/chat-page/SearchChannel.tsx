@@ -8,10 +8,10 @@ import { IChannel } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 
 interface IProps {
-  channelData: IChannel[];
+  allChannelData: IChannel[];
 }
 
-const SearchChannel: VFC<IProps> = ({ channelData }) => {
+const SearchChannel: VFC<IProps> = ({ allChannelData }) => {
   const router = useRouter();
   const [searchChannelName, onChangeSearchChannelName] = useInput('');
   const { data: myChannelData, mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
@@ -53,7 +53,7 @@ const SearchChannel: VFC<IProps> = ({ channelData }) => {
         <input type="text" value={searchChannelName} onChange={onChangeSearchChannelName} placeholder="Search Channel" className="text-lg font-semibold text-sky-700 w-full outline-none" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 max-h-96 overflow-y-auto p-3">
-        {channelData.map((data) => {
+        {allChannelData.map((data) => {
           if (searchChannelName) {
             if (!data.name.includes(searchChannelName)) {
               return null;

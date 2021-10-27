@@ -29,7 +29,7 @@ const SettingModal: VFC<IProps> = ({
     data.userId === channelData?.ownerId
   ))?.user.nickname);
   const [isChannelOwner] = useState(userData.userId === channelData?.ownerId);
-  const { data: channelListData } = useSWR<IChannel[]>('/api/channel', fetcher);
+  const { data: allChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
 
   const onClickReset = useCallback(() => {
     setChannelName(channelData.name);
@@ -42,13 +42,13 @@ const SettingModal: VFC<IProps> = ({
   ]);
 
   useEffect(() => {
-    const equalChannel = channelListData?.find((data) => data.name === channelName);
+    const equalChannel = allChannelData?.find((data) => data.name === channelName);
     if (equalChannel && equalChannel.channelId !== channelData.channelId) {
       setChannelNameError(true);
     } else {
       setChannelNameError(false);
     }
-  }, [channelData.channelId, channelListData, channelName]);
+  }, [allChannelData, channelData.channelId, channelName]);
 
   useEffect(() => {
     if (channelData.isPrivate && !isPrivate) {

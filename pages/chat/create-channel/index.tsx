@@ -34,7 +34,7 @@ const CreateChannel = () => {
   const [inviteMembers, setInviteMembers] = useState<IInviteMember[]>([]);
   const [inviteNumError, setInviteNumError] = useState(false);
   const { data: userData } = useSWR('/api/user/me', fetcher);
-  const { data: memberData } = useSWR<IUser[]>(
+  const { data: allUserData } = useSWR<IUser[]>(
     userData ? '/api/user/all' : null,
     fetcher,
   );
@@ -177,9 +177,9 @@ const CreateChannel = () => {
                   onChangeValue={onChangeInviteMember}
                   inputRef={textareaRef}
                   data={
-                  memberData?.filter(
-                    (v) => !inviteMembers.map((m) => m.id).includes(v.userId),
-                  )
+                    allUserData?.filter(
+                      (v) => !inviteMembers.map((m) => m.id).includes(v.userId),
+                    )
                 }
                 />
               </div>
