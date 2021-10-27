@@ -21,8 +21,8 @@ const ChannelList: VFC = () => {
     setChannelCollapse((prev) => !prev);
   }, []);
 
-  const onClickExitChannel = useCallback((name: string) => {
-    router.push(`/chat/channel/${name}`);
+  const onClickExitChannel = useCallback(async (name: string) => {
+    await router.push(`/chat/channel/${name}`);
     setShowExitModal(true);
   }, [router]);
 
