@@ -85,7 +85,7 @@ const Channel = ({
 
   const onMessage = useCallback(
     (data: IChannelChat) => {
-      if (data.userId !== userData?.userId) {
+      if (data.content && data.userId !== userData?.userId) {
         mutateChat((chatData) => {
           chatData?.push(data);
           return chatData;
@@ -96,6 +96,7 @@ const Channel = ({
   );
 
   useEffect(() => {
+    console.log('message');
     socket?.on('message', onMessage);
     return () => {
       socket?.off('message', onMessage);
