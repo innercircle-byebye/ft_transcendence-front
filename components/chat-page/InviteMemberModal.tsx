@@ -75,7 +75,7 @@ const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMember
                   memberData?.filter(
                     (v) => !inviteMembers.map((m) => m.id).includes(v.userId)
                     && !channelMemberData?.map((m) => m.userId).includes(v.userId),
-                  )
+                  ).map((v) => ({ userId: v.userId, nickname: v.nickname, imagePath: v.imagePath }))
                 }
           />
         </div>
