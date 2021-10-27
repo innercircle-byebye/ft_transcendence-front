@@ -41,7 +41,7 @@ const CreateChannel = ({
   const { data: allUserData } = useSWR<IUser[]>('/api/user/all', fetcher, {
     initialData: allUserInitialData,
   });
-  const { data: channelListData } = useSWR<IChannel[]>('/api/channel', fetcher, {
+  const { data: allChannelData } = useSWR<IChannel[]>('/api/channel', fetcher, {
     initialData: allChannelInitialData,
   });
 
@@ -68,13 +68,13 @@ const CreateChannel = ({
   }, []);
 
   useEffect(() => {
-    const equalChannel = channelListData?.find((data) => data.name === channelName);
+    const equalChannel = allChannelData?.find((data) => data.name === channelName);
     if (equalChannel) {
       setChannelNameError(true);
     } else {
       setChannelNameError(false);
     }
-  }, [channelListData, channelName]);
+  }, [allChannelData, channelName]);
 
   useEffect(() => {
     if (maxMemberNum < 3) {
