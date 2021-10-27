@@ -170,7 +170,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .then((response) => response.data);
 
   const channelInitialData: IChannel = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}`, {
+    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}`), {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
@@ -179,7 +179,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .then((response) => response.data);
 
   const channelChatInitialData: IChannelChat[] = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}/chat`, {
+    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}/chat`), {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
@@ -188,7 +188,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .then((response) => response.data);
 
   const channelMemberInitialData: IChannelMember[] = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}/member`, {
+    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}/member`), {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
