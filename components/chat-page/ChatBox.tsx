@@ -7,7 +7,7 @@ import autosize from 'autosize';
 import { CanonicalEmoji } from 'interweave-emoji';
 import Emoji from './Emoji';
 import MentionMember from './MentionMember';
-import { IUser } from '@/typings/db';
+import { ISimpleUser } from '@/typings/db';
 
 interface IProps {
   chat: string;
@@ -17,7 +17,7 @@ interface IProps {
   showEmoji: boolean;
   setShowEmoji: Dispatch<SetStateAction<boolean>>;
   placeholder?: string;
-  mentionData: IUser[] | undefined;
+  mentionData: ISimpleUser[] | undefined;
 }
 
 const ChatBox: VFC<IProps> = ({

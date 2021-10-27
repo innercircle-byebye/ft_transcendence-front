@@ -9,7 +9,7 @@ import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
 import {
-  IChannel, IChannelChat, IUser,
+  IChannel, IChannelChat, IChannelMember, IUser,
 } from '@/typings/db';
 import ChatItem from '@/components/chat-page/ChatItem';
 import useSocket from '@/hooks/useSocket';
@@ -28,7 +28,7 @@ const Channel = () => {
   const { data: channelChatData, mutate: mutateChat } = useSWR<IChannelChat[]>(
     `/api/channel/${channelName}/chat`, fetcher,
   );
-  const { data: channelMemberData } = useSWR<IUser[]>(
+  const { data: channelMemberData } = useSWR<IChannelMember[]>(
     `/api/channel/${channelName}/member`, fetcher,
   );
 
@@ -113,7 +113,11 @@ const Channel = () => {
           onSubmitChat={onSubmitChat}
           showEmoji={showEmoji}
           setShowEmoji={setShowEmoji}
-          mentionData={channelMemberData}
+          mentionData={
+            channelMemberData?.map((data) => ({
+              userId: data.userId, nickname: data.user.nickname, imagePath: data.user.imagePath,
+            }))
+          }
         />
       </div>
     </div>
