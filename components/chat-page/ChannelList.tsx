@@ -15,7 +15,7 @@ const ChannelList: VFC = () => {
   const [channelCollapse, setChannelCollapse] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
-  const { data: myChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
+  const { data: myChannelData, mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
@@ -26,14 +26,18 @@ const ChannelList: VFC = () => {
   }, []);
 
   const onClickExitYes = useCallback(() => {
+    mutateMyChannelData(
+      (prevMyChannelData) => prevMyChannelData?.filter((data) => data.name !== channelName), false,
+    );
     axios.delete(`/api/channel/${channelName}/member`, {
       headers: {
         withCredentials: 'true',
       },
     }).then(() => {
       router.push('/chat');
+      setShowExitModal(false);
     });
-  }, [channelName, router]);
+  }, [channelName, mutateMyChannelData, router]);
 
   const onClickExitNo = useCallback(() => {
     setShowExitModal(false);
