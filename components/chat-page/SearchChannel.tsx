@@ -1,4 +1,4 @@
-import React, { useCallback, VFC } from 'react';
+import React, { useCallback, useEffect, VFC } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
@@ -6,14 +6,13 @@ import Link from 'next/link';
 import useInput from '@/hooks/useInput';
 import { IChannel } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
+import useSocket from '@/hooks/useSocket';
 
-interface IProps {
-  allChannelData: IChannel[];
-}
-
-const SearchChannel: VFC<IProps> = ({ allChannelData }) => {
+const SearchChannel: VFC = () => {
   const router = useRouter();
+  const { socket } = useSocket('chat');
   const [searchChannelName, onChangeSearchChannelName] = useInput('');
+  const { data: allChannelData, mutate: mutateAllChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
   const { data: myChannelData, mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
   const onClickJoin = useCallback((data: IChannel) => {
@@ -30,6 +29,23 @@ const SearchChannel: VFC<IProps> = ({ allChannelData }) => {
       });
     });
   }, [mutateMyChannelData, router]);
+
+  const onChannelCreate = useCallback(
+    (data: IChannel) => {
+      mutateAllChannelData((channel) => {
+        channel?.push(data);
+        return channel;
+      }, false);
+    },
+    [mutateAllChannelData],
+  );
+
+  useEffect(() => {
+    socket?.on('channelList', onChannelCreate);
+    return () => {
+      socket?.off('channelList', onChannelCreate);
+    };
+  }, [socket, onChannelCreate]);
 
   if (!myChannelData) {
     return <div>로딩중...</div>;
@@ -53,7 +69,7 @@ const SearchChannel: VFC<IProps> = ({ allChannelData }) => {
         <input type="text" value={searchChannelName} onChange={onChangeSearchChannelName} placeholder="Search Channel" className="text-lg font-semibold text-sky-700 w-full outline-none" />
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3 gap-4 max-h-96 overflow-y-auto p-3">
-        {allChannelData.map((data) => {
+        {allChannelData?.map((data) => {
           if (searchChannelName) {
             if (!data.name.includes(searchChannelName)) {
               return null;
