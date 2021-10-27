@@ -96,7 +96,6 @@ const Channel = ({
   );
 
   useEffect(() => {
-    console.log('message');
     socket?.on('message', onMessage);
     return () => {
       socket?.off('message', onMessage);
