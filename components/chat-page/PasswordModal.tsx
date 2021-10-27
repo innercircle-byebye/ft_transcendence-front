@@ -30,7 +30,7 @@ const PasswordModal: VFC<IProps> = ({
       </div>
       <div className="text-2xl">비밀번호를 입력해주세요</div>
       <div className="flex flex-row space-x-3">
-        <input type="password" maxLength={4} placeholder="****" value={password} onChange={onChangePassword} className="rounded-full text-3xl w-24 px-5 py-1" />
+        <input type="password" maxLength={4} placeholder="****" value={password} onChange={onChangePassword} className="rounded-full text-3xl w-24 px-5 py-1  outline-none" />
         <button type="submit" className=" text-lg px-4 py-1 rounded-full bg-amber-500">입장하기</button>
       </div>
       <button type="button" onClick={onCloseModal}>
