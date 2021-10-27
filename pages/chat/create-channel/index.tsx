@@ -254,7 +254,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       context,
       access_token,
       refresh_token,
-      '/create-channel',
+      '/chat/create-channel',
     );
   }
 
