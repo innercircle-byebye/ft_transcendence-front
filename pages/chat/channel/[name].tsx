@@ -5,6 +5,7 @@ import React, {
 import useSWR from 'swr';
 import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { ToastContainer } from 'react-toastify';
 import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
@@ -135,6 +136,7 @@ const Channel = ({
           }
         />
       </div>
+      <ToastContainer />
     </div>
   );
 };

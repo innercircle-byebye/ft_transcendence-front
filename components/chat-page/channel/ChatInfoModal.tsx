@@ -1,7 +1,12 @@
 import React, {
+  Dispatch,
+  SetStateAction,
   useCallback, useEffect, useState, VFC,
 } from 'react';
 import useSWR from 'swr';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
 import SwitchPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
 import useInput from '@/hooks/useInput';
@@ -11,11 +16,19 @@ interface IProps {
   userData: IUser;
   channelData: IChannel;
   channelMemberData: IChannelMember[];
+  setShowSettingModal: Dispatch<SetStateAction<boolean>>;
+}
+
+interface IChannelInfo {
+  name: string;
+  maxParticipantNum: number;
+  password?: string | null;
 }
 
 const SettingModal: VFC<IProps> = ({
-  userData, channelData, channelMemberData,
+  userData, channelData, channelMemberData, setShowSettingModal,
 }) => {
+  const router = useRouter();
   const [channelName, onChangeChannelName, setChannelName] = useInput(channelData.name);
   const [channelNameError, setChannelNameError] = useState(false);
   const [
@@ -30,6 +43,10 @@ const SettingModal: VFC<IProps> = ({
   ))?.user.nickname);
   const [isChannelOwner] = useState(userData.userId === channelData?.ownerId);
   const { data: allChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
+  const { mutate: mutateChannelData } = useSWR<IChannel>(
+    userData ? `/api/channel/${channelData.name}` : null, fetcher,
+  );
+  const { mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
   const onClickReset = useCallback(() => {
     setChannelName(channelData.name);
@@ -39,6 +56,56 @@ const SettingModal: VFC<IProps> = ({
   }, [
     channelData.isPrivate, channelData.maxParticipantNum, channelData.name,
     setChannelName, setMaxMemberNum,
+  ]);
+
+  const onClickSave = useCallback(() => {
+    const body: IChannelInfo = {
+      name: channelName,
+      maxParticipantNum: maxMemberNum,
+    };
+    if (isPrivate && changePassword) {
+      body.password = password;
+    }
+    if (!isPrivate && channelData.isPrivate) {
+      body.password = null;
+    }
+    axios.patch(`/api/channel/${channelData.name}`, body, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      mutateChannelData((prev) => {
+        const newValue = prev;
+        if (newValue) {
+          newValue.isPrivate = isPrivate;
+          newValue.name = channelName;
+          newValue.maxParticipantNum = maxMemberNum;
+        }
+        return newValue;
+      }, false);
+      mutateMyChannelData((prev) => {
+        prev?.map((v) => {
+          if (v.channelId === channelData.channelId) {
+            const newValue = v;
+            newValue.name = channelName;
+            newValue.maxParticipantNum = maxMemberNum;
+            newValue.isPrivate = isPrivate;
+            return newValue;
+          }
+          return v;
+        });
+        return prev;
+      }, false);
+      router.push(`/chat/channel/${channelName}`);
+      setShowSettingModal(false);
+      toast.success('채널 옵션이 변경되었습니다.', { position: 'bottom-right', theme: 'colored' });
+    }).catch(() => {
+      toast.error('채널 옵션변경에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [
+    channelName, maxMemberNum, isPrivate, changePassword,
+    channelData.isPrivate, channelData.name, channelData.channelId,
+    password, mutateChannelData, mutateMyChannelData, router, setShowSettingModal,
   ]);
 
   useEffect(() => {
@@ -119,7 +186,9 @@ const SettingModal: VFC<IProps> = ({
               <button
                 className="bg-amber-600 text-white py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
                 type="button"
-                disabled={channelNameError || passwordError}
+                disabled={!channelName.trim().length || channelNameError
+                  || (isPrivate && passwordError)}
+                onClick={onClickSave}
               >
                 SAVE
               </button>

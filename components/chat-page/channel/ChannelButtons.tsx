@@ -95,6 +95,7 @@ const ChannelButtons = () => {
       )}
       {showSettingModal && (
       <ChatInfoModal
+        setShowSettingModal={setShowSettingModal}
         userData={userData}
         channelData={channelData}
         channelMemberData={channelMemberData}
