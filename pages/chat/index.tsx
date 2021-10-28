@@ -70,6 +70,7 @@ const Chat = ({
       )
   );
 };
+
 Chat.getLayout = function getLayout(page: ReactElement) {
   return <ChatLayout>{page}</ChatLayout>;
 };
