@@ -1,9 +1,9 @@
 import React, { FC, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import ChannelList from '@/components/chat-page/ChannelList';
-import DMList from '@/components/chat-page/DMList';
 import Navbar from '@/components/Navbar';
 import useSocket from '@/hooks/useSocket';
+import ChannelList from '@/components/chat-page/layout/ChannelList';
+import DMList from '@/components/chat-page/layout/DMList';
 
 const ChatLayout: FC = ({ children }) => {
   const router = useRouter();

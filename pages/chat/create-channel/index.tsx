@@ -11,12 +11,12 @@ import useSWR from 'swr';
 import regexifyString from 'regexify-string';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Navbar from '@/components/Navbar';
-import useInput from '@/hooks/useInput';
-import MentionMember from '@/components/chat-page/MentionMember';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IUser } from '@/typings/db';
-import CheckPublicPrivate from '@/components/chat-page/SwitchPublicPrivate';
+import CheckPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
 import reissueToken from '@/utils/reissueTokens';
+import useInput from '@/hooks/useInput';
+import MentionMember from '@/components/chat-page/common/MentionMember';
 
 interface IInviteMember {
   id: number;

@@ -5,17 +5,17 @@ import React, {
 import useSWR from 'swr';
 import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import ChatBox from '@/components/chat-page/ChatBox';
 import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
 import {
   IChannel, IChannelChat, IChannelMember, IUser,
 } from '@/typings/db';
-import ChatItem from '@/components/chat-page/ChatItem';
+import ChatItem from '@/components/chat-page/chat/ChatItem';
 import useSocket from '@/hooks/useSocket';
-import ChannelButtons from '@/components/chat-page/ChannelButtons';
 import reissueToken from '@/utils/reissueTokens';
+import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
+import ChatBox from '@/components/chat-page/chat/ChatBox';
 
 const Channel = ({
   userInitialData,
