@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import useSWR from 'swr';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
-import SwitchPublicPrivate from './SwitchPublicPrivate';
+import SwitchPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
 

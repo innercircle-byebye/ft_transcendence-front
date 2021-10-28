@@ -3,9 +3,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
-import InviteMemberModal from './InviteMemberModal';
-import MembersModal from './MembersModal';
-import ChatInfoModal from './ChatInfoModal';
+import InviteMemberModal from '@/components/chat-page/channel/InviteMemberModal';
+import MembersModal from '@/components/chat-page/channel/MembersModal';
+import ChatInfoModal from '@/components/chat-page/channel/ChatInfoModal';
 
 const ChannelButtons = () => {
   const router = useRouter();
