@@ -10,6 +10,7 @@ import { IDMChat, IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 import useInput from '@/hooks/useInput';
 import ChatBox from '@/components/chat-page/ChatBox';
+import ChatItem from '@/components/chat-page/ChatItem';
 
 const DM = () => {
   const router = useRouter();
@@ -84,14 +85,19 @@ const DM = () => {
           {DMUserName}
         </div>
         <div className="flex-1">
-          {/* {
+          {
             chatDatas?.map((chatData) => (
               <ChatItem
-                key={chatData.channelChatId}
-                chatData={chatData}
+                key={chatData.dmId}
+                chatData={{
+                  createdAt: chatData.createAt,
+                  userId: chatData.sender.userId,
+                  imagePath: chatData.sender.imagePath,
+                  content: chatData.content,
+                }}
               />
             ))
-          } */}
+          }
           chatlist
         </div>
         <ChatBox
