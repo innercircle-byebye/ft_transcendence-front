@@ -5,6 +5,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
+import { ToastContainer, toast } from 'react-toastify';
 import ChatLayout from '@/layouts/ChatLayout';
 import SearchChannel from '@/components/chat-page/SearchChannel';
 import SearchDM from '@/components/chat-page/SearchDM';
@@ -18,11 +19,12 @@ const Chat = ({
   allChannelInitialData, myChannelInitialData, allUserInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const [password, onChangePassword] = useInput('');
+  const [password, onChangePassword, setPassword] = useInput('');
   const [privateChannelToJoin, setPrivateChannelToJoin] = useState<IChannel | null>(null);
   const { mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
-  const onSubmitPassword = useCallback(() => {
+  const onSubmitPassword = useCallback((e) => {
+    e.preventDefault();
     if (privateChannelToJoin) {
       axios.post(`/api/channel/${privateChannelToJoin.name}/member`, {
         password,
@@ -30,18 +32,21 @@ const Chat = ({
         headers: {
           withCredentials: 'true',
         },
-      }).then(() => {
-        mutateMyChannelData((prevMyChannelData) => {
+      }).then(async () => {
+        await mutateMyChannelData((prevMyChannelData) => {
           prevMyChannelData?.push(privateChannelToJoin);
           return prevMyChannelData;
-        }, false).then(() => {
-          const channelName = privateChannelToJoin.name;
-          setPrivateChannelToJoin(null);
-          router.push(`/chat/channel/${channelName}`);
-        });
+        }, false);
+        const channelName = privateChannelToJoin.name;
+        setPrivateChannelToJoin(null);
+        await router.push(`/chat/channel/${channelName}`);
+      }).catch((error) => {
+        setPassword('');
+        console.dir(error);
+        toast.error('틀린 비밀번호 입니다.', { position: 'bottom-right', theme: 'colored' });
       });
     }
-  }, [mutateMyChannelData, password, privateChannelToJoin, router]);
+  }, [mutateMyChannelData, password, privateChannelToJoin, router, setPassword]);
 
   const onClosePasswordModal = useCallback((e) => {
     e.preventDefault();
@@ -51,13 +56,16 @@ const Chat = ({
   return (
     privateChannelToJoin
       ? (
-        <PasswordModal
-          onSubmitPassword={onSubmitPassword}
-          channelName={privateChannelToJoin.name}
-          password={password}
-          onChangePassword={onChangePassword}
-          onCloseModal={onClosePasswordModal}
-        />
+        <>
+          <PasswordModal
+            onSubmitPassword={onSubmitPassword}
+            channelName={privateChannelToJoin.name}
+            password={password}
+            onChangePassword={onChangePassword}
+            onCloseModal={onClosePasswordModal}
+          />
+          <ToastContainer />
+        </>
       ) : (
         <div className="h-full flex flex-col p-4 space-y-1">
           <SearchChannel

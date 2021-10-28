@@ -4,7 +4,7 @@ interface IProps {
   channelName: string;
   password: string;
   onChangePassword: (e: ChangeEvent<HTMLInputElement>) => void;
-  onSubmitPassword: () => void;
+  onSubmitPassword: (e: any) => void;
   onCloseModal: (e: any) => void;
 }
 
