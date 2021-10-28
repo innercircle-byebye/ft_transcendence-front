@@ -1,30 +1,83 @@
 import { useRouter } from 'next/router';
-import React, { ReactElement, useCallback, useEffect } from 'react';
+import React, {
+  ReactElement, useCallback, useEffect, useState,
+} from 'react';
+import useSWR from 'swr';
+import axios from 'axios';
 import ChatLayout from '@/layouts/ChatLayout';
 import useSocket from '@/hooks/useSocket';
+import { IDMChat, IUser } from '@/typings/db';
+import fetcher from '@/utils/fetcher';
+import useInput from '@/hooks/useInput';
+import ChatBox from '@/components/chat-page/ChatBox';
 
 const DM = () => {
   const router = useRouter();
-  const DMUserName = router.query.name;
+  const DMUserName = router.query.id;
+  const [chat, onChangeChat, setChat] = useInput('');
+  const [showEmoji, setShowEmoji] = useState(false);
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
   const { socket } = useSocket('chat');
+  const { data: chatDatas, mutate: mutateChat } = useSWR<IDMChat[]>(
+    `/api/dm/${DMUserName}/chats`,
+    fetcher,
+  );
+
+  const onCloseEmoji = useCallback(() => {
+    setShowEmoji(false);
+  }, []);
+
+  const onSubmitChat = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (chat?.trim() && chatDatas && userData) {
+        const savedChat = chat;
+        axios
+          .post(
+            // `/api/dm/${userData?.userId}/chats`,
+            `/api/dm/${DMUserName}/chats`,
+            {
+              content: savedChat,
+            },
+            {
+              headers: {
+                withCredentials: 'true',
+              },
+            },
+          )
+          .catch(console.error);
+      }
+    },
+    [DMUserName, chat, chatDatas, userData],
+  );
 
   const onMessage = useCallback(
-    (data: any) => {
-      console.log(data);
+    (data: IDMChat) => {
+      if (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.sender.userId !== userData?.userId) {
+        mutateChat((chatData) => {
+          chatData?.push(data);
+          return chatData;
+        }, false);
+      }
     },
-    [],
+    [userData?.userId, mutateChat],
   );
 
   useEffect(() => {
-    socket?.on('message', onMessage);
+    socket?.on('dm', onMessage);
     return () => {
-      socket?.off('message', onMessage);
+      socket?.off('dm', onMessage);
     };
   }, [socket, onMessage]);
-  console.log('in DM');
 
   return (
-    <div className="h-full flex flex-col" role="button" tabIndex={0}>
+    <div
+      className="h-full flex flex-col"
+      role="button"
+      tabIndex={0}
+      onClick={onCloseEmoji}
+      onKeyDown={onCloseEmoji}
+    >
       <div className="h-full flex flex-col">
         <div className="font-semibold text-2xl pl-6">
           {/* {`# ${channelData?.name}`} */}
@@ -41,17 +94,14 @@ const DM = () => {
           } */}
           chatlist
         </div>
-        chatbox
-        {/*
         <ChatBox
-          // chat={chat}
-          // onChangeChat={onChangeChat}
-          // setChat={setChat}
-          // onSubmitChat={onSubmitChat}
-          // showEmoji={showEmoji}
-          // setShowEmoji={setShowEmoji}
+          chat={chat}
+          onChangeChat={onChangeChat}
+          setChat={setChat}
+          onSubmitChat={onSubmitChat}
+          showEmoji={showEmoji}
+          setShowEmoji={setShowEmoji}
         />
-        */}
       </div>
     </div>
   );
