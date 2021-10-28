@@ -66,3 +66,10 @@ export interface IDMChat {
   createAt: Date;
   lastModifiedAt: Date;
 }
+
+export interface IChatItem {
+  createdAt: Date;
+  userId: number;
+  imagePath: string;
+  content: string;
+}
