@@ -90,11 +90,7 @@ const ChannelButtons: VFC = () => {
       />
       )}
       {showMembersModal && (
-      <MembersModal
-        userData={userData}
-        channelData={channelData}
-        channelMemberData={channelMemberData}
-      />
+      <MembersModal />
       )}
       {showSettingModal && (
       <ChannelInfoModal
