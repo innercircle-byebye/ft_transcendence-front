@@ -38,7 +38,7 @@ export interface IMessage {
 
 export interface IChannel {
   channelId: number;
-  ownerID: number;
+  ownerId: number;
   name: string;
   isPrivate: boolean;
   password: string;

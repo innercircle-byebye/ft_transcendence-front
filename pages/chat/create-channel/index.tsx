@@ -14,6 +14,7 @@ import useInput from '@/hooks/useInput';
 import MentionMember from '@/components/chat-page/MentionMember';
 import fetcher from '@/utils/fetcher';
 import { IUser } from '@/typings/db';
+import CheckPublicPrivate from '@/components/chat-page/SwitchPublicPrivate';
 
 interface IInviteMember {
   id: number;
@@ -26,11 +27,6 @@ const CreateChannel = () => {
   const [maxMemberNum, onChangeMaxMemberNum, setMaxMemberNum] = useInput(3);
   const [isPrivate, setIsPrivate] = useState(false);
   const [password, onChangePassword, setPassword] = useInput('');
-  const [passwordError, setPasswordError] = useState(false);
-  const [inputPasswordType, setInputPasswordType] = useState({
-    type: 'password',
-    visible: false,
-  });
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [inviteMember, onChangeInviteMember, setInviteMember] = useInput('');
   const [inviteMembers, setInviteMembers] = useState<IInviteMember[]>([]);
@@ -41,23 +37,6 @@ const CreateChannel = () => {
     fetcher,
   );
 
-  const onClickSwitch = useCallback(
-    (e) => {
-      e.preventDefault();
-      setIsPrivate((prev) => !prev);
-      setPassword('');
-      setInputPasswordType({ type: 'password', visible: false });
-    },
-    [setPassword],
-  );
-
-  const onClickPasswordEye = useCallback(() => {
-    setInputPasswordType((prev) => ({
-      type: prev.type === 'text' ? 'password' : 'text',
-      visible: !prev.visible,
-    }));
-  }, []);
-
   const onClickCancel = useCallback(() => {
     router.back();
   }, [router]);
@@ -66,7 +45,7 @@ const CreateChannel = () => {
     axios.post(`/api/channel/${channelName}`, {
       password: password === '' ? null : password,
       maxParticipantNum: maxMemberNum,
-      inviteMemberIDs: inviteMembers.map((v) => v.id),
+      invitedUsers: inviteMembers.map((v) => v.id),
     }, {
       headers: {
         withCredentials: 'true',
@@ -87,15 +66,6 @@ const CreateChannel = () => {
       setMaxMemberNum(100);
     }
   }, [maxMemberNum, setMaxMemberNum]);
-
-  useEffect(() => {
-    const passwordPattern = /^[0123456789]{4}$/;
-    if (password && passwordPattern.test(password)) {
-      setPasswordError(false);
-    } else {
-      setPasswordError(true);
-    }
-  }, [password]);
 
   useEffect(() => {
     if (maxMemberNum < inviteMembers.length) {
@@ -160,70 +130,13 @@ const CreateChannel = () => {
           value={maxMemberNum}
           onChange={onChangeMaxMemberNum}
         />
-        <div className="ml-3 text-gray-700 font-medium">Public / Private</div>
-        <div>
-          <button type="button" className="relative" onClick={onClickSwitch}>
-            <div className="block bg-gray-600 w-14 h-8 rounded-full" />
-            {isPrivate ? (
-              <div className="absolute right-1 top-1 bg-red-400 w-6 h-6 rounded-full transition" />
-            ) : (
-              <div className="absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition" />
-            )}
-          </button>
-        </div>
-        {isPrivate && (
-          <>
-            <div className="ml-3 text-gray-700 font-medium">비밀번호</div>
-            <div>
-              <div className="flex flex-row items-center space-x-2">
-                <input
-                  className="px-6 py-2 w-24 rounded-full bg-gray-100 text-lg"
-                  type={inputPasswordType.type}
-                  value={password}
-                  onChange={onChangePassword}
-                  placeholder="****"
-                  maxLength={4}
-                />
-                <button type="button" onClick={onClickPasswordEye}>
-                  {inputPasswordType.visible ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z"
-                        clipRule="evenodd"
-                      />
-                      <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-5 w-5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                      <path
-                        fillRule="evenodd"
-                        d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </button>
-              </div>
-              {passwordError && (
-                <div className="absolute items-center text-red-500 text-xs italic">
-                  비밀번호 숫자4자리 입력해주세요
-                </div>
-              )}
-            </div>
-          </>
-        )}
+        <CheckPublicPrivate
+          isPrivate={isPrivate}
+          setIsPrivate={setIsPrivate}
+          password={password}
+          onChangePassword={onChangePassword}
+          setPassword={setPassword}
+        />
         <div className="col-span-2 flex flex-col space-y-5 items-center">
           <form className="w-80 flex items-center justify-evenly flex-row">
             <div className="w-56 bg-gray-100 rounded-full pl-3 pt-1">
