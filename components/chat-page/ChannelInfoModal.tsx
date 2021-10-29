@@ -13,7 +13,7 @@ interface IProps {
   channelMemberData: IChannelMember[];
 }
 
-const SettingModal: VFC<IProps> = ({
+const ChannelInfoModal: VFC<IProps> = ({
   userData, channelData, channelMemberData,
 }) => {
   const [channelName, onChangeChannelName, setChannelName] = useInput(channelData.name);
@@ -57,7 +57,7 @@ const SettingModal: VFC<IProps> = ({
   }, [channelData.isPrivate, isPrivate]);
 
   return (
-    <div className="absolute bg-sky-700 top-7 right-0 w-auto h-auto flex flex-col items-center px-6 py-3">
+    <div className="absolute bg-sky-700 top-7 right-0 w-auto h-auto flex flex-col items-center p-6 space-y-3">
       <div className="text-2xl font-semibold text-amber-50">채널 옵션</div>
       <div className="text-amber-50">
         {`방장: ${ownerNickname} ${userData.userId === channelData.ownerId ? '(나)' : ''}`}
@@ -130,4 +130,4 @@ const SettingModal: VFC<IProps> = ({
     </div>
   );
 };
-export default SettingModal;
+export default ChannelInfoModal;
