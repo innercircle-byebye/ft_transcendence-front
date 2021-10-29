@@ -13,7 +13,7 @@ interface IProps {
   channelMemberData: IChannelMember[];
 }
 
-const SettingModal: VFC<IProps> = ({
+const ChannelInfoModal: VFC<IProps> = ({
   userData, channelData, channelMemberData,
 }) => {
   const [channelName, onChangeChannelName, setChannelName] = useInput(channelData.name);
@@ -130,4 +130,4 @@ const SettingModal: VFC<IProps> = ({
     </div>
   );
 };
-export default SettingModal;
+export default ChannelInfoModal;
