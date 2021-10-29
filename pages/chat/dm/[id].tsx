@@ -34,13 +34,13 @@ const DM = () => {
       if (chat?.trim() && chatDatas && userData) {
         const savedChat = chat;
         mutateChat((prevChatData) => {
-          prevChatData?.push({
+          prevChatData?.unshift({
             dmId: (chatDatas[chatDatas.length - 1]?.dmId || 0) + 1,
-            sender: chatDatas[chatDatas.length - 1]?.sender,
-            receiver: userData,
+            sender: userData,
+            receiver: chatDatas[chatDatas.length - 1]?.sender,
             content: savedChat,
-            createAt: new Date(),
-            lastModifiedAt: new Date(),
+            createdAt: chatDatas[chatDatas.length - 1]?.createdAt,
+            lastModifiedAt: chatDatas[chatDatas.length - 1]?.lastModifiedAt,
           });
           return prevChatData;
         }, false).then(() => {
@@ -100,11 +100,11 @@ const DM = () => {
         </div>
         <div className="flex-1">
           {
-            chatDatas?.map((chatData) => (
+            chatDatas?.slice(0).reverse().map((chatData) => (
               <ChatItem
                 key={chatData.dmId}
                 chatData={{
-                  createdAt: chatData.createAt,
+                  createdAt: chatData.createdAt,
                   userId: chatData.sender.userId,
                   imagePath: chatData.sender.imagePath,
                   content: chatData.content,
