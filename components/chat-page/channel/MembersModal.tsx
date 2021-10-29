@@ -27,7 +27,9 @@ const MembersModal: VFC = () => {
   const { data: channelData } = useSWR<IChannel>(
     `/api/channel/${channelName}`, fetcher,
   );
-  const { data: channelMemberData, revalidate } = useSWR<IChannelMember[]>(
+  const {
+    data: channelMemberData, revalidate: revalidateChannelMemberData,
+  } = useSWR<IChannelMember[]>(
     `/api/channel/${channelName}/member`, fetcher,
   );
 
@@ -53,14 +55,14 @@ const MembersModal: VFC = () => {
           withCredentials: 'true',
         },
       }).then(() => {
-        revalidate();
+        revalidateChannelMemberData();
         toast.success(`"${grantChannelAdminMember.user.nickname}" 님에게 방장권한을 부여했습니다.`, { position: 'bottom-right', theme: 'colored' });
         setGrantChannelAdminMember(null);
       }).catch(() => {
         toast.error('방장권한부여가 실패되었습니다.', { position: 'bottom-right', theme: 'colored' });
       });
     }
-  }, [channelData, grantChannelAdminMember, revalidate, userData]);
+  }, [channelData, grantChannelAdminMember, revalidateChannelMemberData, userData]);
 
   const onClickCancelChannelAdminYes = useCallback(() => {
     if (userData && channelData && cancelChannelAdminMember) {
@@ -72,14 +74,14 @@ const MembersModal: VFC = () => {
           withCredentials: 'true',
         },
       }).then(() => {
-        revalidate();
+        revalidateChannelMemberData();
         toast.success(`"${cancelChannelAdminMember.user.nickname}" 의 방장권한을 취소했습니다.`, { position: 'bottom-right', theme: 'colored' });
         setCancelChannelAdminMember(null);
       }).catch(() => {
         toast.error('방장권한취소가 실패되었습니다.', { position: 'bottom-right', theme: 'colored' });
       });
     }
-  }, [userData, channelData, cancelChannelAdminMember, revalidate]);
+  }, [userData, channelData, cancelChannelAdminMember, revalidateChannelMemberData]);
 
   const onClickGrantChannelAdminNo = useCallback(() => {
     setGrantChannelAdminMember(null);
@@ -181,6 +183,7 @@ const MembersModal: VFC = () => {
         <MuteChatModal
           muteMember={muteMember}
           setMuteMember={setMuteMember}
+          revalidateChannelMemberData={revalidateChannelMemberData}
         />
       )}
     </>
