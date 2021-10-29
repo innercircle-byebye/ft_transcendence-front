@@ -11,13 +11,12 @@ import { IChannelMember } from '@/typings/db';
 import useInput from '@/hooks/useInput';
 
 interface IProps {
-  nickname: string;
   muteMember: IChannelMember;
   setMuteMember: Dispatch<SetStateAction<IChannelMember | null>>;
 }
 
 const MuteChatModal: VFC<IProps> = ({
-  nickname, muteMember, setMuteMember,
+  muteMember, setMuteMember,
 }) => {
   const router = useRouter();
   const channelName = router.query.name;
@@ -30,17 +29,18 @@ const MuteChatModal: VFC<IProps> = ({
     if (muteMember) {
       axios.patch(`/api/channel/${channelName}/member`, {
         mutedDate: new Date(`${muteDay}T${muteTime}:00`),
+        targetUserId: muteMember.userId,
       }, {
         headers: {
           withCredentials: 'true',
         },
       }).then(() => {
-        toast.success(`${nickname}님을 ${muteDay} ${muteTime}까지 채팅 금지 시켰습니다.`, { position: 'bottom-right', theme: 'colored' });
+        toast.success(`${muteMember.user.nickname}님을 ${muteDay} ${muteTime}까지 채팅 금지 시켰습니다.`, { position: 'bottom-right', theme: 'colored' });
       }).catch(() => {
-        toast.error(`${nickname}님 채팅 금지에 실패했습니다.`, { position: 'bottom-right', theme: 'colored' });
+        toast.error(`${muteMember.user.nickname}님 채팅 금지에 실패했습니다.`, { position: 'bottom-right', theme: 'colored' });
       });
     }
-  }, [channelName, muteDay, muteMember, muteTime, nickname]);
+  }, [channelName, muteDay, muteMember, muteTime]);
 
   const onClickNo = useCallback(() => {
     setMuteMember(null);
@@ -54,7 +54,7 @@ const MuteChatModal: VFC<IProps> = ({
   return (
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 shadow-xl">
       <div className="flex flex-col items-center bg-amber-100 space-y-8 p-6 rounded-xl">
-        <div className="text-3xl">{`${nickname}님을 채팅금지하시겠습니까?`}</div>
+        <div className="text-3xl">{`${muteMember.user.nickname}님을 채팅금지하시겠습니까?`}</div>
         <div className="flex flex-col space-y-2">
           <label htmlFor="muteday">
             {'언제까지 : '}

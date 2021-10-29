@@ -179,7 +179,6 @@ const MembersModal: VFC = () => {
       {muteMember
       && (
         <MuteChatModal
-          nickname={muteMember.user.nickname}
           muteMember={muteMember}
           setMuteMember={setMuteMember}
         />
