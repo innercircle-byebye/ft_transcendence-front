@@ -97,7 +97,7 @@ const MembersModal: VFC = () => {
       const userChannelData = channelMemberData.find((data) => data.userId === userData.userId);
       setIsUserAdmin(userChannelData?.isAdmin || false);
     }
-  }, [channelMemberData]);
+  }, [channelMemberData, userData]);
 
   if (!userData || !channelData || !channelMemberData) {
     return <div>로딩중...</div>;
