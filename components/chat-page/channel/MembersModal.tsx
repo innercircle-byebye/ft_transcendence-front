@@ -136,17 +136,18 @@ const MembersModal: VFC = () => {
                 </Link>
                 <button type="button" className="bg-blue-400 font-semibold text-sm rounded-full w-16 h-7">게임신청</button>
                 <button type="button" className="bg-yellow-400 font-semibold text-sm rounded-full w-16 h-7">차단하기</button>
-                {channelData.ownerId === userData.userId
-              && (data.isAdmin
-                ? <button type="button" onClick={() => onClickCancelChannelAdmin(data)} className="bg-red-500 font-semibold text-sm rounded-full w-16 h-7">방장취소</button>
-                : <button type="button" onClick={() => onClickGrantChannelAdmin(data)} className="bg-green-500 font-semibold text-sm rounded-full w-16 h-7">방장부여</button>)}
                 {isUserAdmin
-                && (
-                <>
-                  <button type="button" className="bg-amber-500 font-semibold text-sm rounded-full w-16 h-7">채팅금지</button>
-                  <button type="button" className="bg-red-500 font-semibold text-sm rounded-full w-16 h-7">추방하기</button>
-                </>
+                && <button type="button" className="bg-amber-500 font-semibold text-sm rounded-full w-16 h-7">채팅금지</button>}
+                {channelData.ownerId === userData.userId
+              && (
+              <>
+                {(data.isAdmin
+                  ? <button type="button" onClick={() => onClickCancelChannelAdmin(data)} className="bg-red-400 font-semibold text-sm rounded-full w-16 h-7">방장취소</button>
+                  : <button type="button" onClick={() => onClickGrantChannelAdmin(data)} className="bg-green-500 font-semibold text-sm rounded-full w-16 h-7">방장부여</button>
                 )}
+                <button type="button" className="bg-red-500 font-semibold text-sm rounded-full w-16 h-7">추방하기</button>
+              </>
+              )}
               </div>
             );
           })}
