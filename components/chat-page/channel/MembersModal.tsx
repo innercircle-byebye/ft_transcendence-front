@@ -7,27 +7,35 @@ import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
-import ChatTwoButtonModal from '../common/ChatTwoButtonModal';
+import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
 import fetcher from '@/utils/fetcher';
+import MuteChatModal from '@/components/chat-page/channel/MuteChatModal';
 
 const MembersModal: VFC = () => {
   const router = useRouter();
   const channelName = router.query.name;
-  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
-  const { data: channelData } = useSWR<IChannel>(
-    `/api/channel/${channelName}`, fetcher,
-  );
-  const { data: channelMemberData, revalidate } = useSWR<IChannelMember[]>(
-    `/api/channel/${channelName}/member`, fetcher,
-  );
   const [ownerNickname, setOwnerNickname] = useState<string | null>(null);
   const [isUserAdmin, setIsUserAdmin] = useState(false);
+  const [muteMember, setMuteMember] = useState<IChannelMember | null>(null);
   const [
     grantChannelAdminMember, setGrantChannelAdminMember,
   ] = useState<IChannelMember | null>(null);
   const [
     cancelChannelAdminMember, setCancelChannelAdminMember,
   ] = useState<IChannelMember | null>(null);
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
+  const { data: channelData } = useSWR<IChannel>(
+    `/api/channel/${channelName}`, fetcher,
+  );
+  const {
+    data: channelMemberData, revalidate: revalidateChannelMemberData,
+  } = useSWR<IChannelMember[]>(
+    `/api/channel/${channelName}/member`, fetcher,
+  );
+
+  const onClickMuteMember = useCallback((member: IChannelMember) => {
+    setMuteMember(member);
+  }, []);
 
   const onClickGrantChannelAdmin = useCallback((member: IChannelMember) => {
     setGrantChannelAdminMember(member);
@@ -47,18 +55,14 @@ const MembersModal: VFC = () => {
           withCredentials: 'true',
         },
       }).then(() => {
-        revalidate();
+        revalidateChannelMemberData();
         toast.success(`"${grantChannelAdminMember.user.nickname}" 님에게 방장권한을 부여했습니다.`, { position: 'bottom-right', theme: 'colored' });
         setGrantChannelAdminMember(null);
       }).catch(() => {
         toast.error('방장권한부여가 실패되었습니다.', { position: 'bottom-right', theme: 'colored' });
       });
     }
-  }, [channelData, grantChannelAdminMember, revalidate, userData]);
-
-  const onClickGrantChannelAdminNo = useCallback(() => {
-    setGrantChannelAdminMember(null);
-  }, []);
+  }, [channelData, grantChannelAdminMember, revalidateChannelMemberData, userData]);
 
   const onClickCancelChannelAdminYes = useCallback(() => {
     if (userData && channelData && cancelChannelAdminMember) {
@@ -70,14 +74,18 @@ const MembersModal: VFC = () => {
           withCredentials: 'true',
         },
       }).then(() => {
-        revalidate();
+        revalidateChannelMemberData();
         toast.success(`"${cancelChannelAdminMember.user.nickname}" 의 방장권한을 취소했습니다.`, { position: 'bottom-right', theme: 'colored' });
         setCancelChannelAdminMember(null);
       }).catch(() => {
         toast.error('방장권한취소가 실패되었습니다.', { position: 'bottom-right', theme: 'colored' });
       });
     }
-  }, [userData, channelData, cancelChannelAdminMember, revalidate]);
+  }, [userData, channelData, cancelChannelAdminMember, revalidateChannelMemberData]);
+
+  const onClickGrantChannelAdminNo = useCallback(() => {
+    setGrantChannelAdminMember(null);
+  }, []);
 
   const onClickCancelChannelAdminNo = useCallback(() => {
     setCancelChannelAdminMember(null);
@@ -123,7 +131,6 @@ const MembersModal: VFC = () => {
         </div>
         <div className="bg-amber-50 rounded-xl flex flex-col space-y-1 px-3 py-2 max-h-60 overflow-y-auto">
           {channelMemberData.map((data) => {
-            console.log(`${data.user.nickname} ${data.isAdmin}`);
             if (data.user.nickname === userData.nickname) {
               return null;
             }
@@ -137,7 +144,7 @@ const MembersModal: VFC = () => {
                 <button type="button" className="bg-blue-400 font-semibold text-sm rounded-full w-16 h-7">게임신청</button>
                 <button type="button" className="bg-yellow-400 font-semibold text-sm rounded-full w-16 h-7">차단하기</button>
                 {isUserAdmin
-                && <button type="button" className="bg-amber-500 font-semibold text-sm rounded-full w-16 h-7">채팅금지</button>}
+                && <button type="button" onClick={() => onClickMuteMember(data)} className="bg-amber-500 font-semibold text-sm rounded-full w-16 h-7">채팅금지</button>}
                 {channelData.ownerId === userData.userId
               && (
               <>
@@ -170,6 +177,14 @@ const MembersModal: VFC = () => {
         onClickNo={onClickCancelChannelAdminNo}
         yesButtonColor="bg-green-500"
       />
+      )}
+      {muteMember
+      && (
+        <MuteChatModal
+          muteMember={muteMember}
+          setMuteMember={setMuteMember}
+          revalidateChannelMemberData={revalidateChannelMemberData}
+        />
       )}
     </>
   );
