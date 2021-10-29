@@ -25,7 +25,7 @@ interface IChannelInfo {
   password?: string | null;
 }
 
-const SettingModal: VFC<IProps> = ({
+const ChannelInfoModal: VFC<IProps> = ({
   userData, channelData, channelMemberData, setShowSettingModal,
 }) => {
   const router = useRouter();
@@ -199,4 +199,5 @@ const SettingModal: VFC<IProps> = ({
     </div>
   );
 };
-export default SettingModal;
+
+export default ChannelInfoModal;
