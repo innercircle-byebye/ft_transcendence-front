@@ -11,6 +11,7 @@ import { IChannel, IChannelMember, IUser } from '@/typings/db';
 import SwitchPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
+// import useSocket from '@/hooks/useSocket';
 
 interface IProps {
   userData: IUser;
@@ -20,8 +21,8 @@ interface IProps {
 }
 
 interface IChannelInfo {
-  name: string;
-  maxParticipantNum: number;
+  updateName?: string;
+  maxParticipantNum?: number;
   password?: string | null;
 }
 
@@ -29,6 +30,7 @@ const ChannelInfoModal: VFC<IProps> = ({
   userData, channelData, channelMemberData, setShowSettingModal,
 }) => {
   const router = useRouter();
+  // const { socket } = useSocket('chat');
   const [channelName, onChangeChannelName, setChannelName] = useInput(channelData.name);
   const [channelNameError, setChannelNameError] = useState(false);
   const [
@@ -43,10 +45,6 @@ const ChannelInfoModal: VFC<IProps> = ({
   ))?.user.nickname);
   const [isChannelOwner] = useState(userData.userId === channelData?.ownerId);
   const { data: allChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
-  const { mutate: mutateChannelData } = useSWR<IChannel>(
-    userData ? `/api/channel/${channelData.name}` : null, fetcher,
-  );
-  const { mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
   const onClickReset = useCallback(() => {
     setChannelName(channelData.name);
@@ -59,53 +57,36 @@ const ChannelInfoModal: VFC<IProps> = ({
   ]);
 
   const onClickSave = useCallback(() => {
-    const body: IChannelInfo = {
-      name: channelName,
-      maxParticipantNum: maxMemberNum,
-    };
+    const body: IChannelInfo = {};
+    if (channelName !== channelData.name) {
+      body.updateName = channelName;
+    }
+    if (maxMemberNum !== channelData.maxParticipantNum) {
+      body.maxParticipantNum = maxMemberNum;
+    }
     if (isPrivate && changePassword) {
       body.password = password;
     }
     if (!isPrivate && channelData.isPrivate) {
       body.password = null;
     }
-    axios.patch(`/api/channel/${channelData.name}`, body, {
-      headers: {
-        withCredentials: 'true',
-      },
-    }).then(() => {
-      mutateChannelData((prev) => {
-        const newValue = prev;
-        if (newValue) {
-          newValue.isPrivate = isPrivate;
-          newValue.name = channelName;
-          newValue.maxParticipantNum = maxMemberNum;
-        }
-        return newValue;
-      }, false);
-      mutateMyChannelData((prev) => {
-        prev?.map((v) => {
-          if (v.channelId === channelData.channelId) {
-            const newValue = v;
-            newValue.name = channelName;
-            newValue.maxParticipantNum = maxMemberNum;
-            newValue.isPrivate = isPrivate;
-            return newValue;
-          }
-          return v;
-        });
-        return prev;
-      }, false);
-      router.push(`/chat/channel/${channelName}`);
-      setShowSettingModal(false);
-      toast.success('채널 옵션이 변경되었습니다.', { position: 'bottom-right', theme: 'colored' });
-    }).catch(() => {
-      toast.error('채널 옵션변경에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
-    });
+    if (body !== {}) {
+      axios.patch(`/api/channel/${channelData.name}`, body, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        router.push(`/chat/channel/${channelName}`);
+        setShowSettingModal(false);
+        toast.success('채널 옵션이 변경되었습니다.', { position: 'bottom-right', theme: 'colored' });
+      }).catch(() => {
+        toast.error('채널 옵션변경에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
+      });
+    }
   }, [
-    channelName, maxMemberNum, isPrivate, changePassword,
-    channelData.isPrivate, channelData.name, channelData.channelId,
-    password, mutateChannelData, mutateMyChannelData, router, setShowSettingModal,
+    channelName, channelData.name, channelData.maxParticipantNum,
+    channelData.isPrivate, maxMemberNum, isPrivate, changePassword, password,
+    router, setShowSettingModal,
   ]);
 
   useEffect(() => {
