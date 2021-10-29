@@ -5,6 +5,7 @@ import {
 } from 'react';
 import useSWR from 'swr';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IUser } from '@/typings/db';
 import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
@@ -14,6 +15,7 @@ const ChannelList: VFC = () => {
   const channelName = router.query.name;
   const [channelCollapse, setChannelCollapse] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
+  const [showDeleteChannelModal, setShowDeleteChannelModal] = useState(false);
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
   const { data: myChannelData, mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
@@ -21,10 +23,14 @@ const ChannelList: VFC = () => {
     setChannelCollapse((prev) => !prev);
   }, []);
 
-  const onClickExitChannel = useCallback(async (name: string) => {
-    await router.push(`/chat/channel/${name}`);
-    setShowExitModal(true);
-  }, [router]);
+  const onClickExitChannel = useCallback(async (channel: IChannel) => {
+    if (channelName !== channel.name) { await router.push(`/chat/channel/${channel.name}`); }
+    if (userData?.userId === channel.ownerId) {
+      setShowDeleteChannelModal(true);
+    } else {
+      setShowExitModal(true);
+    }
+  }, [channelName, router, userData?.userId]);
 
   const onClickExitYes = useCallback(() => {
     mutateMyChannelData(
@@ -35,13 +41,30 @@ const ChannelList: VFC = () => {
         withCredentials: 'true',
       },
     }).then(() => {
-      router.push('/chat');
       setShowExitModal(false);
+      router.push('/chat');
     });
   }, [channelName, mutateMyChannelData, router]);
 
   const onClickExitNo = useCallback(() => {
     setShowExitModal(false);
+  }, []);
+
+  const onClickDeleteChannelYes = useCallback(() => {
+    axios.delete(`/api/channel/${channelName}`, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      setShowDeleteChannelModal(false);
+      router.push('/chat');
+    }).catch(() => {
+      toast.error(`${channelName} 채널 삭제에 실패했습니다.`, { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [channelName, router]);
+
+  const onClickDeleteChannelNo = useCallback(() => {
+    setShowDeleteChannelModal(false);
   }, []);
 
   useEffect(() => {
@@ -140,7 +163,7 @@ const ChannelList: VFC = () => {
                       />
                     </svg>
                     )}
-                    <button type="button" onClick={() => onClickExitChannel(channel.name)}>
+                    <button type="button" onClick={() => onClickExitChannel(channel)}>
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                       </svg>
@@ -153,6 +176,9 @@ const ChannelList: VFC = () => {
       </div>
       {showExitModal && (
         <ChatTwoButtonModal question={`${channelName} 채널에서 나가시겠습니까?`} onClickYes={onClickExitYes} onClickNo={onClickExitNo} yesButtonColor="bg-red-500" />
+      )}
+      {showDeleteChannelModal && (
+        <ChatTwoButtonModal question={`${channelName} 채널을 삭제하시겠습니까?`} onClickYes={onClickDeleteChannelYes} onClickNo={onClickDeleteChannelNo} yesButtonColor="bg-red-500" />
       )}
     </div>
   );
