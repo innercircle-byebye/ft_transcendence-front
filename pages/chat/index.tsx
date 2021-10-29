@@ -1,14 +1,16 @@
-import React, { ReactElement, useCallback } from 'react';
+import React, { ReactElement, useCallback, useEffect } from 'react';
 import useSWR from 'swr';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import ChatLayout from '@/layouts/ChatLayout';
 import fetcher from '@/utils/fetcher';
 import { IChannel } from '@/typings/db';
+import useSocket from '@/hooks/useSocket';
 
 const Chat = () => {
   const router = useRouter();
-  const { data: channelData } = useSWR<IChannel[]>('/api/channel', fetcher);
+  const { socket } = useSocket('chat');
+  const { data: channelData, mutate: mutateChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
   const { data: myChannelData, mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
   const onClickJoin = useCallback((data: IChannel) => {
@@ -25,6 +27,25 @@ const Chat = () => {
       });
     });
   }, [mutateMyChannelData, router]);
+
+  const onChannelCreate = useCallback(
+    (data: IChannel) => {
+      if (!myChannelData?.includes(data)) {
+        mutateChannelData((channel) => {
+          channel?.push(data);
+          return channel;
+        }, false);
+      }
+    },
+    [mutateChannelData, myChannelData],
+  );
+
+  useEffect(() => {
+    socket?.on('channelList', onChannelCreate);
+    return () => {
+      socket?.off('channelList', onChannelCreate);
+    };
+  }, [socket, onChannelCreate]);
 
   if (!channelData || !myChannelData) {
     return <div>로딩중...</div>;
