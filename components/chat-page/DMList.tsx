@@ -9,12 +9,8 @@ import { IUser } from '@/typings/db';
 const DMList: VFC = () => {
   const router = useRouter();
   const { name } = router.query;
-  // const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
-  //   dedupingInterval: 2000, // 2초
-  // });
-  const { data: memberData } = useSWR<IUser[]>(
-    // userData ? 'http://localhost:3000/api/members' : null,
-    'http://localhost:3000/api/members',
+  const { data: membersData } = useSWR<IUser[]>(
+    '/api/dm/users',
     fetcher,
   );
   const [channelCollapse, setChannelCollapse] = useState(false);
@@ -22,6 +18,8 @@ const DMList: VFC = () => {
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
   }, []);
+
+  console.log('test GET /api/dm/users', membersData);
 
   return (
     <div className="border-2 border-sky-700 bg-sky-50 rounded-lg w-full h-auto p-3 space-y-3">
@@ -63,7 +61,7 @@ const DMList: VFC = () => {
       </div>
       <div className="flex flex-col max-h-72 overflow-y-auto">
         {!channelCollapse
-          && memberData?.map((member) => (
+          && membersData?.map((member) => (
             <Link
               // href={`/chat/dm/${member.nickname}`}
               href={`/chat/dm/${member.userId}`}
@@ -89,9 +87,6 @@ const DMList: VFC = () => {
                       />
                     </div>
                     {member.nickname}
-                    {/* {member.intraUsername === userData?.intraUsername && (
-                        <span> (나)</span>
-                      )} */}
                     {member.status === 'online' ? (
                       <div className="w-2 h-2 rounded-full bg-green-600" />
                     ) : (
