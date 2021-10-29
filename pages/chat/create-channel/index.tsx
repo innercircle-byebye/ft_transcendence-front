@@ -13,7 +13,7 @@ import Navbar from '@/components/Navbar';
 import useInput from '@/hooks/useInput';
 import MentionMember from '@/components/chat-page/MentionMember';
 import fetcher from '@/utils/fetcher';
-import { IUser } from '@/typings/db';
+import { IChannel, IUser } from '@/typings/db';
 import CheckPublicPrivate from '@/components/chat-page/SwitchPublicPrivate';
 
 interface IInviteMember {
@@ -24,9 +24,11 @@ interface IInviteMember {
 const CreateChannel = () => {
   const router = useRouter();
   const [channelName, onChangeChannelName] = useInput('');
+  const [channelNameError, setChannelNameError] = useState(false);
   const [maxMemberNum, onChangeMaxMemberNum, setMaxMemberNum] = useInput(3);
   const [isPrivate, setIsPrivate] = useState(false);
   const [password, onChangePassword, setPassword] = useInput('');
+  const [passwordError, setPasswordError] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [inviteMember, onChangeInviteMember, setInviteMember] = useInput('');
   const [inviteMembers, setInviteMembers] = useState<IInviteMember[]>([]);
@@ -36,6 +38,7 @@ const CreateChannel = () => {
     userData ? '/api/user/all' : null,
     fetcher,
   );
+  const { data: channelListData } = useSWR<IChannel[]>('/api/channel', fetcher);
 
   const onClickCancel = useCallback(() => {
     router.back();
@@ -58,6 +61,15 @@ const CreateChannel = () => {
   const onClickRemoveInvite = useCallback((id: number) => {
     setInviteMembers((prev) => prev.filter((v) => v.id !== id));
   }, []);
+
+  useEffect(() => {
+    const equalChannel = channelListData?.find((data) => data.name === channelName);
+    if (equalChannel) {
+      setChannelNameError(true);
+    } else {
+      setChannelNameError(false);
+    }
+  }, [channelListData, channelName]);
 
   useEffect(() => {
     if (maxMemberNum < 3) {
@@ -114,13 +126,25 @@ const CreateChannel = () => {
       </div>
 
       <div className="grid grid-cols-2 gap-10 items-center">
-        <input
-          className="col-span-2 w-80 px-6 py-4 rounded-full bg-gray-100 text-xl"
-          placeholder="채널명"
-          type="text"
-          value={channelName}
-          onChange={onChangeChannelName}
-        />
+        <div className="relative col-span-2">
+          <input
+            className="col-span-2 w-80 px-6 py-4 rounded-full bg-gray-100 text-xl"
+            placeholder="채널명"
+            type="text"
+            value={channelName}
+            onChange={onChangeChannelName}
+          />
+          {!channelName.trim().length && (
+          <div className="absolute left-5 text-red-500 text-xs italic">
+            채널명을 입력해주세요
+          </div>
+          )}
+          {channelNameError && (
+          <div className="absolute left-5 text-red-500 text-xs italic">
+            이미 존재하는 채널명입니다.
+          </div>
+          )}
+        </div>
         <div className="ml-3 text-gray-700 font-medium">최대멤버수</div>
         <input
           className="px-6 py-2 w-24 rounded-full bg-gray-100 text-xl"
@@ -136,6 +160,8 @@ const CreateChannel = () => {
           password={password}
           onChangePassword={onChangePassword}
           setPassword={setPassword}
+          passwordError={passwordError}
+          setPasswordError={setPasswordError}
         />
         <div className="col-span-2 flex flex-col space-y-5 items-center">
           <form className="w-80 flex items-center justify-evenly flex-row">
@@ -189,6 +215,7 @@ const CreateChannel = () => {
           className="bg-amber-600 text-white py-3 px-10 rounded-full focus:outline-none focus:shadow-outline"
           type="button"
           onClick={onClickSave}
+          disabled={!channelName.trim().length || channelNameError || (isPrivate && passwordError)}
         >
           SAVE
         </button>

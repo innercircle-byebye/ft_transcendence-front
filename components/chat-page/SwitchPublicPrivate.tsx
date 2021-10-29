@@ -3,22 +3,24 @@ import {
 } from 'react';
 
 interface IProps {
-  isChannelOwner?: boolean;
   isPrivate: boolean;
   setIsPrivate: Dispatch<SetStateAction<boolean>>;
   password: string;
   onChangePassword: (e: ChangeEvent<HTMLInputElement>) => void;
   setPassword: Dispatch<SetStateAction<string>>;
+  passwordError: boolean;
+  setPasswordError: Dispatch<SetStateAction<boolean>>;
+
+  isChannelOwner?: boolean;
   isPrivateChannel?: boolean;
   changePassword?: boolean;
   setChangePassword?: Dispatch<SetStateAction<boolean>>;
 }
 
 const CheckPublicPrivate: VFC<IProps> = ({
-  isChannelOwner = true, isPrivate, setIsPrivate, password, onChangePassword, setPassword,
-  isPrivateChannel, changePassword = true, setChangePassword,
+  isPrivate, setIsPrivate, password, onChangePassword, setPassword, passwordError, setPasswordError,
+  isChannelOwner = true, isPrivateChannel, changePassword = true, setChangePassword,
 }) => {
-  const [passwordError, setPasswordError] = useState(false);
   const [inputPasswordType, setInputPasswordType] = useState({
     type: 'password',
     visible: false,
@@ -59,7 +61,7 @@ const CheckPublicPrivate: VFC<IProps> = ({
     } else {
       setPasswordError(true);
     }
-  }, [password]);
+  }, [password, setPasswordError]);
 
   return (
     <>
