@@ -33,6 +33,20 @@ const DM = () => {
       e.preventDefault();
       if (chat?.trim() && chatDatas && userData) {
         const savedChat = chat;
+        mutateChat((prevChatData) => {
+          prevChatData?.push({
+            dmId: (chatDatas[chatDatas.length - 1]?.dmId || 0) + 1,
+            sender: chatDatas[chatDatas.length - 1]?.sender,
+            receiver: userData,
+            content: savedChat,
+            createAt: new Date(),
+            lastModifiedAt: new Date(),
+          });
+          return prevChatData;
+        }, false).then(() => {
+          // 읽지 않은 메시지 처리하기 추가
+          setChat('');
+        });
         axios
           .post(
             // `/api/dm/${userData?.userId}/chats`,
@@ -49,7 +63,7 @@ const DM = () => {
           .catch(console.error);
       }
     },
-    [DMUserName, chat, chatDatas, userData],
+    [DMUserName, chat, chatDatas, mutateChat, setChat, userData],
   );
 
   const onMessage = useCallback(
