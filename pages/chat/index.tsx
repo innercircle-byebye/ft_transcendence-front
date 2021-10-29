@@ -32,6 +32,25 @@ const Chat = () => {
     };
   }, [socket, onChannelCreate]);
 
+  const onChannelCreate = useCallback(
+    (data: IChannel) => {
+      if (!myChannelData?.includes(data)) {
+        mutateChannelData((channel) => {
+          channel?.push(data);
+          return channel;
+        }, false);
+      }
+    },
+    [mutateChannelData, myChannelData],
+  );
+
+  useEffect(() => {
+    socket?.on('channelList', onChannelCreate);
+    return () => {
+      socket?.off('channelList', onChannelCreate);
+    };
+  }, [socket, onChannelCreate]);
+
   if (!channelData || !myChannelData) {
     return <div>로딩중...</div>;
   }
