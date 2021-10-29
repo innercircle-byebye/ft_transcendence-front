@@ -155,25 +155,21 @@ const MembersModal: VFC = () => {
       </div>
       {grantChannelAdminMember
       && (
-        <div>
-          <ChatTwoButtonModal
-            question={`${grantChannelAdminMember.user.nickname}님께 방장 권한을 부여하시겠습니까?`}
-            onClickYes={onClickGrantChannelAdminYes}
-            onClickNo={onClickGrantChannelAdminNo}
-            yesButtonColor="bg-green-500"
-          />
-        </div>
+      <ChatTwoButtonModal
+        question={`${grantChannelAdminMember.user.nickname}님께 방장 권한을 부여하시겠습니까?`}
+        onClickYes={onClickGrantChannelAdminYes}
+        onClickNo={onClickGrantChannelAdminNo}
+        yesButtonColor="bg-green-500"
+      />
       )}
       {cancelChannelAdminMember
       && (
-        <div>
-          <ChatTwoButtonModal
-            question={`${cancelChannelAdminMember.user.nickname}님의 방장 권한을 취소하시겠습니까?`}
-            onClickYes={onClickCancelChannelAdminYes}
-            onClickNo={onClickCancelChannelAdminNo}
-            yesButtonColor="bg-green-500"
-          />
-        </div>
+      <ChatTwoButtonModal
+        question={`${cancelChannelAdminMember.user.nickname}님의 방장 권한을 취소하시겠습니까?`}
+        onClickYes={onClickCancelChannelAdminYes}
+        onClickNo={onClickCancelChannelAdminNo}
+        yesButtonColor="bg-green-500"
+      />
       )}
     </>
   );
