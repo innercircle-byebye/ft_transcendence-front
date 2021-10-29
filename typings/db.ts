@@ -46,6 +46,7 @@ export interface IChannel {
   readonly createdAt: Date;
   readonly lastModifiedAt: Date;
   deletedAt: Date;
+  currentChatMemberCount: number;
 }
 
 export interface IChannelChat {
