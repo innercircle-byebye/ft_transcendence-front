@@ -38,7 +38,7 @@ export interface IMessage {
 
 export interface IChannel {
   channelId: number;
-  ownerID: number;
+  ownerId: number;
   name: string;
   isPrivate: boolean;
   password: string;
@@ -46,6 +46,7 @@ export interface IChannel {
   readonly createdAt: Date;
   readonly lastModifiedAt: Date;
   deletedAt: Date;
+  currentChatMemberCount: number;
 }
 
 export interface IChannelChat {
@@ -56,4 +57,27 @@ export interface IChannelChat {
   createdAt: Date;
   lastModifiedAt: Date;
   deletedAt: Date | null;
+}
+
+export interface IChannelUser {
+  nickname: string;
+  imagePath: string;
+}
+
+export interface IChannelMember {
+  userId: number;
+  channelId: number;
+  mutedDate: Date;
+  banDate: Date;
+  isAdmin: boolean;
+  createdAt: Date;
+  lastModifiedAt: Date;
+  deletedAt: Date;
+  user: IChannelUser;
+}
+
+export interface ISimpleUser {
+  userId: number;
+  nickname: string;
+  imagePath: string;
 }

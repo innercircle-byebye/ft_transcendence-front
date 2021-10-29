@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import {
   useCallback, useEffect, useRef, useState,
 } from 'react';
-import { toast } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import useInput from '@/hooks/useInput';
 import reissueToken from '@/utils/reissueTokens';
 import { IUser } from '@/typings/db';
@@ -80,7 +80,7 @@ const CreateProfile = ({
           })
           .catch((error) => {
             console.dir(error);
-            toast.error(error.response?.data, { position: 'bottom-center' });
+            toast.error(error.response?.data, { position: 'bottom-center', theme: 'colored' });
           });
       }
     },
@@ -219,6 +219,7 @@ const CreateProfile = ({
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };

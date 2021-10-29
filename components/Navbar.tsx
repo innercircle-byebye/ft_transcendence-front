@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import React, { VFC } from 'react';
-import SearchUserNicknameInputBox from './SearchUserNicknameInputBox';
-import UserInfoMenu from './UserInfoMenu';
+import SearchUserNicknameInputBox from '@/components/SearchUserNicknameInputBox';
+import UserInfoMenu from '@/components/UserInfoMenu';
 
 interface IListItem {
   name: string;

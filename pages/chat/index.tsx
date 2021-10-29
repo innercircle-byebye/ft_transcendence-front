@@ -1,75 +1,138 @@
-import React, { ReactElement, useCallback } from 'react';
-import useSWR from 'swr';
+import React, {
+  ReactElement, useCallback, useState,
+} from 'react';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import useSWR from 'swr';
+import { ToastContainer, toast } from 'react-toastify';
 import ChatLayout from '@/layouts/ChatLayout';
+import SearchChannel from '@/components/chat-page/SearchChannel';
+import SearchDM from '@/components/chat-page/SearchDM';
+import reissueToken from '@/utils/reissueTokens';
+import { IChannel, IUser } from '@/typings/db';
+import PasswordModal from '@/components/chat-page/PasswordModal';
+import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
-import { IChannel } from '@/typings/db';
 
-const Chat = () => {
+const Chat = ({
+  allChannelInitialData, myChannelInitialData, allUserInitialData,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const { data: channelData } = useSWR<IChannel[]>('/api/channel', fetcher);
-  const { data: myChannelData, mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
+  const [password, onChangePassword, setPassword] = useInput('');
+  const [privateChannelToJoin, setPrivateChannelToJoin] = useState<IChannel | null>(null);
+  const { mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
-  const onClickJoin = useCallback((data: IChannel) => {
-    axios.post(`/api/channel/${data.name}/member`, {}, {
-      headers: {
-        withCredentials: 'true',
-      },
-    }).then(() => {
-      mutateMyChannelData((prevMyChannelData) => {
-        prevMyChannelData?.push(data);
-        return prevMyChannelData;
-      }, false).then(() => {
-        router.push(`/chat/channel/${data.name}`);
+  const onSubmitPassword = useCallback((e) => {
+    e.preventDefault();
+    if (privateChannelToJoin) {
+      axios.post(`/api/channel/${privateChannelToJoin.name}/member`, {
+        password,
+      }, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(async () => {
+        await mutateMyChannelData((prevMyChannelData) => {
+          prevMyChannelData?.push(privateChannelToJoin);
+          return prevMyChannelData;
+        }, false);
+        const channelName = privateChannelToJoin.name;
+        setPrivateChannelToJoin(null);
+        await router.push(`/chat/channel/${channelName}`);
+      }).catch((error) => {
+        setPassword('');
+        console.dir(error);
+        toast.error('틀린 비밀번호 입니다.', { position: 'bottom-right', theme: 'colored' });
       });
-    });
-  }, [mutateMyChannelData, router]);
+    }
+  }, [mutateMyChannelData, password, privateChannelToJoin, router, setPassword]);
 
-  if (!channelData || !myChannelData) {
-    return <div>로딩중...</div>;
-  }
+  const onClosePasswordModal = useCallback((e) => {
+    e.preventDefault();
+    setPrivateChannelToJoin(null);
+  }, [setPrivateChannelToJoin]);
 
   return (
-    <div className="h-full flex flex-col pl-6 space-y-2">
-      <div className="font-semibold text-2xl">
-        채널 목록
-      </div>
-      <div className="flex flex-wrap gap-4">
-        {channelData.map((data) => {
-          if (myChannelData.filter((v) => v.channelId === data.channelId).length) { return null; }
-          return (
-            <div key={data.channelId}>
-              <div className="flex flex-row justify-between items-center w-80 h-12 bg-blueGray-300 rounded-xl px-5 text-lg">
-                <div>{`# ${data.name}`}</div>
-                {!data.isPrivate ? <div>{`1 / ${data.maxParticipantNum}`}</div> : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
-                <button type="button" onClick={() => onClickJoin(data)} className=" bg-amber-500 px-2 py-1 rounded-sm">
-                  입장하기
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
+    privateChannelToJoin
+      ? (
+        <>
+          <PasswordModal
+            onSubmitPassword={onSubmitPassword}
+            channelName={privateChannelToJoin.name}
+            password={password}
+            onChangePassword={onChangePassword}
+            onCloseModal={onClosePasswordModal}
+          />
+          <ToastContainer />
+        </>
+      ) : (
+        <div className="h-full flex flex-col p-4 space-y-1">
+          <SearchChannel
+            allChannelInitialData={allChannelInitialData}
+            myChannelInitialData={myChannelInitialData}
+            setPrivateChannelToJoin={setPrivateChannelToJoin}
+          />
+          <SearchDM allUserInitialData={allUserInitialData} />
+        </div>
+      )
   );
 };
 
 Chat.getLayout = function getLayout(page: ReactElement) {
   return <ChatLayout>{page}</ChatLayout>;
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const access_token = process.env.ACCESS_TOKEN || '';
+  const refresh_token = process.env.REFRESH_TOKEN || '';
+
+  if (
+    !context.req.cookies[refresh_token]
+    || !context.req.cookies[access_token]
+  ) {
+    return reissueToken(
+      context,
+      access_token,
+      refresh_token,
+      '/chat',
+    );
+  }
+
+  const allChannelInitialData: IChannel[] = await axios
+    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/channel`, {
+      withCredentials: true,
+      headers: {
+        Cookie: `Authentication=${context.req.cookies[access_token]}`,
+      },
+    })
+    .then((response) => response.data);
+
+  const myChannelInitialData: IChannel[] = await axios
+    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/me`, {
+      withCredentials: true,
+      headers: {
+        Cookie: `Authentication=${context.req.cookies[access_token]}`,
+      },
+    })
+    .then((response) => response.data);
+
+  const allUserInitialData: IUser[] = await axios
+    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/all`, {
+      withCredentials: true,
+      headers: {
+        Cookie: `Authentication=${context.req.cookies[access_token]}`,
+      },
+    })
+    .then((response) => response.data);
+
+  return {
+    props: {
+      allChannelInitialData,
+      myChannelInitialData,
+      allUserInitialData,
+    },
+  };
 };
 
 export default Chat;
