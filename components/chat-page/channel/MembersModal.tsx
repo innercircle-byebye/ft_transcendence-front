@@ -1,10 +1,11 @@
-import {
+import React, {
   useCallback, useEffect, useState, VFC,
 } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
 import ChatTwoButtonModal from '../common/ChatTwoButtonModal';
 import fetcher from '@/utils/fetcher';
@@ -85,7 +86,11 @@ const MembersModal: VFC = () => {
             }
             return (
               <div key={data.userId} className="flex flex-row justify-between space-x-2">
-                <div className="font-semibold">{data.user.nickname}</div>
+                <Link href={`/chat/dm/${data.user.nickname}`}>
+                  <a className="font-semibold">
+                    {data.user.nickname}
+                  </a>
+                </Link>
                 <button type="button" className="bg-blue-400 font-semibold text-sm rounded-full w-16 h-7">게임신청</button>
                 <button type="button" className="bg-yellow-400 font-semibold text-sm rounded-full w-16 h-7">차단하기</button>
                 {channelData.ownerId === userData.userId
