@@ -75,3 +75,9 @@ export interface IChannelMember {
   deletedAt: Date;
   user: IChannelUser;
 }
+
+export interface ISimpleUser {
+  userId: number;
+  nickname: string;
+  imagePath: string;
+}
