@@ -8,7 +8,9 @@ import ChatBox from '@/components/chat-page/ChatBox';
 import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
-import { IChannel, IChannelChat, IUser } from '@/typings/db';
+import {
+  IChannel, IChannelChat, IUser,
+} from '@/typings/db';
 import ChatItem from '@/components/chat-page/ChatItem';
 import useSocket from '@/hooks/useSocket';
 import ChannelButtons from '@/components/chat-page/ChannelButtons';
@@ -23,8 +25,11 @@ const Channel = () => {
   const { data: channelData } = useSWR<IChannel>(
     `/api/channel/${channelName}`, fetcher,
   );
-  const { data: chatDatas, mutate: mutateChat } = useSWR<IChannelChat[]>(
+  const { data: channelChatData, mutate: mutateChat } = useSWR<IChannelChat[]>(
     `/api/channel/${channelName}/chat`, fetcher,
+  );
+  const { data: channelMemberData } = useSWR<IUser[]>(
+    `/api/channel/${channelName}/member`, fetcher,
   );
 
   const onCloseEmoji = useCallback(() => {
@@ -34,11 +39,11 @@ const Channel = () => {
   const onSubmitChat = useCallback(
     (e) => {
       e.preventDefault();
-      if (chat?.trim() && chatDatas && channelData && userData) {
+      if (chat?.trim() && channelChatData && channelData && userData) {
         const savedChat = chat;
         mutateChat((prevChatData) => {
           prevChatData?.push({
-            channelChatId: (chatDatas[chatDatas.length - 1]?.channelChatId || 0) + 1,
+            channelChatId: (channelChatData[channelChatData.length - 1]?.channelChatId || 0) + 1,
             userId: userData.userId,
             channelId: channelData.channelId,
             content: savedChat,
@@ -60,7 +65,7 @@ const Channel = () => {
         }).catch(console.error);
       }
     },
-    [channelData, chat, chatDatas, mutateChat, setChat, userData],
+    [channelData, chat, channelChatData, mutateChat, setChat, userData],
   );
 
   const onMessage = useCallback(
@@ -93,7 +98,7 @@ const Channel = () => {
         </div>
         <div className="flex-1">
           {
-            chatDatas?.map((chatData) => (
+            channelChatData?.map((chatData) => (
               <ChatItem
                 key={chatData.channelChatId}
                 chatData={chatData}
@@ -108,6 +113,7 @@ const Channel = () => {
           onSubmitChat={onSubmitChat}
           showEmoji={showEmoji}
           setShowEmoji={setShowEmoji}
+          mentionData={channelMemberData}
         />
       </div>
     </div>

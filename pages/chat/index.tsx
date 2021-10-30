@@ -10,7 +10,7 @@ import SearchChannel from '@/components/chat-page/SearchChannel';
 
 const Chat = () => {
   const { socket } = useSocket('chat');
-  const { data: channelData, mutate: mutateChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
+  const { data: allChannelData, mutate: mutateChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
   const { data: myChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
   const onChannelCreate = useCallback(
@@ -32,32 +32,13 @@ const Chat = () => {
     };
   }, [socket, onChannelCreate]);
 
-  const onChannelCreate = useCallback(
-    (data: IChannel) => {
-      if (!myChannelData?.includes(data)) {
-        mutateChannelData((channel) => {
-          channel?.push(data);
-          return channel;
-        }, false);
-      }
-    },
-    [mutateChannelData, myChannelData],
-  );
-
-  useEffect(() => {
-    socket?.on('channelList', onChannelCreate);
-    return () => {
-      socket?.off('channelList', onChannelCreate);
-    };
-  }, [socket, onChannelCreate]);
-
-  if (!channelData || !myChannelData) {
+  if (!allChannelData || !myChannelData) {
     return <div>로딩중...</div>;
   }
 
   return (
     <div className="h-full flex flex-col p-4 space-y-1">
-      <SearchChannel channelData={channelData} />
+      <SearchChannel allChannelData={allChannelData} />
     </div>
   );
 };

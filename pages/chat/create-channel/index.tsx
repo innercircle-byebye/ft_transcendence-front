@@ -34,11 +34,11 @@ const CreateChannel = () => {
   const [inviteMembers, setInviteMembers] = useState<IInviteMember[]>([]);
   const [inviteNumError, setInviteNumError] = useState(false);
   const { data: userData } = useSWR('/api/user/me', fetcher);
-  const { data: memberData } = useSWR<IUser[]>(
+  const { data: allUserData } = useSWR<IUser[]>(
     userData ? '/api/user/all' : null,
     fetcher,
   );
-  const { data: channelListData } = useSWR<IChannel[]>('/api/channel', fetcher);
+  const { data: allChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
 
   const onClickCancel = useCallback(() => {
     router.back();
@@ -63,13 +63,13 @@ const CreateChannel = () => {
   }, []);
 
   useEffect(() => {
-    const equalChannel = channelListData?.find((data) => data.name === channelName);
+    const equalChannel = allChannelData?.find((data) => data.name === channelName);
     if (equalChannel) {
       setChannelNameError(true);
     } else {
       setChannelNameError(false);
     }
-  }, [channelListData, channelName]);
+  }, [allChannelData, channelName]);
 
   useEffect(() => {
     if (maxMemberNum < 3) {
@@ -177,9 +177,9 @@ const CreateChannel = () => {
                   onChangeValue={onChangeInviteMember}
                   inputRef={textareaRef}
                   data={
-                  memberData?.filter(
-                    (v) => !inviteMembers.map((m) => m.id).includes(v.userId),
-                  )
+                    allUserData?.filter(
+                      (v) => !inviteMembers.map((m) => m.id).includes(v.userId),
+                    )
                 }
                 />
               </div>
