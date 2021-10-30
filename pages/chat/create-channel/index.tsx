@@ -134,7 +134,7 @@ const CreateChannel = () => {
             value={channelName}
             onChange={onChangeChannelName}
           />
-          {!channelName.length && (
+          {!channelName.trim().length && (
           <div className="absolute left-5 text-red-500 text-xs italic">
             채널명을 입력해주세요
           </div>
@@ -215,7 +215,7 @@ const CreateChannel = () => {
           className="bg-amber-600 text-white py-3 px-10 rounded-full focus:outline-none focus:shadow-outline"
           type="button"
           onClick={onClickSave}
-          disabled={!channelName.length || channelNameError || (isPrivate && passwordError)}
+          disabled={!channelName.trim().length || channelNameError || (isPrivate && passwordError)}
         >
           SAVE
         </button>
