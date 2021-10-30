@@ -107,6 +107,16 @@ const Channel = ({
     if (channelData?.ownerId !== userData?.userId) { toast.success('채널명이 변경되었습니다.', { position: 'bottom-right' }); }
   }, [channelData?.ownerId, revalidate, router, userData?.userId]);
 
+  const onUpdateAdmin = useCallback((data: { isAdmin: boolean, userId: number, }) => {
+    if (userData && data.userId === userData.userId) {
+      if (data.isAdmin) {
+        toast.info('관리자 권한이 생겼습니다.', { position: 'bottom-right', theme: 'colored' });
+      } else {
+        toast.info('관리자 권한이 없어졌습니다', { position: 'bottom-right', theme: 'colored' });
+      }
+    }
+  }, [userData]);
+
   useEffect(() => {
     socket?.on('message', onMessage);
     return () => {
@@ -120,6 +130,13 @@ const Channel = ({
       socket?.off('updatedChannelName', onUpdatedChannelName);
     };
   }, [onUpdatedChannelName, socket]);
+
+  useEffect(() => {
+    socket?.on('updateChannelAdmin', onUpdateAdmin);
+    return () => {
+      socket?.off('updateChannelAdmin', onUpdateAdmin);
+    };
+  }, [onUpdateAdmin, socket]);
 
   return (
     <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
