@@ -1,47 +1,16 @@
 import React, {
-  ReactElement, useCallback, useEffect,
+  ReactElement,
 } from 'react';
-import useSWR from 'swr';
 import ChatLayout from '@/layouts/ChatLayout';
-import fetcher from '@/utils/fetcher';
-import { IChannel } from '@/typings/db';
-import useSocket from '@/hooks/useSocket';
 import SearchChannel from '@/components/chat-page/SearchChannel';
+import SearchDM from '@/components/chat-page/SearchDM';
 
-const Chat = () => {
-  const { socket } = useSocket('chat');
-  const { data: allChannelData, mutate: mutateChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
-  const { data: myChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
-
-  const onChannelCreate = useCallback(
-    (data: IChannel) => {
-      if (!myChannelData?.includes(data)) {
-        mutateChannelData((channel) => {
-          channel?.push(data);
-          return channel;
-        }, false);
-      }
-    },
-    [mutateChannelData, myChannelData],
-  );
-
-  useEffect(() => {
-    socket?.on('channelList', onChannelCreate);
-    return () => {
-      socket?.off('channelList', onChannelCreate);
-    };
-  }, [socket, onChannelCreate]);
-
-  if (!allChannelData || !myChannelData) {
-    return <div>로딩중...</div>;
-  }
-
-  return (
-    <div className="h-full flex flex-col p-4 space-y-1">
-      <SearchChannel allChannelData={allChannelData} />
-    </div>
-  );
-};
+const Chat = () => (
+  <div className="h-full flex flex-col p-4 space-y-1">
+    <SearchChannel />
+    <SearchDM />
+  </div>
+);
 
 Chat.getLayout = function getLayout(page: ReactElement) {
   return <ChatLayout>{page}</ChatLayout>;
