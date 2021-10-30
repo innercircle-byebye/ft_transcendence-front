@@ -17,6 +17,7 @@ const MembersModal: VFC = () => {
   const [ownerNickname, setOwnerNickname] = useState<string | null>(null);
   const [isUserAdmin, setIsUserAdmin] = useState(false);
   const [muteMember, setMuteMember] = useState<IChannelMember | null>(null);
+  const [banMember, setBanMember] = useState<IChannelMember | null>(null);
   const [
     grantChannelAdminMember, setGrantChannelAdminMember,
   ] = useState<IChannelMember | null>(null);
@@ -45,6 +46,10 @@ const MembersModal: VFC = () => {
     setCancelChannelAdminMember(member);
   }, []);
 
+  const onClickBanMember = useCallback((member: IChannelMember) => {
+    setBanMember(member);
+  }, []);
+
   const onClickGrantChannelAdminYes = useCallback(() => {
     if (userData && channelData && grantChannelAdminMember) {
       axios.patch(`/api/channel/${channelData.name}/admin`, {
@@ -56,6 +61,7 @@ const MembersModal: VFC = () => {
         },
       }).then(() => {
         revalidateChannelMemberData();
+
         toast.success(`"${grantChannelAdminMember.user.nickname}" 님에게 방장권한을 부여했습니다.`, { position: 'bottom-right', theme: 'colored' });
         setGrantChannelAdminMember(null);
       }).catch(() => {
@@ -83,12 +89,35 @@ const MembersModal: VFC = () => {
     }
   }, [userData, channelData, cancelChannelAdminMember, revalidateChannelMemberData]);
 
+  const onClickBanMemberYes = useCallback(() => {
+    if (banMember) {
+      axios.patch(`/api/channel/${channelName}/member`, {
+        banDate: new Date(),
+        targetUserId: banMember.userId,
+      }, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        setBanMember(null);
+        revalidateChannelMemberData();
+        toast.success(`${banMember.user.nickname}님을 추방했습니다.`, { position: 'bottom-right', theme: 'colored' });
+      }).catch(() => {
+        toast.error(`${banMember.user.nickname}님 추방에 실패했습니다.`, { position: 'bottom-right', theme: 'colored' });
+      });
+    }
+  }, [banMember, channelName, revalidateChannelMemberData]);
+
   const onClickGrantChannelAdminNo = useCallback(() => {
     setGrantChannelAdminMember(null);
   }, []);
 
   const onClickCancelChannelAdminNo = useCallback(() => {
     setCancelChannelAdminMember(null);
+  }, []);
+
+  const onClickBanMemberNo = useCallback(() => {
+    setBanMember(null);
   }, []);
 
   useEffect(() => {
@@ -143,18 +172,21 @@ const MembersModal: VFC = () => {
                 </Link>
                 <button type="button" className="bg-blue-400 font-semibold text-sm rounded-full w-16 h-7">게임신청</button>
                 <button type="button" className="bg-yellow-400 font-semibold text-sm rounded-full w-16 h-7">차단하기</button>
-                {isUserAdmin
-                && <button type="button" onClick={() => onClickMuteMember(data)} className="bg-amber-500 font-semibold text-sm rounded-full w-16 h-7">채팅금지</button>}
                 {channelData.ownerId === userData.userId
-              && (
-              <>
-                {(data.isAdmin
+                && (data.isAdmin
                   ? <button type="button" onClick={() => onClickCancelChannelAdmin(data)} className="bg-red-400 font-semibold text-sm rounded-full w-16 h-7">방장취소</button>
                   : <button type="button" onClick={() => onClickGrantChannelAdmin(data)} className="bg-green-500 font-semibold text-sm rounded-full w-16 h-7">방장부여</button>
                 )}
-                <button type="button" className="bg-red-500 font-semibold text-sm rounded-full w-16 h-7">추방하기</button>
-              </>
-              )}
+                {isUserAdmin && (userData.userId === channelData.ownerId || !data.isAdmin)
+                && (
+                <>
+                  <button type="button" onClick={() => onClickMuteMember(data)} className="bg-amber-500 font-semibold text-sm rounded-full w-16 h-7">채팅금지</button>
+                  {(data.banDate
+                    ? <button type="button" onClick={() => onClickBanMember(data)} className="bg-green-400 font-semibold text-sm rounded-full w-16 h-7">추방취소</button>
+                    : <button type="button" onClick={() => onClickBanMember(data)} className="bg-red-500 font-semibold text-sm rounded-full w-16 h-7">추방하기</button>
+                  )}
+                </>
+                )}
               </div>
             );
           })}
@@ -184,6 +216,15 @@ const MembersModal: VFC = () => {
           muteMember={muteMember}
           setMuteMember={setMuteMember}
           revalidateChannelMemberData={revalidateChannelMemberData}
+        />
+      )}
+      {banMember
+      && (
+        <ChatTwoButtonModal
+          question={`${banMember.user.nickname}님을 추방하시겠습니까?`}
+          onClickYes={onClickBanMemberYes}
+          onClickNo={onClickBanMemberNo}
+          yesButtonColor="bg-red-500"
         />
       )}
     </>
