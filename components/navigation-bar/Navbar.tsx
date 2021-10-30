@@ -23,19 +23,22 @@ const Navbar: VFC = () => {
   ];
 
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
-  console.log('userData:', userData);
 
   return (
-    <div className="flex flex-row flex-wrap px-12 py-3 bg-sky-700 h-1/12 text-white">
+    <div className="flex flex-row flex-wrap justify-evenly items-center bg-sky-700 h-auto py-5 text-white">
       {/* 이미지 */}
       <div className="px-6">
-        <Image
-          src="/Logo.png"
-          alt="Logo"
-          width="100"
-          height="20"
-          objectFit="contain"
-        />
+        <Link href="/">
+          <a>
+            <Image
+              src="/Logo.png"
+              alt="Logo"
+              width="150"
+              height="40"
+              objectFit="contain"
+            />
+          </a>
+        </Link>
       </div>
       {/* page lists */}
       <div className="px-12 mx-6 flex flex-row flex-wrap">
@@ -49,12 +52,10 @@ const Navbar: VFC = () => {
       </div>
       {/* user search input box */}
       <div className="px-12">
-        <div className="justify-center">
-          <SearchUserNicknameInputBox />
-        </div>
+        <SearchUserNicknameInputBox />
       </div>
       {/* ID 와 Dropdown button */}
-      <div className="flex flex-auto flex-wrap justify-end">
+      <div className="flex items-center">
         <div className="mx-2">{userData?.nickname}</div>
         <UserInfoMenu />
       </div>

@@ -27,12 +27,12 @@ const UserInfoMenu = () => {
           {/* MenuIcon size 를 어떻게 맞춰야하는지 모르겠습니다... */}
           <MenuIcon className="w-12 h-1/12 px-4" />
         </Menu.Button>
-        <Menu.Items className="absolute w-20 flex flex-col divide-y divide-gray-50 bg-white">
+        <Menu.Items className="absolute flex flex-col divide-y divide-gray-100 bg-white">
           <Menu.Item>
             {({ active }) => (
               <div className={`${active && 'bg-blue-500 text-white'}`}>
                 <Link href="/">
-                  <a>Profile</a>
+                  <a className="px-1">Profile</a>
                 </Link>
               </div>
             )}
@@ -41,7 +41,7 @@ const UserInfoMenu = () => {
             {({ active }) => (
               <div className={`${active && 'bg-blue-500 text-white'}`}>
                 <Link href="/">
-                  <a>History</a>
+                  <a className="px-1">History</a>
                 </Link>
               </div>
             )}
@@ -49,7 +49,7 @@ const UserInfoMenu = () => {
           <Menu.Item>
             {({ active }) => (
               <div className={`${active && 'bg-blue-500 text-white'}`}>
-                <a>
+                <a className="px-1">
                   <button type="button" onClick={onClickLogout}>
                     Log out
                   </button>
