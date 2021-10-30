@@ -38,16 +38,18 @@ export interface IMessage {
 
 export interface IChannel {
   channelId: number;
+  ownerId: number;
   name: string;
+  isPrivate: boolean;
   password: string;
   maxParticipantNum: number;
   readonly createdAt: Date;
   readonly lastModifiedAt: Date;
   deletedAt: Date;
+  currentChatMemberCount: number;
 }
 
-export interface IChat {
-  // 채널의 채팅
+export interface IChannelChat {
   channelChatId: number;
   userId: number;
   channelId: number;
@@ -55,4 +57,27 @@ export interface IChat {
   createdAt: Date;
   lastModifiedAt: Date;
   deletedAt: Date | null;
+}
+
+export interface IChannelUser {
+  nickname: string;
+  imagePath: string;
+}
+
+export interface IChannelMember {
+  userId: number;
+  channelId: number;
+  mutedDate: Date;
+  banDate: Date;
+  isAdmin: boolean;
+  createdAt: Date;
+  lastModifiedAt: Date;
+  deletedAt: Date;
+  user: IChannelUser;
+}
+
+export interface ISimpleUser {
+  userId: number;
+  nickname: string;
+  imagePath: string;
 }
