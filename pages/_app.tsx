@@ -8,7 +8,10 @@ import {
 } from 'react';
 import 'tailwindcss/tailwind.css';
 import { useRouter } from 'next/router';
+import useSWR from 'swr';
 import useSocket from '@/hooks/useSocket';
+import { IUser } from '@/typings/db';
+import fetcher from '@/utils/fetcher';
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -24,6 +27,24 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const { pathname } = router;
   const [namespace, setNamespace] = useState('');
   const { disconnect } = useSocket(namespace);
+  const mainSocket = useSocket('main').socket;
+  const [isLogin, setIsLogin] = useState(false);
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
+  // 이 부분을 login 성공했을때로 변경
+  // 'chatLogin' -> 'login'
+  console.log('isLogin:', isLogin);
+  if (isLogin === false) {
+    if (userData?.userId) {
+      mainSocket?.emit('login', userData?.userId);
+      setIsLogin(true);
+    }
+  }
+
+  useEffect(() => {
+    mainSocket?.on('dm', (data) => {
+      console.log('dm 왔을때', data);
+    });
+  }, [mainSocket]);
 
   useEffect(() => {
     if (pathname.slice(0, 5) === '/chat') {
