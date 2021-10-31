@@ -89,7 +89,13 @@ const Channel = () => {
             chatDatas?.map((chatData) => (
               <ChatItem
                 key={chatData.channelChatId}
-                chatData={chatData}
+                // chatData={chatData}
+                chatData={{
+                  createdAt: chatData.createdAt,
+                  userId: chatData.userId,
+                  imagePath: 'https://picsum.photos/400/400',
+                  content: chatData.content,
+                }}
               />
             ))
           }
