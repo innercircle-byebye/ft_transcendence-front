@@ -13,7 +13,6 @@ import {
 } from '@/typings/db';
 import ChatItem from '@/components/chat-page/chat/ChatItem';
 import useSocket from '@/hooks/useSocket';
-import reissueToken from '@/utils/reissueTokens';
 import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
 
@@ -154,29 +153,7 @@ Channel.getLayout = function getLayout(page: ReactElement) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
   const channelName = context.query.name;
-
-  if (
-    !context.req.cookies[refresh_token]
-    || !context.req.cookies[access_token]
-  ) {
-    return reissueToken(
-      context,
-      access_token,
-      refresh_token,
-      '/chat',
-    );
-  }
-
-  const userInitialData: IUser = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
-      withCredentials: true,
-      headers: {
-        Cookie: `Authentication=${context.req.cookies[access_token]}`,
-      },
-    })
-    .then((response) => response.data);
 
   const channelInitialData: IChannel = await axios
     .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}`), {
@@ -207,7 +184,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      userInitialData,
       channelInitialData,
       channelChatInitialData,
       channelMemberInitialData,
