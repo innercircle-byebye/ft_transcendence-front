@@ -3,13 +3,13 @@ import React, {
 } from 'react';
 import { Mention, MentionsInput, SuggestionDataItem } from 'react-mentions';
 import Image from 'next/image';
-import { IUser } from '@/typings/db';
+import { ISimpleUser } from '@/typings/db';
 
 interface IProps {
   trigger: string;
   value: string;
   onChangeValue: (e: any) => void;
-  data: IUser[] | undefined;
+  data: ISimpleUser[] | undefined;
   inputRef: RefObject<HTMLTextAreaElement> | ((instance: HTMLInputElement | null) => void);
   onKeyPress?: (e: any) => void;
   placeholder?: string;

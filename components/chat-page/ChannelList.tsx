@@ -12,7 +12,7 @@ const ChannelList: VFC = () => {
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
     dedupingInterval: 2000, // 2초
   });
-  const { data: channelData } = useSWR<IChannel[]>(
+  const { data: myChannelData } = useSWR<IChannel[]>(
     userData ? '/api/channel/me' : null,
     fetcher,
   );
@@ -81,9 +81,9 @@ const ChannelList: VFC = () => {
         </button>
         Channels
       </div>
-      <div className="flex flex-col max-h-72 overflow-y-auto">
+      <div className="flex flex-col max-h-80 overflow-y-auto">
         {!channelCollapse
-          && channelData?.map((channel) => (
+          && myChannelData?.map((channel) => (
             <Link key={channel.channelId} href={`/chat/channel/${channel.name}`}>
               <a>
                 <span
@@ -93,10 +93,15 @@ const ChannelList: VFC = () => {
                       : ''
                   }`}
                 >
-                  #
-                  {' '}
-                  {channel.name}
-                  {channel.password && (
+                  <div className="flex flex-row items-center">
+                    {`# ${channel.name} `}
+                    {userData?.userId === channel.ownerId ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                    ) : <></>}
+                  </div>
+                  {channel.isPrivate && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
@@ -115,23 +120,6 @@ const ChannelList: VFC = () => {
             </Link>
           ))}
       </div>
-      <button type="button" className="w-full bg-sky-700 text-sky-100 hover:bg-gray-300 hover:text-sky-700 flex flex-row justify-between items-center rounded-full px-3 py-1">
-        <div>Search Channels</div>
-        <div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-      </button>
     </div>
   );
 };
