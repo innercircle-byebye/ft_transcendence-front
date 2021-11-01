@@ -9,7 +9,7 @@ import { IUser } from '@/typings/db';
 const DMList: VFC = () => {
   const router = useRouter();
   const { name } = router.query;
-  const { data: membersData } = useSWR<IUser[]>(
+  const { data: dmMembersDatas } = useSWR<IUser[]>(
     '/api/dm/users',
     fetcher,
   );
@@ -19,7 +19,7 @@ const DMList: VFC = () => {
     setChannelCollapse((prev) => !prev);
   }, []);
 
-  console.log('test GET /api/dm/users', membersData);
+  console.log('test GET /api/dm/users', dmMembersDatas);
 
   return (
     <div className="border-2 border-sky-700 bg-sky-50 rounded-lg w-full h-auto p-3 space-y-3">
@@ -61,7 +61,7 @@ const DMList: VFC = () => {
       </div>
       <div className="flex flex-col max-h-72 overflow-y-auto">
         {!channelCollapse
-          && membersData?.map((member) => (
+          && dmMembersDatas?.map((member) => (
             <Link
               // href={`/chat/dm/${member.nickname}`}
               href={`/chat/dm/${member.userId}`}
