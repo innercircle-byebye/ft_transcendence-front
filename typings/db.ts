@@ -49,6 +49,11 @@ export interface IChannel {
   currentChatMemberCount: number;
 }
 
+export interface IChannelUser {
+  nickname: string;
+  imagePath: string;
+}
+
 export interface IChannelChat {
   channelChatId: number;
   userId: number;
@@ -57,11 +62,7 @@ export interface IChannelChat {
   createdAt: Date;
   lastModifiedAt: Date;
   deletedAt: Date | null;
-}
-
-export interface IChannelUser {
-  nickname: string;
-  imagePath: string;
+  user: IChannelUser;
 }
 
 export interface IChannelMember {

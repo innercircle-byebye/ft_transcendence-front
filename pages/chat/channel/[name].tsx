@@ -72,6 +72,10 @@ const Channel = ({
             createdAt: new Date(),
             lastModifiedAt: new Date(),
             deletedAt: null,
+            user: {
+              nickname: userData.nickname,
+              imagePath: userData.imagePath,
+            },
           });
           return prevChatData;
         }, false).then(() => {
