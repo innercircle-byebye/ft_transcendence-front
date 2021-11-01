@@ -21,13 +21,12 @@ const UserInfoMenu = () => {
   }, []);
 
   return (
-    <div className="relative text-blue-900">
+    <div className="relative text-white">
       <Menu>
-        <Menu.Button>
-          {/* MenuIcon size 를 어떻게 맞춰야하는지 모르겠습니다... */}
-          <MenuIcon className="w-14 h-1/6 px-4" />
+        <Menu.Button className="flex items-center">
+          <MenuIcon className="w-8 h-8" />
         </Menu.Button>
-        <Menu.Items className="absolute flex flex-col divide-y divide-gray-100 bg-gray-100">
+        <Menu.Items className="absolute flex flex-col divide-y divide-gray-100 bg-gray-100 text-blue-900 font-medium">
           <Menu.Item>
             {({ active }) => (
               <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
@@ -50,7 +49,7 @@ const UserInfoMenu = () => {
             {({ active }) => (
               <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
                 <a className="px-3">
-                  <button type="button" onClick={onClickLogout}>
+                  <button className="font-medium" type="button" onClick={onClickLogout}>
                     Log out
                   </button>
                 </a>
