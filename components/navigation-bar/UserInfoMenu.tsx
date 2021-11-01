@@ -26,7 +26,7 @@ const UserInfoMenu = () => {
         <Menu.Button className="flex items-center">
           <MenuIcon className="w-8 h-8" />
         </Menu.Button>
-        <Menu.Items className="absolute flex flex-col divide-y divide-gray-100 bg-gray-100 text-blue-900 font-medium">
+        <Menu.Items className="absolute right-0 flex flex-col divide-y divide-gray-100 bg-gray-100 text-blue-900 font-medium">
           <Menu.Item>
             {({ active }) => (
               <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
@@ -50,7 +50,7 @@ const UserInfoMenu = () => {
               <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
                 <a className="px-3">
                   <button className="font-medium" type="button" onClick={onClickLogout}>
-                    Log out
+                    Logout
                   </button>
                 </a>
               </div>
