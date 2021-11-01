@@ -91,10 +91,11 @@ const DM = () => {
               <ChatItem
                 key={chatData.dmId}
                 chatData={{
-                  createdAt: chatData.createAt,
                   userId: chatData.sender.userId,
+                  nickname: chatData.sender.nickname,
                   imagePath: chatData.sender.imagePath,
                   content: chatData.content,
+                  createdAt: chatData.createAt,
                 }}
               />
             ))
