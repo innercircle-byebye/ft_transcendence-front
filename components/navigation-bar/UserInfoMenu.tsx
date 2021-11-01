@@ -21,41 +21,38 @@ const UserInfoMenu = () => {
   }, []);
 
   return (
-    <div className="relative">
+    <div className="relative text-white">
       <Menu>
-        <Menu.Button>
-          {/* MenuIcon size 를 어떻게 맞춰야하는지 모르겠습니다... */}
-          <MenuIcon className="w-12 h-1/12 px-4" />
+        <Menu.Button className="flex items-center">
+          <MenuIcon className="w-8 h-8" />
         </Menu.Button>
-        <Menu.Items className="absolute w-20 flex flex-col divide-y divide-gray-50 bg-white">
+        <Menu.Items className="absolute right-0 flex flex-col divide-y divide-gray-100 bg-gray-100 text-blue-900 font-medium">
           <Menu.Item>
             {({ active }) => (
-              <div className={`${active && 'bg-blue-500 text-white'}`}>
+              <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
                 <Link href="/">
-                  <a>Profile</a>
+                  <a className="px-3">Profile</a>
                 </Link>
               </div>
             )}
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <Link href="/">
-                <a className={`${active && 'bg-blue-500 text-white'}`}>
-                  History
-                </a>
-              </Link>
+              <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
+                <Link href="/">
+                  <a className="px-3">History</a>
+                </Link>
+              </div>
             )}
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <div className={`${active && 'bg-blue-500 text-white'}`}>
-                <Link href="/">
-                  <a>
-                    <button type="button" onClick={onClickLogout}>
-                      Log out
-                    </button>
-                  </a>
-                </Link>
+              <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
+                <a className="px-3">
+                  <button className="font-medium" type="button" onClick={onClickLogout}>
+                    Logout
+                  </button>
+                </a>
               </div>
             )}
           </Menu.Item>
