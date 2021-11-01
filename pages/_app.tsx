@@ -52,14 +52,15 @@ MyApp.getInitialProps = async (context: any) => {
   const access_token = process.env.ACCESS_TOKEN || '';
   const refresh_token = process.env.REFRESH_TOKEN || '';
 
+  if (ctx.pathname === '/login') {
+    return {};
+  }
   if (
-    ctx.pathname !== '/login' && (
-      !ctx.req.cookies[refresh_token]
-    || !ctx.req.cookies[access_token])
+    !ctx.req.cookies[refresh_token]
+    || !ctx.req.cookies[access_token]
   ) {
     return reissueToken(ctx, access_token, refresh_token);
   }
-
   if (Component.getInitialProps) {
     console.log('hellooooooo');
     pageProps = await Component.getInitialProps(ctx);
@@ -73,6 +74,14 @@ MyApp.getInitialProps = async (context: any) => {
       },
     })
     .then((response) => response.data);
+
+  if (ctx.pathname !== '/create-profile' && userInitialData.status === `${process.env.STATUS_NOT_REGISTER}`) {
+    ctx.res.writeHead(302, {
+      Location: '/create-profile',
+    });
+    ctx.res.end();
+    return {};
+  }
 
   // _app에서 props 추가 (모든 컴포넌트에서 공통적으로 사용할 값 추가)
   pageProps = { ...pageProps, userInitialData };
