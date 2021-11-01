@@ -9,12 +9,8 @@ import { IUser } from '@/typings/db';
 const DMList: VFC = () => {
   const router = useRouter();
   const { name } = router.query;
-  // const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
-  //   dedupingInterval: 2000, // 2초
-  // });
-  const { data: memberData } = useSWR<IUser[]>(
-    // userData ? 'http://localhost:3000/api/members' : null,
-    'http://localhost:3000/api/members',
+  const { data: dmMembersDatas } = useSWR<IUser[]>(
+    '/api/dm/users',
     fetcher,
   );
   const [channelCollapse, setChannelCollapse] = useState(false);
@@ -22,6 +18,8 @@ const DMList: VFC = () => {
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
   }, []);
+
+  console.log('test GET /api/dm/users', dmMembersDatas);
 
   return (
     <div className="border-2 border-sky-700 bg-sky-50 rounded-lg w-full h-auto p-3 space-y-3">
@@ -61,9 +59,9 @@ const DMList: VFC = () => {
         </button>
         DMs
       </div>
-      <div className="flex flex-col max-h-72 overflow-y-auto">
+      <div className="flex flex-col max-h-80 overflow-y-auto">
         {!channelCollapse
-          && memberData?.map((member) => (
+          && dmMembersDatas?.map((member) => (
             <Link
               // href={`/chat/dm/${member.nickname}`}
               href={`/chat/dm/${member.userId}`}
@@ -89,9 +87,6 @@ const DMList: VFC = () => {
                       />
                     </div>
                     {member.nickname}
-                    {/* {member.intraUsername === userData?.intraUsername && (
-                        <span> (나)</span>
-                      )} */}
                     {member.status === 'online' ? (
                       <div className="w-2 h-2 rounded-full bg-green-600" />
                     ) : (
@@ -104,23 +99,6 @@ const DMList: VFC = () => {
           ))}
         {/* </div> */}
       </div>
-      <button type="button" className="w-full bg-sky-700 text-sky-100 hover:bg-gray-300 hover:text-sky-700 flex flex-row justify-between items-center rounded-full px-3 py-1">
-        <div>Search members</div>
-        <div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
-          >
-            <path
-              fillRule="evenodd"
-              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
-      </button>
     </div>
   );
 };
