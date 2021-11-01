@@ -23,7 +23,7 @@ const SearchUserNicknameInputBox = () => {
       <div>
         <input
           type="text"
-          className="w-full px-1 sm:text-sm text-gray-900"
+          className="outline-none w-full px-1 sm:text-sm text-gray-900"
           placeholder="Search user Nickname"
           onChange={onChangeUserNickname}
           onKeyPress={onKeyPressHandler}
