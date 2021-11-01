@@ -21,7 +21,7 @@ import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
 const Channel = ({
   userInitialData,
   channelInitialData,
-  allChannelInitialData,
+  myChannelInitialData,
   channelChatInitialData,
   channelMemberInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -40,12 +40,7 @@ const Channel = ({
   );
   const { data: myChannelData, revalidate } = useSWR<IChannel[]>(
     '/api/channel/me', fetcher, {
-      initialData: channelInitialData,
-    },
-  );
-  const { data: allChannelData } = useSWR<IChannel[]>(
-    '/api/channel', fetcher, {
-      initialData: allChannelInitialData,
+      initialData: myChannelInitialData,
     },
   );
   const { data: channelChatData, mutate: mutateChat } = useSWR<IChannelChat[]>(
@@ -123,6 +118,10 @@ const Channel = ({
     }
   }, [userData]);
 
+  const onDeleteChannel = useCallback(() => {
+    router.push('/chat');
+  }, [router]);
+
   useEffect(() => {
     socket?.on('message', onMessage);
     return () => {
@@ -145,12 +144,18 @@ const Channel = ({
   }, [onUpdateAdmin, socket]);
 
   useEffect(() => {
+    socket?.on('deleteChannel', onDeleteChannel);
+    return () => {
+      socket?.off('deleteChannel', onDeleteChannel);
+    };
+  }, [onDeleteChannel, socket]);
+
+  useEffect(() => {
     if (channelData
-      && (!myChannelData?.map((v) => v.channelId).includes(channelData?.channelId)
-    || !allChannelData?.map((v) => v.channelId).includes(channelData?.channelId))) {
+      && (!myChannelData?.map((v) => v.channelId).includes(channelData?.channelId))) {
       router.push('/chat');
     }
-  }, [allChannelData, channelData, channelData?.channelId, channelName, myChannelData, router]);
+  }, [channelData, myChannelData, router]);
 
   return (
     <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
@@ -229,8 +234,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })
     .then((response) => response.data);
 
-  const allChannelInitialData: IChannel[] = await axios
-    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel`), {
+  const myChannelInitialData: IChannel[] = await axios
+    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/me`), {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
@@ -256,11 +261,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })
     .then((response) => response.data);
 
+  if (channelInitialData
+      && (!myChannelInitialData?.map((v) => v.channelId).includes(channelInitialData?.channelId))) {
+    return {
+      redirect: {
+        destination: '/chat',
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
       userInitialData,
       channelInitialData,
-      allChannelInitialData,
+      myChannelInitialData,
       channelChatInitialData,
       channelMemberInitialData,
     },
