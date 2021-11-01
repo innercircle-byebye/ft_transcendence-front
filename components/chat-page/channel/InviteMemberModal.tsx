@@ -3,7 +3,7 @@ import React, {
 } from 'react';
 import regexifyString from 'regexify-string';
 import useInput from '@/hooks/useInput';
-import MentionMember from './MentionMember';
+import MentionMember from '@/components/chat-page/common/MentionMember';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
 
 interface IInviteMember {

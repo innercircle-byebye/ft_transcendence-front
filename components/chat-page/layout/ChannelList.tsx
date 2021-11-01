@@ -7,7 +7,7 @@ import useSWR from 'swr';
 import axios from 'axios';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IUser } from '@/typings/db';
-import ChatTwoButtonModal from './ChatTwoButtonModal';
+import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
 
 const ChannelList: VFC = () => {
   const router = useRouter();

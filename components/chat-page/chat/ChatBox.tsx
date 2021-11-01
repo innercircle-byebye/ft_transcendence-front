@@ -5,8 +5,8 @@ import React, {
 } from 'react';
 import autosize from 'autosize';
 import { CanonicalEmoji } from 'interweave-emoji';
-import Emoji from './Emoji';
-import MentionMember from './MentionMember';
+import Emoji from '@/components/chat-page/chat/Emoji';
+import MentionMember from '@/components/chat-page/common/MentionMember';
 import { ISimpleUser } from '@/typings/db';
 
 interface IProps {

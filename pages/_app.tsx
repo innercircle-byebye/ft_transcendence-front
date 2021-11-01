@@ -1,6 +1,7 @@
 import '@/styles/globals.css';
 import '@/styles/emoji.css';
 import '@/styles/mention.css';
+import 'react-toastify/dist/ReactToastify.css';
 import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
 import {
