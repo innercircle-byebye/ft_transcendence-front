@@ -59,6 +59,23 @@ export interface IChannelChat {
   deletedAt: Date | null;
 }
 
+export interface IDMChat {
+  // DM 의 채팅
+  dmId: number;
+  sender: IUser;
+  receiver: IUser;
+  content: string;
+  createAt: Date;
+  lastModifiedAt: Date;
+}
+
+export interface IChatItem {
+  createdAt: Date;
+  userId: number;
+  imagePath: string;
+  content: string;
+}
+
 export interface IChannelUser {
   nickname: string;
   imagePath: string;
