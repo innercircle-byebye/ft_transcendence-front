@@ -10,6 +10,7 @@ import {
 import 'tailwindcss/tailwind.css';
 import { useRouter } from 'next/router';
 import useSocket from '@/hooks/useSocket';
+import reissueToken from '@/utils/reissueTokens';
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -42,5 +43,21 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     <Component {...pageProps} />,
   );
 }
+
+MyApp.getInitialProps = async (context: any) => {
+  const { ctx } = context; // next에서 넣어주는 context
+  const access_token = process.env.ACCESS_TOKEN || '';
+  const refresh_token = process.env.REFRESH_TOKEN || '';
+
+  if (
+    ctx.pathname !== '/login' && (
+      !ctx.req.cookies[refresh_token]
+    || !ctx.req.cookies[access_token])
+  ) {
+    return reissueToken(ctx, access_token, refresh_token);
+  }
+
+  return {};
+};
 
 export default MyApp;
