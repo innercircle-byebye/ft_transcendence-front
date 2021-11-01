@@ -3,10 +3,10 @@ import Image from 'next/image';
 import regexifyString from 'regexify-string';
 import Link from 'next/link';
 import dayjs from 'dayjs';
-import { IChannelChat } from '@/typings/db';
+import { IChatItem } from '@/typings/db';
 
 interface Props {
-  chatData: IChannelChat;
+  chatData: IChatItem;
 }
 
 const ChatItem: FC<Props> = ({ chatData }) => {
@@ -38,7 +38,7 @@ const ChatItem: FC<Props> = ({ chatData }) => {
     <div className="flex flex-row">
       <div className="relative bg-blue-300 w-10 h-10 mr-2">
         <Image
-          src={chatData.user.imagePath}
+          src={chatData.imagePath}
           alt="previewImage"
           objectFit="cover"
           layout="fill"
@@ -47,7 +47,7 @@ const ChatItem: FC<Props> = ({ chatData }) => {
       </div>
       <div>
         <div className="space-x-2">
-          <b>{chatData.user.nickname}</b>
+          <b>{chatData.nickname}</b>
           <span className="text-sm text-gray-700">{dayjs(chatData.createdAt).format('h:mm A')}</span>
         </div>
         <p>{result}</p>
