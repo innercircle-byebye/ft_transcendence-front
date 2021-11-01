@@ -72,6 +72,10 @@ const Channel = ({
             createdAt: new Date(),
             lastModifiedAt: new Date(),
             deletedAt: null,
+            user: {
+              nickname: userData.nickname,
+              imagePath: userData.imagePath,
+            },
           });
           return prevChatData;
         }, false).then(() => {
@@ -171,7 +175,12 @@ const Channel = ({
             channelChatData?.map((chatData) => (
               <ChatItem
                 key={chatData.channelChatId}
-                chatData={chatData}
+                chatData={{
+                  userId: chatData.userId,
+                  imagePath: chatData.user.imagePath,
+                  content: chatData.content,
+                  createdAt: chatData.createdAt,
+                }}
               />
             ))
           }
