@@ -35,14 +35,15 @@ const ChannelList: VFC = () => {
   const onClickExitYes = useCallback(() => {
     mutateMyChannelData(
       (prevMyChannelData) => prevMyChannelData?.filter((data) => data.name !== channelName), false,
-    );
-    axios.delete(`/api/channel/${channelName}/member`, {
-      headers: {
-        withCredentials: 'true',
-      },
-    }).then(() => {
-      setShowExitModal(false);
+    ).then(() => {
       router.push('/chat');
+      axios.delete(`/api/channel/${channelName}/member`, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        setShowExitModal(false);
+      });
     });
   }, [channelName, mutateMyChannelData, router]);
 
@@ -140,7 +141,7 @@ const ChannelList: VFC = () => {
                       : ''
                   }`}
                 >
-                  <div className="flex flex-row items-center">
+                  <div className="flex items-center">
                     {`# ${channel.name} `}
                     {userData?.userId === channel.ownerId ? (
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
@@ -148,7 +149,7 @@ const ChannelList: VFC = () => {
                       </svg>
                     ) : <></>}
                   </div>
-                  <div className="flex flex-row">
+                  <div className="flex">
                     {channel.isPrivate && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
