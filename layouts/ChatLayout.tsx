@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import ChannelList from '@/components/chat-page/ChannelList';
 import DMList from '@/components/chat-page/DMList';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navigation-bar/Navbar';
 import useSocket from '@/hooks/useSocket';
 import { IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
@@ -41,8 +41,8 @@ const ChatLayout: FC = ({ children }) => {
             <DMList />
           </div>
         </div>
-        <main className="flex-1">{children}</main>
       </div>
+      <main className="flex-1">{children}</main>
     </div>
   );
 };

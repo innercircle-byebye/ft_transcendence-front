@@ -9,7 +9,7 @@ import React, {
 import axios from 'axios';
 import useSWR from 'swr';
 import regexifyString from 'regexify-string';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navigation-bar/Navbar';
 import useInput from '@/hooks/useInput';
 import MentionMember from '@/components/chat-page/MentionMember';
 import fetcher from '@/utils/fetcher';
