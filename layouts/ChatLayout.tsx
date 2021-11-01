@@ -1,14 +1,23 @@
 import React, { FC, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import useSWR from 'swr';
 import ChannelList from '@/components/chat-page/ChannelList';
 import DMList from '@/components/chat-page/DMList';
-import Navbar from '@/components/Navbar';
+import Navbar from '@/components/navigation-bar/Navbar';
 import useSocket from '@/hooks/useSocket';
+import { IUser } from '@/typings/db';
+import fetcher from '@/utils/fetcher';
 
 const ChatLayout: FC = ({ children }) => {
   const router = useRouter();
   const channelName = router.pathname === '/chat/channel/[name]' ? router.query.name : null;
   const { socket } = useSocket('chat');
+  // onlineMap 을 위해서 chatLogin event 발생시키기 위한 코드 추가
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
+
+  useEffect(() => {
+    socket?.emit('chatLogin', userData?.userId);
+  }, [socket, userData]);
 
   useEffect(() => {
     if (channelName) {
@@ -32,8 +41,8 @@ const ChatLayout: FC = ({ children }) => {
             <DMList />
           </div>
         </div>
-        <main className="flex-1">{children}</main>
       </div>
+      <main className="flex-1">{children}</main>
     </div>
   );
 };
