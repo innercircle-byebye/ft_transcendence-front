@@ -23,6 +23,7 @@ const DM = () => {
     `/api/dm/${DMUserName}/chats`,
     fetcher,
   );
+  const { data: allUserData } = useSWR<IUser[]>('/api/user/all', fetcher);
 
   const onCloseEmoji = useCallback(() => {
     setShowEmoji(false);
@@ -120,6 +121,11 @@ const DM = () => {
           onSubmitChat={onSubmitChat}
           showEmoji={showEmoji}
           setShowEmoji={setShowEmoji}
+          mentionData={
+            allUserData?.map((data) => ({
+              userId: data.userId, nickname: data.nickname, imagePath: data.imagePath,
+            }))
+          }
         />
       </div>
     </div>

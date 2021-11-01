@@ -8,12 +8,21 @@ import { IChannel } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 import useSocket from '@/hooks/useSocket';
 
-const SearchChannel: VFC = () => {
+interface IProps {
+  allChannelInitialData: IChannel[];
+  myChannelInitialData: IChannel[];
+}
+
+const SearchChannel: VFC<IProps> = ({ allChannelInitialData, myChannelInitialData }) => {
   const router = useRouter();
   const { socket } = useSocket('chat');
   const [searchChannelName, onChangeSearchChannelName] = useInput('');
-  const { data: allChannelData, mutate: mutateAllChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
-  const { data: myChannelData, mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
+  const { data: allChannelData, mutate: mutateAllChannelData } = useSWR<IChannel[]>('/api/channel', fetcher, {
+    initialData: allChannelInitialData,
+  });
+  const { data: myChannelData, mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher, {
+    initialData: myChannelInitialData,
+  });
 
   const onClickJoin = useCallback((data: IChannel) => {
     axios.post(`/api/channel/${data.name}/member`, {}, {

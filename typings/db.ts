@@ -49,16 +49,6 @@ export interface IChannel {
   currentChatMemberCount: number;
 }
 
-export interface IChannelChat {
-  channelChatId: number;
-  userId: number;
-  channelId: number;
-  content: string;
-  createdAt: Date;
-  lastModifiedAt: Date;
-  deletedAt: Date | null;
-}
-
 export interface IDMChat {
   // DM 의 채팅
   dmId: number;
@@ -70,10 +60,10 @@ export interface IDMChat {
 }
 
 export interface IChatItem {
-  createdAt: Date;
   userId: number;
   imagePath: string;
   content: string;
+  createdAt: Date;
 }
 
 export interface IChannelUser {
@@ -90,6 +80,17 @@ export interface IChannelMember {
   createdAt: Date;
   lastModifiedAt: Date;
   deletedAt: Date;
+  user: IChannelUser;
+}
+
+export interface IChannelChat {
+  channelChatId: number;
+  userId: number;
+  channelId: number;
+  content: string;
+  createdAt: Date;
+  lastModifiedAt: Date;
+  deletedAt: Date | null;
   user: IChannelUser;
 }
 

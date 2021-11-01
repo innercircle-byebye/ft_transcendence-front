@@ -9,19 +9,24 @@ import React, {
 import axios from 'axios';
 import useSWR from 'swr';
 import regexifyString from 'regexify-string';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import Navbar from '@/components/navigation-bar/Navbar';
 import useInput from '@/hooks/useInput';
 import MentionMember from '@/components/chat-page/MentionMember';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IUser } from '@/typings/db';
 import CheckPublicPrivate from '@/components/chat-page/SwitchPublicPrivate';
+import reissueToken from '@/utils/reissueTokens';
 
 interface IInviteMember {
   id: number;
   nickname: string;
 }
 
-const CreateChannel = () => {
+const CreateChannel = ({
+  allUserInitialData,
+  allChannelInitialData,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const [channelName, onChangeChannelName] = useInput('');
   const [channelNameError, setChannelNameError] = useState(false);
@@ -33,12 +38,12 @@ const CreateChannel = () => {
   const [inviteMember, onChangeInviteMember, setInviteMember] = useInput('');
   const [inviteMembers, setInviteMembers] = useState<IInviteMember[]>([]);
   const [inviteNumError, setInviteNumError] = useState(false);
-  const { data: userData } = useSWR('/api/user/me', fetcher);
-  const { data: allUserData } = useSWR<IUser[]>(
-    userData ? '/api/user/all' : null,
-    fetcher,
-  );
-  const { data: allChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
+  const { data: allUserData } = useSWR<IUser[]>('/api/user/all', fetcher, {
+    initialData: allUserInitialData,
+  });
+  const { data: allChannelData } = useSWR<IChannel[]>('/api/channel', fetcher, {
+    initialData: allChannelInitialData,
+  });
 
   const onClickCancel = useCallback(() => {
     router.back();
@@ -235,6 +240,48 @@ CreateChannel.getLayout = function getLayout(page: ReactElement) {
       </div>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const access_token = process.env.ACCESS_TOKEN || '';
+  const refresh_token = process.env.REFRESH_TOKEN || '';
+
+  if (
+    !context.req.cookies[refresh_token]
+    || !context.req.cookies[access_token]
+  ) {
+    return reissueToken(
+      context,
+      access_token,
+      refresh_token,
+      '/chat/create-channel',
+    );
+  }
+
+  const allUserInitialData: IUser[] = await axios
+    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/all`, {
+      withCredentials: true,
+      headers: {
+        Cookie: `Authentication=${context.req.cookies[access_token]}`,
+      },
+    })
+    .then((response) => response.data);
+
+  const allChannelInitialData: IChannel[] = await axios
+    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/channel`, {
+      withCredentials: true,
+      headers: {
+        Cookie: `Authentication=${context.req.cookies[access_token]}`,
+      },
+    })
+    .then((response) => response.data);
+
+  return {
+    props: {
+      allUserInitialData,
+      allChannelInitialData,
+    },
+  };
 };
 
 export default CreateChannel;

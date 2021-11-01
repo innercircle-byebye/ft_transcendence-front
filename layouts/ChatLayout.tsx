@@ -45,8 +45,8 @@ const ChatLayout: FC = ({ children }) => {
             <DMList />
           </div>
         </div>
+        <main className="flex-1">{children}</main>
       </div>
-      <main className="flex-1">{children}</main>
     </div>
   );
 };
