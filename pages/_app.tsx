@@ -84,6 +84,12 @@ MyApp.getInitialProps = async (context: any) => {
     });
     ctx.res.end();
   }
+  if (ctx.pathname === '/create-profile' && userInitialData.status !== `${process.env.STATUS_NOT_REGISTER}`) {
+    ctx.res.writeHead(302, {
+      Location: '/',
+    });
+    ctx.res.end();
+  }
 
   return { pageProps };
 };
