@@ -25,31 +25,31 @@ const UserInfoMenu = () => {
       <Menu>
         <Menu.Button>
           {/* MenuIcon size 를 어떻게 맞춰야하는지 모르겠습니다... */}
-          <MenuIcon className="w-12 h-1/12 px-4" />
+          <MenuIcon className="w-14 h-1/6 px-4" />
         </Menu.Button>
-        <Menu.Items className="absolute flex flex-col divide-y divide-gray-100 bg-white">
+        <Menu.Items className="absolute flex flex-col divide-y divide-gray-100 bg-gray-100">
           <Menu.Item>
             {({ active }) => (
-              <div className={`${active && 'bg-blue-500 text-white'}`}>
+              <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
                 <Link href="/">
-                  <a className="px-1">Profile</a>
+                  <a className="px-3">Profile</a>
                 </Link>
               </div>
             )}
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <div className={`${active && 'bg-blue-500 text-white'}`}>
+              <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
                 <Link href="/">
-                  <a className="px-1">History</a>
+                  <a className="px-3">History</a>
                 </Link>
               </div>
             )}
           </Menu.Item>
           <Menu.Item>
             {({ active }) => (
-              <div className={`${active && 'bg-blue-500 text-white'}`}>
-                <a className="px-1">
+              <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
+                <a className="px-3">
                   <button type="button" onClick={onClickLogout}>
                     Log out
                   </button>
