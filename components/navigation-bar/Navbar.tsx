@@ -25,18 +25,19 @@ const Navbar: VFC = () => {
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
 
   return (
-    <div className="flex flex-row flex-wrap justify-evenly items-center bg-sky-700 h-auto py-5 text-white">
+    <div className="flex flex-row flex-wrap justify-evenly items-center bg-sky-700 py-2 text-white">
       {/* 이미지 */}
       <div className="px-6">
         <Link href="/">
           <a>
-            <Image
-              src="/Logo.png"
-              alt="Logo"
-              width="150"
-              height="40"
-              objectFit="contain"
-            />
+            <div className="h-12 w-20 relative">
+              <Image
+                src="/Logo.png"
+                alt="Logo"
+                layout="fill"
+                objectFit="contain"
+              />
+            </div>
           </a>
         </Link>
       </div>
