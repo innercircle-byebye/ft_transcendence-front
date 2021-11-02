@@ -2,6 +2,9 @@ import React, {
   useCallback, useEffect, useRef, useState, VFC,
 } from 'react';
 import regexifyString from 'regexify-string';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
 import useInput from '@/hooks/useInput';
 import MentionMember from '@/components/chat-page/common/MentionMember';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
@@ -18,6 +21,8 @@ interface IProps {
 }
 
 const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMemberData }) => {
+  const router = useRouter();
+  const channelName = router.query.name;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [inviteMember, onChangeInviteMember, setInviteMember] = useInput('');
   const [inviteMembers, setInviteMembers] = useState<IInviteMember[]>([]);
@@ -28,8 +33,20 @@ const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMember
   }, []);
 
   const onClickInvite = useCallback(() => {
-    console.log('invite members');
-  }, []);
+    if (inviteMembers.length > 0) {
+      axios.post(`/api/channel/${channelName}/invite`, {
+        invitedUsers: inviteMembers,
+      }, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        toast.success('초대하기 dm을 보냈습니다.', { position: 'bottom-right', theme: 'colored' });
+      }).catch(() => {
+        toast.error('초대하기를 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
+      });
+    }
+  }, [channelName, inviteMembers]);
 
   useEffect(() => {
     if (channelData?.maxParticipantNum && channelMemberData?.length) {
