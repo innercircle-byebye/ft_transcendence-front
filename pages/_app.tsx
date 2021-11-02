@@ -26,14 +26,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const { disconnect } = useSocket(typeof window !== 'undefined' ? window.localStorage.getItem('namespace') : null);
 
   useEffect(() => {
-    if (localStorage) {
-      if (localStorage.getItem('namespace') !== 'chat' && pathname.slice(0, 5) === '/chat') {
-        localStorage.setItem('namespace', 'chat');
-      }
-      if (localStorage.getItem('namespace') === 'chat' && pathname.slice(0, 5) !== '/chat') {
-        disconnect();
-        localStorage.removeItem('namespace');
-      }
+    if (localStorage.getItem('namespace') !== 'chat' && pathname.slice(0, 5) === '/chat') {
+      localStorage.setItem('namespace', 'chat');
+    }
+    if (localStorage.getItem('namespace') === 'chat' && pathname.slice(0, 5) !== '/chat') {
+      disconnect();
+      localStorage.removeItem('namespace');
     }
   }, [disconnect, pathname]);
 
