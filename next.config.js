@@ -2,7 +2,7 @@
 module.exports = {
   reactStrictMode: true,
   images: {
-    domains: ['cdn.intra.42.fr', 'picsum.photos'],
+    domains: ['cdn.intra.42.fr', 'picsum.photos', 'back-nestjs'],
   },
   async rewrites() {
     return [
