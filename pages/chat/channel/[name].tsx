@@ -186,11 +186,8 @@ const Channel = ({
   return (
     <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
       <div className="h-full flex flex-col">
-        <div className="flex flex-row justify-between items-end">
-          <div className="font-semibold text-2xl">
-            {`# ${channelData?.name}`}
-          </div>
-          <ChannelButtons />
+        <div className="font-semibold text-2xl">
+          {`# ${channelData?.name}`}
         </div>
         <ChatList
           chatSections={chatSections}
@@ -212,6 +209,7 @@ const Channel = ({
           }
         />
       </div>
+      <ChannelButtons />
       <ToastContainer />
     </div>
   );
