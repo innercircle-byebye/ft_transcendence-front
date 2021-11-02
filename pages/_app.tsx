@@ -62,7 +62,6 @@ MyApp.getInitialProps = async (context: any) => {
     return reissueToken(ctx, access_token, refresh_token);
   }
   if (Component.getInitialProps) {
-    console.log('hellooooooo');
     pageProps = await Component.getInitialProps(ctx);
   }
 
