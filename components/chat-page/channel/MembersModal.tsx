@@ -196,7 +196,7 @@ const MembersModal: VFC = () => {
   }, []);
 
   const onClickBlockNo = useCallback(() => {
-    setBanMember(null);
+    setBlockMember(null);
   }, []);
 
   const onClickCancelBlockNo = useCallback(() => {
