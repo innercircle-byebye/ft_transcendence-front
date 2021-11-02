@@ -15,8 +15,8 @@ import {
 import ChatItem from '@/components/chat-page/chat/ChatItem';
 import useSocket from '@/hooks/useSocket';
 import reissueToken from '@/utils/reissueTokens';
-import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
+import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
 
 const Channel = ({
   userInitialData,
@@ -108,8 +108,17 @@ const Channel = ({
   const onUpdatedChannelName = useCallback((data: string) => {
     revalidate();
     router.push(`/chat/channel/${data}`);
-    if (channelData?.ownerId !== userData?.userId) { toast.success('채널명이 변경되었습니다.', { position: 'bottom-right' }); }
+    if (channelData?.ownerId !== userData?.userId) { toast.success('채널명이 변경되었습니다.', { position: 'bottom-right', theme: 'colored' }); }
   }, [channelData?.ownerId, revalidate, router, userData?.userId]);
+
+  const onDeleteChannel = useCallback((data: string) => {
+    if (channelName === data) {
+      toast.info(`${data} 채널이 삭제되었습니다.`, { position: 'bottom-right', theme: 'colored' });
+      setTimeout(() => {
+        router.push('/chat');
+      }, 3000);
+    }
+  }, [channelName, router]);
 
   const onUpdateAdmin = useCallback((data: { isAdmin: boolean, userId: number, }) => {
     if (userData && data.userId === userData.userId) {
@@ -134,6 +143,13 @@ const Channel = ({
       socket?.off('updatedChannelName', onUpdatedChannelName);
     };
   }, [onUpdatedChannelName, socket]);
+
+  useEffect(() => {
+    socket?.on('deleteChannel', onDeleteChannel);
+    return () => {
+      socket?.off('deleteChannel', onDeleteChannel);
+    };
+  });
 
   useEffect(() => {
     socket?.on('updateChannelAdmin', onUpdateAdmin);
