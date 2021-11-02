@@ -105,7 +105,7 @@ const ChannelInfoModal: VFC<IProps> = ({
   }, [channelData.isPrivate, isPrivate]);
 
   return (
-    <div className="absolute bg-sky-700 top-7 right-0 w-auto h-auto flex flex-col items-center p-6 space-y-3">
+    <div className="absolute bg-sky-700 top-28 right-16 w-auto h-auto flex flex-col items-center p-6 space-y-3">
       <div className="text-2xl font-semibold text-amber-50">채널 옵션</div>
       <div className="text-amber-50">
         {`방장: ${ownerNickname} ${userData.userId === channelData.ownerId ? '(나)' : ''}`}
