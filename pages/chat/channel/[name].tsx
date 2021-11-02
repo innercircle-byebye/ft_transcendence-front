@@ -5,6 +5,7 @@ import React, {
 import useSWR from 'swr';
 import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { toast, ToastContainer } from 'react-toastify';
 import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
@@ -33,6 +34,11 @@ const Channel = ({
   });
   const { data: channelData } = useSWR<IChannel>(
     `/api/channel/${channelName}`, fetcher, {
+      initialData: channelInitialData,
+    },
+  );
+  const { revalidate } = useSWR<IChannel[]>(
+    '/api/channel/me', fetcher, {
       initialData: channelInitialData,
     },
   );
@@ -99,12 +105,25 @@ const Channel = ({
     [userData?.userId, mutateChat],
   );
 
+  const onUpdatedChannelName = useCallback((data: string) => {
+    revalidate();
+    router.push(`/chat/channel/${data}`);
+    if (channelData?.ownerId !== userData?.userId) { toast.success('채널명이 변경되었습니다.', { position: 'bottom-right' }); }
+  }, [channelData?.ownerId, revalidate, router, userData?.userId]);
+
   useEffect(() => {
     socket?.on('message', onMessage);
     return () => {
       socket?.off('message', onMessage);
     };
   }, [socket, onMessage]);
+
+  useEffect(() => {
+    socket?.on('updatedChannelName', onUpdatedChannelName);
+    return () => {
+      socket?.off('updatedChannelName', onUpdatedChannelName);
+    };
+  }, [onUpdatedChannelName, socket]);
 
   return (
     <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
@@ -144,6 +163,7 @@ const Channel = ({
           }
         />
       </div>
+      <ToastContainer />
     </div>
   );
 };

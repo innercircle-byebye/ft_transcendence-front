@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
-  useCallback, useState, VFC,
+  useCallback, useEffect, useState, VFC,
 } from 'react';
 import useSWR from 'swr';
 import axios from 'axios';
@@ -44,6 +44,10 @@ const ChannelList: VFC = () => {
   const onClickExitNo = useCallback(() => {
     setShowExitModal(false);
   }, []);
+
+  useEffect(() => {
+    // console.log('hello');
+  }, [channelName]);
 
   return (
     <div className="border-2 border-sky-700 bg-sky-50 rounded-lg w-full h-auto p-3 space-y-3">
