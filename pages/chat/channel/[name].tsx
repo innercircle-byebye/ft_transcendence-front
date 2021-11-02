@@ -45,7 +45,7 @@ const Channel = ({
       initialData: myChannelInitialData,
     },
   );
-  const { data: channelChatData, mutate: mutateChat } = useSWRInfinite<IChannelChat[]>(
+  const { data: channelChatData, mutate: mutateChat, setSize } = useSWRInfinite<IChannelChat[]>(
     (index) => `/api/channel/${channelName}/chat?perPage=20&page=${index + 1}`, fetcher,
   );
   const { data: channelMemberData } = useSWR<IChannelMember[]>(
@@ -54,8 +54,8 @@ const Channel = ({
     },
   );
   const isEmpty = channelChatData?.length === 0;
-  const isReachingEnd = isEmpty || false;
-  // || (channelChatData && channelChatData[channelChatData.length - 1]?.length < 20) || false;
+  const isReachingEnd = isEmpty || false
+    || (channelChatData && channelChatData[channelChatData.length - 1]?.length < 20) || false;
   const chatSections = makeSection(channelChatData ? channelChatData.flat().reverse() : []);
 
   const onCloseEmoji = useCallback(() => {
@@ -192,7 +192,12 @@ const Channel = ({
           </div>
           <ChannelButtons />
         </div>
-        <ChatList chatSections={chatSections} ref={scrollbarRef} isReachingEnd={isReachingEnd} />
+        <ChatList
+          chatSections={chatSections}
+          ref={scrollbarRef}
+          setSize={setSize}
+          isReachingEnd={isReachingEnd}
+        />
         <ChatBox
           chat={chat}
           onChangeChat={onChangeChat}
