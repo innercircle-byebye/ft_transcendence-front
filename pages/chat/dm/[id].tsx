@@ -9,8 +9,8 @@ import useSocket from '@/hooks/useSocket';
 import { IDMChat, IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 import useInput from '@/hooks/useInput';
-import ChatBox from '@/components/chat-page/ChatBox';
-import ChatItem from '@/components/chat-page/ChatItem';
+import ChatBox from '@/components/chat-page/chat/ChatBox';
+import ChatItem from '@/components/chat-page/chat/ChatItem';
 
 const DM = () => {
   const router = useRouter();
