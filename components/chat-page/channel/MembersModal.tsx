@@ -225,7 +225,7 @@ const MembersModal: VFC = () => {
 
   if (channelMemberData.length === 1) {
     return (
-      <div className="absolute bg-sky-700 top-32 right-10 w-60 h-auto p-6 flex flex-col items-center space-y-3">
+      <div className="absolute bg-sky-700 top-7 right-0 w-60 h-auto p-6 flex flex-col items-center space-y-3">
         <div className="text-2xl font-semibold text-amber-50 tracking-wide">{`# ${channelData.name} (1)`}</div>
         <div className="text-amber-50 font-semibold">{`소유자 : ${userData.nickname} (나)`}</div>
         <div className="text-amber-50 text-9xl">텅</div>
@@ -234,7 +234,7 @@ const MembersModal: VFC = () => {
   }
   return (
     <>
-      <div className="absolute bg-sky-700 top-32 right-10 w-auto p-6 h-auto flex flex-col items-center space-y-3">
+      <div className="absolute bg-sky-700 top-7 right-0 w-auto p-6 h-auto flex flex-col items-center space-y-3">
         <div className="text-2xl font-semibold text-amber-50 tracking-wide">
           {`# ${channelData.name} (${channelData.currentChatMemberCount})`}
         </div>

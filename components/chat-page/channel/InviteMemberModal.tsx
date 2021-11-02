@@ -33,6 +33,7 @@ const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMember
   }, []);
 
   const onClickInvite = useCallback(() => {
+    console.log('invite');
     if (inviteMembers.length > 0) {
       axios.post(`/api/channel/${channelName}/invite`, {
         invitedUsers: inviteMembers,
@@ -41,6 +42,7 @@ const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMember
           withCredentials: 'true',
         },
       }).then(() => {
+        setInviteMembers([]);
         toast.success('초대하기 dm을 보냈습니다.', { position: 'bottom-right', theme: 'colored' });
       }).catch(() => {
         toast.error('초대하기를 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
@@ -75,7 +77,7 @@ const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMember
   }, [inviteMember, inviteMembers, setInviteMember]);
 
   return (
-    <div className="absolute bg-sky-700 top-32 right-10 w-auto h-auto flex flex-col items-center p-6 space-y-3">
+    <div className="absolute bg-sky-700 top-7 right-0 w-auto h-auto flex flex-col items-center p-6 space-y-3">
       <div className="text-2xl font-bold text-amber-50 pb-1">멤버 초대하기</div>
       <div className="w-36 bg-gray-100 rounded-full">
         <div className="flex flex-row pl-4">
