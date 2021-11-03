@@ -177,6 +177,7 @@ const Channel = ({
                 key={chatData.channelChatId}
                 chatData={{
                   userId: chatData.userId,
+                  nickname: chatData.user.nickname,
                   imagePath: chatData.user.imagePath,
                   content: chatData.content,
                   createdAt: chatData.createdAt,
