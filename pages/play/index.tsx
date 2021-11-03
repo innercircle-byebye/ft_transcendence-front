@@ -41,7 +41,7 @@ const Play = () => {
           <OnlineFriendList />
         </div>
         <div className="bg-sky-100 col-span-2">
-          {roomToEntrance
+          {roomToEntrance && roomToEntrance % 2
             ? (
               <PasswordModal
                 name={`${roomToEntrance}번방 입니다.`}
