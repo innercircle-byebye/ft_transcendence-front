@@ -28,19 +28,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const { pathname } = router;
   const [namespace, setNamespace] = useState('');
   const { disconnect } = useSocket(namespace);
-  // const mainSocket = useSocket('main').socket;
   const { socket: mainSocket } = useSocket('main');
-  const [isLogin, setIsLogin] = useState(false);
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
-  // 이 부분을 login 성공했을때로 변경
-  // 'chatLogin' -> 'login'
-  console.log('isLogin:', isLogin);
-  if (isLogin === false) {
+
+  useEffect(() => {
     if (userData?.userId) {
       mainSocket?.emit('login', userData?.userId);
-      setIsLogin(true);
     }
-  }
+  }, [mainSocket, userData?.userId]);
 
   useEffect(() => {
     mainSocket?.on('dm', (data) => {
