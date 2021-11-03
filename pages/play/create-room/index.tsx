@@ -31,7 +31,7 @@ const CreateRoom = () => {
           <span>
             난이도(하 / 중 / 상)
           </span>
-          <input type="range" min="0" max="2" value={difficulty} onChange={onChangeDifficulty} list="tickmarks" />
+          <input type="range" min="0" max="2" value={difficulty} onChange={onChangeDifficulty} list="tickmarks" className="outline-none" />
           <datalist id="tickmarks">
             <option value="0" label="0%" />
             <option value="1" label="50%" />
