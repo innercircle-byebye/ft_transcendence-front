@@ -16,10 +16,16 @@ const Home = ({
   }
 
   return (
-    <div>
-      <OnlineFriendList />
-      <ProfileCard userData={userData} />
-      <AnnouncementList />
+    <div className="bg-gray-100 flex px-10 py-5 space-x-5">
+      {/* 프로필카드와 공지사항 */}
+      <div className="flex-none">
+        <ProfileCard userData={userData} />
+        <AnnouncementList />
+      </div>
+      {/* 빠른시작2개, 친구목록과 채널목록 */}
+      <div className="flex-grow">
+        <OnlineFriendList />
+      </div>
     </div>
   );
 };
