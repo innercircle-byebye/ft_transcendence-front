@@ -45,6 +45,11 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     mainSocket?.on('dm', (data) => {
       console.log('dm 왔을때', data);
     });
+    return () => {
+      mainSocket?.off('dm', (data) => {
+        console.log('dm 온거 확인 끝!', data);
+      });
+    };
   }, [mainSocket]);
 
   useEffect(() => {
