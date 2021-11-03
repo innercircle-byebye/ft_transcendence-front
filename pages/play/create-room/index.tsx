@@ -69,7 +69,7 @@ const CreateRoom = () => {
             onClick={onClickMake}
             disabled={isPrivate && passwordError}
           >
-            MAKE
+            SAVE
           </button>
         </div>
       </div>
