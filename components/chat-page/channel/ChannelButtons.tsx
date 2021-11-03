@@ -1,13 +1,15 @@
 import { useRouter } from 'next/router';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, {
+  useCallback, useEffect, useState, VFC,
+} from 'react';
 import useSWR from 'swr';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
-import InviteMemberModal from './InviteMemberModal';
-import MembersModal from './MembersModal';
-import ChannelInfoModal from './ChannelInfoModal';
+import InviteMemberModal from '@/components/chat-page/channel/InviteMemberModal';
+import MembersModal from '@/components/chat-page/channel/MembersModal';
+import ChannelInfoModal from '@/components/chat-page/channel/ChannelInfoModal';
 
-const ChannelButtons = () => {
+const ChannelButtons: VFC = () => {
   const router = useRouter();
   const channelName = router.query.name;
   const [showInviteMemberModal, setShowInviteMemberModal] = useState(false);
@@ -58,7 +60,8 @@ const ChannelButtons = () => {
   }
 
   return (
-    <div className="relative flex flex-row">
+    // <div className="relative flex flex-row">
+    <div className="flex flex-row">
       <button type="button" className={`hover:bg-sky-700 hover:text-white p-1 ${showInviteMemberModal ? 'bg-sky-700 text-white' : ''}`} onClick={onClickInviteMemberIcon}>
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
           <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z" />
@@ -87,14 +90,11 @@ const ChannelButtons = () => {
       />
       )}
       {showMembersModal && (
-      <MembersModal
-        userData={userData}
-        channelData={channelData}
-        channelMemberData={channelMemberData}
-      />
+      <MembersModal />
       )}
       {showSettingModal && (
       <ChannelInfoModal
+        setShowSettingModal={setShowSettingModal}
         userData={userData}
         channelData={channelData}
         channelMemberData={channelMemberData}

@@ -2,8 +2,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import React, { VFC } from 'react';
 import useSWR from 'swr';
-import SearchUserNicknameInputBox from './SearchUserNicknameInputBox';
-import UserInfoMenu from './UserInfoMenu';
+import SearchUserNicknameInputBox from '@/components/navigation-bar/SearchUserNicknameInputBox';
+import UserInfoMenu from '@/components/navigation-bar/UserInfoMenu';
 import { IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 

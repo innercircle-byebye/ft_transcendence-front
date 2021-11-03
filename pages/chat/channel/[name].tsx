@@ -5,21 +5,23 @@ import React, {
 import useSWR from 'swr';
 import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import ChatBox from '@/components/chat-page/ChatBox';
+import { toast, ToastContainer } from 'react-toastify';
 import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
 import {
   IChannel, IChannelChat, IChannelMember, IUser,
 } from '@/typings/db';
-import ChatItem from '@/components/chat-page/ChatItem';
+import ChatItem from '@/components/chat-page/chat/ChatItem';
 import useSocket from '@/hooks/useSocket';
-import ChannelButtons from '@/components/chat-page/ChannelButtons';
 import reissueToken from '@/utils/reissueTokens';
+import ChatBox from '@/components/chat-page/chat/ChatBox';
+import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
 
 const Channel = ({
   userInitialData,
   channelInitialData,
+  myChannelInitialData,
   channelChatInitialData,
   channelMemberInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -34,6 +36,11 @@ const Channel = ({
   const { data: channelData } = useSWR<IChannel>(
     `/api/channel/${channelName}`, fetcher, {
       initialData: channelInitialData,
+    },
+  );
+  const { data: myChannelData, revalidate } = useSWR<IChannel[]>(
+    '/api/channel/me', fetcher, {
+      initialData: myChannelInitialData,
     },
   );
   const { data: channelChatData, mutate: mutateChat } = useSWR<IChannelChat[]>(
@@ -99,13 +106,60 @@ const Channel = ({
     [userData?.userId, mutateChat],
   );
 
+  const onUpdatedChannelName = useCallback((data: string) => {
+    revalidate();
+    router.push(`/chat/channel/${data}`);
+    if (channelData?.ownerId !== userData?.userId) { toast.success('채널명이 변경되었습니다.', { position: 'bottom-right', theme: 'colored' }); }
+  }, [channelData?.ownerId, revalidate, router, userData?.userId]);
+
+  const onUpdateAdmin = useCallback((data: { isAdmin: boolean, userId: number, }) => {
+    if (userData && data.userId === userData.userId) {
+      if (data.isAdmin) {
+        toast.info('관리자 권한이 생겼습니다.', { position: 'bottom-right', theme: 'colored' });
+      } else {
+        toast.info('관리자 권한이 없어졌습니다', { position: 'bottom-right', theme: 'colored' });
+      }
+    }
+  }, [userData]);
+
+  const onDeleteChannel = useCallback(() => {
+    router.push('/chat');
+  }, [router]);
+
   useEffect(() => {
-    console.log('message');
     socket?.on('message', onMessage);
     return () => {
       socket?.off('message', onMessage);
     };
   }, [socket, onMessage]);
+
+  useEffect(() => {
+    socket?.on('updatedChannelName', onUpdatedChannelName);
+    return () => {
+      socket?.off('updatedChannelName', onUpdatedChannelName);
+    };
+  }, [onUpdatedChannelName, socket]);
+
+  useEffect(() => {
+    socket?.on('updateChannelAdmin', onUpdateAdmin);
+    return () => {
+      socket?.off('updateChannelAdmin', onUpdateAdmin);
+    };
+  }, [onUpdateAdmin, socket]);
+
+  useEffect(() => {
+    socket?.on('deleteChannel', onDeleteChannel);
+    return () => {
+      socket?.off('deleteChannel', onDeleteChannel);
+    };
+  }, [onDeleteChannel, socket]);
+
+  useEffect(() => {
+    if (channelData
+      && (!myChannelData?.map((v) => v.channelId).includes(channelData?.channelId))) {
+      router.push('/chat');
+    }
+  }, [channelData, myChannelData, router]);
 
   return (
     <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
@@ -123,6 +177,7 @@ const Channel = ({
                 key={chatData.channelChatId}
                 chatData={{
                   userId: chatData.userId,
+                  nickname: chatData.user.nickname,
                   imagePath: chatData.user.imagePath,
                   content: chatData.content,
                   createdAt: chatData.createdAt,
@@ -145,6 +200,7 @@ const Channel = ({
           }
         />
       </div>
+      <ToastContainer />
     </div>
   );
 };
@@ -188,6 +244,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })
     .then((response) => response.data);
 
+  const myChannelInitialData: IChannel[] = await axios
+    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/me`), {
+      withCredentials: true,
+      headers: {
+        Cookie: `Authentication=${context.req.cookies[access_token]}`,
+      },
+    })
+    .then((response) => response.data);
+
   const channelChatInitialData: IChannelChat[] = await axios
     .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}/chat`), {
       withCredentials: true,
@@ -206,10 +271,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })
     .then((response) => response.data);
 
+  if (channelInitialData
+      && (!myChannelInitialData?.map((v) => v.channelId).includes(channelInitialData?.channelId))) {
+    return {
+      redirect: {
+        destination: '/chat',
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
       userInitialData,
       channelInitialData,
+      myChannelInitialData,
       channelChatInitialData,
       channelMemberInitialData,
     },

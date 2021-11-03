@@ -1,21 +1,36 @@
 import React, {
+  Dispatch,
+  SetStateAction,
   useCallback, useEffect, useState, VFC,
 } from 'react';
 import useSWR from 'swr';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
-import SwitchPublicPrivate from './SwitchPublicPrivate';
+import SwitchPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
+// import useSocket from '@/hooks/useSocket';
 
 interface IProps {
   userData: IUser;
   channelData: IChannel;
   channelMemberData: IChannelMember[];
+  setShowSettingModal: Dispatch<SetStateAction<boolean>>;
+}
+
+interface IChannelInfo {
+  updateName?: string;
+  maxParticipantNum?: number;
+  password?: string | null;
 }
 
 const ChannelInfoModal: VFC<IProps> = ({
-  userData, channelData, channelMemberData,
+  userData, channelData, channelMemberData, setShowSettingModal,
 }) => {
+  const router = useRouter();
+  // const { socket } = useSocket('chat');
   const [channelName, onChangeChannelName, setChannelName] = useInput(channelData.name);
   const [channelNameError, setChannelNameError] = useState(false);
   const [
@@ -41,6 +56,39 @@ const ChannelInfoModal: VFC<IProps> = ({
     setChannelName, setMaxMemberNum,
   ]);
 
+  const onClickSave = useCallback(() => {
+    const body: IChannelInfo = {};
+    if (channelName !== channelData.name) {
+      body.updateName = channelName;
+    }
+    if (maxMemberNum !== channelData.maxParticipantNum) {
+      body.maxParticipantNum = maxMemberNum;
+    }
+    if (isPrivate && changePassword) {
+      body.password = password;
+    }
+    if (!isPrivate && channelData.isPrivate) {
+      body.password = null;
+    }
+    if (body !== {}) {
+      axios.patch(`/api/channel/${channelData.name}`, body, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        router.push(`/chat/channel/${channelName}`);
+        setShowSettingModal(false);
+        toast.success('채널 옵션이 변경되었습니다.', { position: 'bottom-right', theme: 'colored' });
+      }).catch(() => {
+        toast.error('채널 옵션변경에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
+      });
+    }
+  }, [
+    channelName, channelData.name, channelData.maxParticipantNum,
+    channelData.isPrivate, maxMemberNum, isPrivate, changePassword, password,
+    router, setShowSettingModal,
+  ]);
+
   useEffect(() => {
     const equalChannel = allChannelData?.find((data) => data.name === channelName);
     if (equalChannel && equalChannel.channelId !== channelData.channelId) {
@@ -57,7 +105,7 @@ const ChannelInfoModal: VFC<IProps> = ({
   }, [channelData.isPrivate, isPrivate]);
 
   return (
-    <div className="absolute bg-sky-700 top-7 right-0 w-auto h-auto flex flex-col items-center p-6 space-y-3">
+    <div className="absolute bg-sky-700 top-32 right-10 w-auto h-auto flex flex-col items-center p-6 space-y-3">
       <div className="text-2xl font-semibold text-amber-50">채널 옵션</div>
       <div className="text-amber-50">
         {`방장: ${ownerNickname} ${userData.userId === channelData.ownerId ? '(나)' : ''}`}
@@ -119,7 +167,9 @@ const ChannelInfoModal: VFC<IProps> = ({
               <button
                 className="bg-amber-600 text-white py-2 px-4 rounded-full focus:outline-none focus:shadow-outline"
                 type="button"
-                disabled={channelNameError || passwordError}
+                disabled={!channelName.trim().length || channelNameError
+                  || (isPrivate && passwordError)}
+                onClick={onClickSave}
               >
                 SAVE
               </button>
@@ -130,4 +180,5 @@ const ChannelInfoModal: VFC<IProps> = ({
     </div>
   );
 };
+
 export default ChannelInfoModal;
