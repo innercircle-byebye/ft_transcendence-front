@@ -1,7 +1,7 @@
 import { ChangeEvent, VFC } from 'react';
 
 interface IProps {
-  channelName: string;
+  name: string;
   password: string;
   onChangePassword: (e: ChangeEvent<HTMLInputElement>) => void;
   onSubmitPassword: (e: any) => void;
@@ -9,7 +9,7 @@ interface IProps {
 }
 
 const PasswordModal: VFC<IProps> = ({
-  channelName, password, onChangePassword, onSubmitPassword, onCloseModal,
+  name, password, onChangePassword, onSubmitPassword, onCloseModal,
 }) => (
   <div className="w-full h-full bg-sky-100 flex items-center justify-center">
     <form className="flex flex-col items-center gap-10" onSubmit={onSubmitPassword}>
@@ -26,7 +26,7 @@ const PasswordModal: VFC<IProps> = ({
             clipRule="evenodd"
           />
         </svg>
-        <div className="text-3xl">{channelName}</div>
+        <div className="text-3xl">{name}</div>
       </div>
       <div className="text-2xl">비밀번호를 입력해주세요</div>
       <input type="password" maxLength={4} placeholder="****" value={password} onChange={onChangePassword} className="rounded-full text-3xl w-24 px-5 py-1  outline-none" />
