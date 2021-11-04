@@ -50,6 +50,11 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
   [setNickname, userData.nickname, userData.email, userData.imagePath,
     userData.isStatusPublic, userData.isHistoryPublic, setEmail]);
 
+  const onSubmitEditProfile = useCallback((e) => {
+    e.preventDefault();
+    console.log('submit edit profile');
+  }, []);
+
   useEffect(() => {
     if (imageFile) {
       const fileReader = new FileReader();
@@ -62,38 +67,40 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
 
   return (
     <PageContainer>
-      <ContentContainer>
-        <InputImage size={72} previewImagePath={previewImagePath} setImageFile={setImageFile} />
-        <InputNickname
-          nickname={nickname}
-          onChangeNickname={onChangeNickname}
-          onClickResetNickname={onClickResetNickname}
-        />
-        <InputEmail
-          email={email}
-          onChangeEmail={onChangeEmail}
-          emailError={emailError}
-          setEmailError={setEmailError}
-          onClickResetEmail={onClickResetEmail}
-        />
-        <Switch title="상태공개 / 비공개" isLeft={isStatusPublic} onClickSwitch={onClickSwitchState} />
-        <Switch title="기록공개 / 비공개" isLeft={isHistoryPublic} onClickSwitch={onClickSwitchHistory} />
-        <div className="w-72 flex items-center justify-evenly">
-          <button
-            className="bg-white text-sky-600 border-sky-600 border font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="button"
-            onClick={onClickReset}
-          >
-            Reset
-          </button>
-          <button
-            className="bg-sky-600 hover:bg-sky-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
-            type="submit"
-          >
-            Save
-          </button>
-        </div>
-      </ContentContainer>
+      <form onSubmit={onSubmitEditProfile}>
+        <ContentContainer>
+          <InputImage size={72} previewImagePath={previewImagePath} setImageFile={setImageFile} />
+          <InputNickname
+            nickname={nickname}
+            onChangeNickname={onChangeNickname}
+            onClickResetNickname={onClickResetNickname}
+          />
+          <InputEmail
+            email={email}
+            onChangeEmail={onChangeEmail}
+            emailError={emailError}
+            setEmailError={setEmailError}
+            onClickResetEmail={onClickResetEmail}
+          />
+          <Switch title="상태공개 / 비공개" isLeft={isStatusPublic} onClickSwitch={onClickSwitchState} />
+          <Switch title="기록공개 / 비공개" isLeft={isHistoryPublic} onClickSwitch={onClickSwitchHistory} />
+          <div className="w-72 flex items-center justify-evenly">
+            <button
+              className="bg-white text-sky-600 border-sky-600 border font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              onClick={onClickReset}
+            >
+              Reset
+            </button>
+            <button
+              className="bg-sky-600 hover:bg-sky-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
+              type="submit"
+            >
+              Save
+            </button>
+          </div>
+        </ContentContainer>
+      </form>
     </PageContainer>
   );
 };
