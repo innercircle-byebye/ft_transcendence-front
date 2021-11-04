@@ -7,7 +7,7 @@ const OnlineFriendList = () => {
   const { data: friendData } = useSWR<IUser[]>('/api/friend/list', fetcher);
 
   return (
-    <div className="rounded-xl bg-sky-700 text-center flex flex-col space-y-2 w-1/4">
+    <div className="rounded-xl bg-sky-700 text-center flex flex-col space-y-2 w-1/2">
       {/* title */}
       <div className="text-white py-2">접속중인 친구목록</div>
       {/* content list */}

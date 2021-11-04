@@ -9,7 +9,7 @@ const JoinedChannelList = () => {
   );
 
   return (
-    <div className="rounded-xl bg-sky-700 text-center flex flex-col w-1/4">
+    <div className="rounded-xl bg-sky-700 text-center flex flex-col w-1/2">
       {/* title */}
       <div className="text-white font-medium text-xl pt-3 pb-2">참여중인 채널목록</div>
       {/* content list */}

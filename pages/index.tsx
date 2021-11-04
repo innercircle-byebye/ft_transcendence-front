@@ -7,6 +7,7 @@ import reissueToken from '@/utils/reissueTokens';
 import ProfileCard from '@/components/main-page/ProfileCard';
 import AnnouncementList from '@/components/main-page/AnnouncementList';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
+import JoinedChannelList from '@/components/main-page/JoinedChannelList';
 
 const Home = ({
   userData,
@@ -16,15 +17,16 @@ const Home = ({
   }
 
   return (
-    <div className="bg-gray-100 flex px-10 py-5 space-x-5">
+    <div className="flex px-12 py-5 space-x-5">
       {/* 프로필카드와 공지사항 */}
-      <div className="flex-none">
+      <div className="flex-none w-1/5 space-y-5">
         <ProfileCard userData={userData} />
         <AnnouncementList />
       </div>
       {/* 빠른시작2개, 친구목록과 채널목록 */}
-      <div className="flex-grow">
+      <div className="flex space-x-5 w-4/5">
         <OnlineFriendList />
+        <JoinedChannelList />
       </div>
     </div>
   );
