@@ -55,12 +55,13 @@ export interface IDMChat {
   sender: IUser;
   receiver: IUser;
   content: string;
-  createAt: Date;
+  createdAt: Date;
   lastModifiedAt: Date;
 }
 
 export interface IChatItem {
   userId: number;
+  nickname: string;
   imagePath: string;
   content: string;
   createdAt: Date;
