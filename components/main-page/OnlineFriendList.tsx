@@ -9,7 +9,7 @@ const OnlineFriendList = () => {
   return (
     <div className="rounded-xl bg-sky-700 text-center flex flex-col space-y-2 w-1/2">
       {/* title */}
-      <div className="text-white py-2">접속중인 친구목록</div>
+      <div className="text-white font-medium text-xl pt-3 pb-2">접속중인 친구목록</div>
       {/* content list */}
       <div className="flex flex-col space-y-4 mx-4 py-2">
         <div className="space-y-2">
