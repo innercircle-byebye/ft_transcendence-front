@@ -67,8 +67,8 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
 
   return (
     <PageContainer>
-      <form onSubmit={onSubmitEditProfile}>
-        <ContentContainer>
+      <ContentContainer>
+        <form onSubmit={onSubmitEditProfile}>
           <InputImage size={72} previewImagePath={previewImagePath} setImageFile={setImageFile} />
           <InputNickname
             nickname={nickname}
@@ -99,8 +99,8 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
               Save
             </button>
           </div>
-        </ContentContainer>
-      </form>
+        </form>
+      </ContentContainer>
     </PageContainer>
   );
 };
