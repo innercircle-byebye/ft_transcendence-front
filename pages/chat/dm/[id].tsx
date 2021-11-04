@@ -107,6 +107,7 @@ const DM = () => {
                 chatData={{
                   createdAt: chatData.createdAt,
                   userId: chatData.sender.userId,
+                  nickname: chatData.sender.nickname,
                   imagePath: chatData.sender.imagePath,
                   content: chatData.content,
                 }}
