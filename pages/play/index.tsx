@@ -20,8 +20,8 @@ const Play = () => {
         <div className="flex flex-col items-center space-y-3">
           <ProfileCard />
           <div className="flex px-8 w-full justify-evenly">
-            <button type="button" onClick={onClickMakeRoom}>방만들기</button>
-            <button type="button" onClick={onClickQuickStart}>빠른시작</button>
+            <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
+            <button type="button" onClick={onClickQuickStart} className="bg-red-500 text-3xl p-5 rounded-md">빠른시작</button>
           </div>
           <OnlineFriendList />
         </div>
