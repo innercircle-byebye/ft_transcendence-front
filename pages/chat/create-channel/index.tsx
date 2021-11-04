@@ -236,7 +236,7 @@ CreateChannel.getLayout = function getLayout(page: ReactElement) {
         <Navbar />
       </div>
       <div className="bg-gray-300 flex flex-row h-auto flex-1">
-        <main>{page}</main>
+        {page}
       </div>
     </div>
   );
