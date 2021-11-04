@@ -1,27 +1,29 @@
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useCallback, useEffect, useState,
+  ReactElement, useCallback, useEffect, useRef, useState,
 } from 'react';
-import useSWR from 'swr';
+import useSWR, { useSWRInfinite } from 'swr';
 import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { toast, ToastContainer } from 'react-toastify';
+import Scrollbars from 'react-custom-scrollbars-2';
 import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
 import {
   IChannel, IChannelChat, IChannelMember, IUser,
 } from '@/typings/db';
-import ChatItem from '@/components/chat-page/chat/ChatItem';
 import useSocket from '@/hooks/useSocket';
 import reissueToken from '@/utils/reissueTokens';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
 import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
+import ChatList from '@/components/chat-page/chat/ChatList';
+import makeSection from '@/utils/makeSection';
 
 const Channel = ({
   userInitialData,
   channelInitialData,
-  channelChatInitialData,
+  myChannelInitialData,
   channelMemberInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
@@ -29,6 +31,7 @@ const Channel = ({
   const [chat, onChangeChat, setChat] = useInput('');
   const [showEmoji, setShowEmoji] = useState(false);
   const { socket } = useSocket('chat');
+  const scrollbarRef = useRef<Scrollbars>(null);
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
     initialData: userInitialData,
   });
@@ -37,21 +40,23 @@ const Channel = ({
       initialData: channelInitialData,
     },
   );
-  const { revalidate } = useSWR<IChannel[]>(
+  const { data: myChannelData, revalidate } = useSWR<IChannel[]>(
     '/api/channel/me', fetcher, {
-      initialData: channelInitialData,
+      initialData: myChannelInitialData,
     },
   );
-  const { data: channelChatData, mutate: mutateChat } = useSWR<IChannelChat[]>(
-    `/api/channel/${channelName}/chat`, fetcher, {
-      initialData: channelChatInitialData,
-    },
+  const { data: channelChatData, mutate: mutateChat, setSize } = useSWRInfinite<IChannelChat[]>(
+    (index) => `/api/channel/${channelName}/chat?perPage=20&page=${index + 1}`, fetcher,
   );
   const { data: channelMemberData } = useSWR<IChannelMember[]>(
     `/api/channel/${channelName}/member`, fetcher, {
       initialData: channelMemberInitialData,
     },
   );
+  const isEmpty = channelChatData?.length === 0;
+  const isReachingEnd = isEmpty || false
+    || (channelChatData && channelChatData[channelChatData.length - 1]?.length < 20) || false;
+  const chatSections = makeSection(channelChatData ? channelChatData.flat().reverse() : []);
 
   const onCloseEmoji = useCallback(() => {
     setShowEmoji(false);
@@ -63,8 +68,8 @@ const Channel = ({
       if (chat?.trim() && channelChatData && channelData && userData) {
         const savedChat = chat;
         mutateChat((prevChatData) => {
-          prevChatData?.push({
-            channelChatId: (channelChatData[channelChatData.length - 1]?.channelChatId || 0) + 1,
+          prevChatData?.[0].unshift({
+            channelChatId: (channelChatData[0][0]?.channelChatId || 0) + 1,
             userId: userData.userId,
             channelId: channelData.channelId,
             content: savedChat,
@@ -78,8 +83,8 @@ const Channel = ({
           });
           return prevChatData;
         }, false).then(() => {
-          // 읽지 않은 메시지 처리하기 추가
           setChat('');
+          scrollbarRef.current?.scrollToBottom();
         });
         axios.post(`/api/channel/${channelData.name}/chat`, {
           content: savedChat,
@@ -97,9 +102,19 @@ const Channel = ({
     (data: IChannelChat) => {
       if (data.content && data.userId !== userData?.userId) {
         mutateChat((chatData) => {
-          chatData?.push(data);
+          chatData?.[0].unshift(data);
           return chatData;
-        }, false);
+        }, false).then(() => {
+          if (scrollbarRef.current) {
+            if (scrollbarRef.current.getScrollHeight()
+            < scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
+            ) {
+              setTimeout(() => {
+                scrollbarRef.current?.scrollToBottom();
+              }, 50);
+            }
+          }
+        });
       }
     },
     [userData?.userId, mutateChat],
@@ -111,15 +126,6 @@ const Channel = ({
     if (channelData?.ownerId !== userData?.userId) { toast.success('채널명이 변경되었습니다.', { position: 'bottom-right', theme: 'colored' }); }
   }, [channelData?.ownerId, revalidate, router, userData?.userId]);
 
-  const onDeleteChannel = useCallback((data: string) => {
-    if (channelName === data) {
-      toast.info(`${data} 채널이 삭제되었습니다.`, { position: 'bottom-right', theme: 'colored' });
-      setTimeout(() => {
-        router.push('/chat');
-      }, 3000);
-    }
-  }, [channelName, router]);
-
   const onUpdateAdmin = useCallback((data: { isAdmin: boolean, userId: number, }) => {
     if (userData && data.userId === userData.userId) {
       if (data.isAdmin) {
@@ -129,6 +135,10 @@ const Channel = ({
       }
     }
   }, [userData]);
+
+  const onDeleteChannel = useCallback(() => {
+    router.push('/chat');
+  }, [router]);
 
   useEffect(() => {
     socket?.on('message', onMessage);
@@ -145,18 +155,33 @@ const Channel = ({
   }, [onUpdatedChannelName, socket]);
 
   useEffect(() => {
-    socket?.on('deleteChannel', onDeleteChannel);
-    return () => {
-      socket?.off('deleteChannel', onDeleteChannel);
-    };
-  });
-
-  useEffect(() => {
     socket?.on('updateChannelAdmin', onUpdateAdmin);
     return () => {
       socket?.off('updateChannelAdmin', onUpdateAdmin);
     };
   }, [onUpdateAdmin, socket]);
+
+  useEffect(() => {
+    socket?.on('deleteChannel', onDeleteChannel);
+    return () => {
+      socket?.off('deleteChannel', onDeleteChannel);
+    };
+  }, [onDeleteChannel, socket]);
+
+  useEffect(() => {
+    if (channelData
+      && (!myChannelData?.map((v) => v.channelId).includes(channelData?.channelId))) {
+      router.push('/chat');
+    }
+  }, [channelData, myChannelData, router]);
+
+  useEffect(() => {
+    if (channelChatData?.length === 1) {
+      setTimeout(() => {
+        scrollbarRef.current?.scrollToBottom();
+      }, 500);
+    }
+  }, [channelChatData]);
 
   return (
     <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
@@ -167,21 +192,12 @@ const Channel = ({
           </div>
           <ChannelButtons />
         </div>
-        <div className="flex-1">
-          {
-            channelChatData?.map((chatData) => (
-              <ChatItem
-                key={chatData.channelChatId}
-                chatData={{
-                  userId: chatData.userId,
-                  imagePath: chatData.user.imagePath,
-                  content: chatData.content,
-                  createdAt: chatData.createdAt,
-                }}
-              />
-            ))
-          }
-        </div>
+        <ChatList
+          chatSections={chatSections}
+          ref={scrollbarRef}
+          setSize={setSize}
+          isReachingEnd={isReachingEnd}
+        />
         <ChatBox
           chat={chat}
           onChangeChat={onChangeChat}
@@ -240,8 +256,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })
     .then((response) => response.data);
 
-  const channelChatInitialData: IChannelChat[] = await axios
-    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}/chat`), {
+  const myChannelInitialData: IChannel[] = await axios
+    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/me`), {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
@@ -258,11 +274,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })
     .then((response) => response.data);
 
+  if (channelInitialData
+      && (!myChannelInitialData?.map((v) => v.channelId).includes(channelInitialData?.channelId))) {
+    return {
+      redirect: {
+        destination: '/chat',
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
       userInitialData,
       channelInitialData,
-      channelChatInitialData,
+      myChannelInitialData,
       channelMemberInitialData,
     },
   };

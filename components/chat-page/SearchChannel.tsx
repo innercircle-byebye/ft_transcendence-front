@@ -7,6 +7,7 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import Link from 'next/link';
+import { toast, ToastContainer } from 'react-toastify';
 import useInput from '@/hooks/useInput';
 import { IChannel } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
@@ -46,6 +47,8 @@ const SearchChannel: VFC<IProps> = ({
         }, false).then(() => {
           router.push(`/chat/channel/${data.name}`);
         });
+      }).catch(() => {
+        toast.info(`${data.name} 채널에 입장하실 수 없습니다.`, { position: 'bottom-right', theme: 'colored' });
       });
     }
   }, [mutateMyChannelData, router, setPrivateChannelToJoin]);
@@ -138,6 +141,7 @@ const SearchChannel: VFC<IProps> = ({
             );
           })}
         </div>
+        <ToastContainer />
       </div>
     </>
   );
