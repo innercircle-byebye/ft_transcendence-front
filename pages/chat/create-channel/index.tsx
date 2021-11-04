@@ -17,6 +17,7 @@ import fetcher from '@/utils/fetcher';
 import { IChannel, IUser } from '@/typings/db';
 import CheckPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
 import reissueToken from '@/utils/reissueTokens';
+import InputName from '@/components/inputs/InputName';
 
 interface IInviteMember {
   id: number;
@@ -131,24 +132,8 @@ const CreateChannel = ({
       </div>
 
       <div className="grid grid-cols-2 gap-10 items-center">
-        <div className="relative col-span-2">
-          <input
-            className="col-span-2 w-80 px-6 py-4 rounded-full bg-gray-100 text-xl"
-            placeholder="채널명"
-            type="text"
-            value={channelName}
-            onChange={onChangeChannelName}
-          />
-          {!channelName.trim().length && (
-          <div className="absolute left-5 text-red-500 text-xs italic">
-            채널명을 입력해주세요
-          </div>
-          )}
-          {channelNameError && (
-          <div className="absolute left-5 text-red-500 text-xs italic">
-            이미 존재하는 채널명입니다.
-          </div>
-          )}
+        <div className="col-span-2">
+          <InputName type="채널명" name={channelName} onChangeName={onChangeChannelName} nameError={channelNameError} />
         </div>
         <div className="ml-3 text-gray-700 font-medium">최대멤버수</div>
         <input
