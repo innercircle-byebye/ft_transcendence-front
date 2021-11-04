@@ -9,6 +9,10 @@ import useInput from '@/hooks/useInput';
 import SwitchPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
 import Navbar from '@/components/navigation-bar/Navbar';
 import { IGameRoom } from '@/typings/db';
+import InputName from '@/components/inputs/InputName';
+import InputNumber from '@/components/inputs/InputNumber';
+import PageContainer from '@/components/create-page/PageContainer';
+import ContentContainerWithTitle from '@/components/create-page/ContentContainerWithTitle';
 
 const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
@@ -59,70 +63,49 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
   }, [allRoomList, roomName]);
 
   return (
-    <div className="flex-1 bg-gray-200">
-      <div className="flex flex-col items-center gap-10 pt-28">
-        <p className="text-5xl">Create Game Room</p>
-        <div className="relative">
-          <input type="text" placeholder="방이름" value={roomName} onChange={onChangeRoomName} className="col-span-2 w-80 px-6 py-4 rounded-full bg-gray-100 text-xl outline-none" />
-          {!roomName.trim().length && (
-          <div className="absolute left-5 text-red-500 text-xs italic">
-            채널명을 입력해주세요
-          </div>
-          )}
-          {roomNameError && (
-          <div className="absolute left-5 text-red-500 text-xs italic">
-            이미 존재하는 채널명입니다.
-          </div>
-          )}
+    <PageContainer>
+      <ContentContainerWithTitle isPrivate={isPrivate} title="Create Game Room">
+        <div className="col-span-2">
+          <InputName type="게임방이름" name={roomName} onChangeName={onChangeRoomName} nameError={roomNameError} />
         </div>
-        <form className="grid grid-cols-2 gap-8 items-center">
-          <span>
-            난이도(하 / 중 / 상)
-          </span>
-          <input type="range" min="0" max="2" value={difficulty} onChange={onChangeDifficulty} list="tickmarks" className="outline-none" />
-          <datalist id="tickmarks">
-            <option value="0" label="0%" />
-            <option value="1" label="50%" />
-            <option value="2" label="100%" />
-          </datalist>
-          <span>
-            승리점수
-          </span>
-          <input type="number" value={winScore} onChange={onChangeWinScore} className="px-6 py-2 w-24 rounded-full bg-gray-100 text-xl outline-none" />
-          <span>
-            최대관전자수
-          </span>
-          <input type="number" value={numOfSpectator} onChange={onChangeNumOfSpectator} className="px-6 py-2 w-24 rounded-full bg-gray-100 text-xl outline-none" />
-          <SwitchPublicPrivate
-            isPrivate={isPrivate}
-            setIsPrivate={setIsPrivate}
-            password={password}
-            onChangePassword={onChangePassword}
-            setPassword={setPassword}
-            passwordError={passwordError}
-            setPasswordError={setPasswordError}
-          />
-        </form>
-        <div className="space-x-4">
-          <button
-            className="bg-gray-400 text-white py-3 px-8 rounded-full focus:outline-none focus:shadow-outline"
-            type="button"
-            onClick={onClickCancel}
-          >
-            CANCEL
-          </button>
-          <button
-            className="bg-amber-600 text-white py-3 px-10 rounded-full focus:outline-none focus:shadow-outline"
-            type="button"
-            onClick={onClickMake}
-            disabled={!roomName.trim().length || roomNameError || (isPrivate && passwordError)}
-          >
-            SAVE
-          </button>
-        </div>
-      </div>
+        <span>
+          난이도(하 / 중 / 상)
+        </span>
+        <input type="range" min="0" max="2" value={difficulty} onChange={onChangeDifficulty} list="tickmarks" className="outline-none" />
+        <datalist id="tickmarks">
+          <option value="0" label="0%" />
+          <option value="1" label="50%" />
+          <option value="2" label="100%" />
+        </datalist>
+        <InputNumber type="승리점수" value={winScore} onChangeValue={onChangeWinScore} min={1} max={15} />
+        <InputNumber type="최대관전자수" value={numOfSpectator} onChangeValue={onChangeNumOfSpectator} min={0} max={10} />
+        <SwitchPublicPrivate
+          isPrivate={isPrivate}
+          setIsPrivate={setIsPrivate}
+          password={password}
+          onChangePassword={onChangePassword}
+          setPassword={setPassword}
+          passwordError={passwordError}
+          setPasswordError={setPasswordError}
+        />
+        <button
+          className="bg-gray-400 text-white py-3 rounded-full focus:outline-none focus:shadow-outline"
+          type="button"
+          onClick={onClickCancel}
+        >
+          CANCEL
+        </button>
+        <button
+          className="bg-amber-600 text-white py-3 rounded-full focus:outline-none focus:shadow-outline"
+          type="button"
+          onClick={onClickMake}
+          disabled={!roomName.trim().length || roomNameError || (isPrivate && passwordError)}
+        >
+          SAVE
+        </button>
+      </ContentContainerWithTitle>
       <ToastContainer />
-    </div>
+    </PageContainer>
   );
 };
 
