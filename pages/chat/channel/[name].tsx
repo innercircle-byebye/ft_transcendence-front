@@ -21,6 +21,7 @@ import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
 const Channel = ({
   userInitialData,
   channelInitialData,
+  myChannelInitialData,
   channelChatInitialData,
   channelMemberInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -37,9 +38,9 @@ const Channel = ({
       initialData: channelInitialData,
     },
   );
-  const { revalidate } = useSWR<IChannel[]>(
+  const { data: myChannelData, revalidate } = useSWR<IChannel[]>(
     '/api/channel/me', fetcher, {
-      initialData: channelInitialData,
+      initialData: myChannelInitialData,
     },
   );
   const { data: channelChatData, mutate: mutateChat } = useSWR<IChannelChat[]>(
@@ -111,15 +112,6 @@ const Channel = ({
     if (channelData?.ownerId !== userData?.userId) { toast.success('채널명이 변경되었습니다.', { position: 'bottom-right', theme: 'colored' }); }
   }, [channelData?.ownerId, revalidate, router, userData?.userId]);
 
-  const onDeleteChannel = useCallback((data: string) => {
-    if (channelName === data) {
-      toast.info(`${data} 채널이 삭제되었습니다.`, { position: 'bottom-right', theme: 'colored' });
-      setTimeout(() => {
-        router.push('/chat');
-      }, 3000);
-    }
-  }, [channelName, router]);
-
   const onUpdateAdmin = useCallback((data: { isAdmin: boolean, userId: number, }) => {
     if (userData && data.userId === userData.userId) {
       if (data.isAdmin) {
@@ -129,6 +121,10 @@ const Channel = ({
       }
     }
   }, [userData]);
+
+  const onDeleteChannel = useCallback(() => {
+    router.push('/chat');
+  }, [router]);
 
   useEffect(() => {
     socket?.on('message', onMessage);
@@ -145,18 +141,25 @@ const Channel = ({
   }, [onUpdatedChannelName, socket]);
 
   useEffect(() => {
-    socket?.on('deleteChannel', onDeleteChannel);
-    return () => {
-      socket?.off('deleteChannel', onDeleteChannel);
-    };
-  });
-
-  useEffect(() => {
     socket?.on('updateChannelAdmin', onUpdateAdmin);
     return () => {
       socket?.off('updateChannelAdmin', onUpdateAdmin);
     };
   }, [onUpdateAdmin, socket]);
+
+  useEffect(() => {
+    socket?.on('deleteChannel', onDeleteChannel);
+    return () => {
+      socket?.off('deleteChannel', onDeleteChannel);
+    };
+  }, [onDeleteChannel, socket]);
+
+  useEffect(() => {
+    if (channelData
+      && (!myChannelData?.map((v) => v.channelId).includes(channelData?.channelId))) {
+      router.push('/chat');
+    }
+  }, [channelData, myChannelData, router]);
 
   return (
     <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
@@ -174,6 +177,7 @@ const Channel = ({
                 key={chatData.channelChatId}
                 chatData={{
                   userId: chatData.userId,
+                  nickname: chatData.user.nickname,
                   imagePath: chatData.user.imagePath,
                   content: chatData.content,
                   createdAt: chatData.createdAt,
@@ -240,6 +244,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })
     .then((response) => response.data);
 
+  const myChannelInitialData: IChannel[] = await axios
+    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/me`), {
+      withCredentials: true,
+      headers: {
+        Cookie: `Authentication=${context.req.cookies[access_token]}`,
+      },
+    })
+    .then((response) => response.data);
+
   const channelChatInitialData: IChannelChat[] = await axios
     .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}/chat`), {
       withCredentials: true,
@@ -258,10 +271,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })
     .then((response) => response.data);
 
+  if (channelInitialData
+      && (!myChannelInitialData?.map((v) => v.channelId).includes(channelInitialData?.channelId))) {
+    return {
+      redirect: {
+        destination: '/chat',
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
       userInitialData,
       channelInitialData,
+      myChannelInitialData,
       channelChatInitialData,
       channelMemberInitialData,
     },
