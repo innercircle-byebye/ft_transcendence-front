@@ -3,7 +3,6 @@ import React, {
 } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import Navbar from '@/components/navigation-bar/Navbar';
 import InputImage from '@/components/inputs/InputImage';
 import { IUser } from '@/typings/db';
@@ -15,14 +14,13 @@ import PageContainer from '@/components/edit-profile-page/PageContainer';
 import ContentContainer from '@/components/edit-profile-page/ContentContainer';
 
 const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const router = useRouter();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImagePath, setPreviewImagePath] = useState<string>(userData.imagePath);
   const [nickname, onChangeNickname, setNickname] = useInput<string>(userData.nickname);
   const [email, onChangeEmail, setEmail] = useInput(userData.email);
   const [emailError, setEmailError] = useState(false);
-  const [isStatePrivate, setIsStatePrivate] = useState(false);
-  const [isHistoryPrivate, setIsHistoryPrivate] = useState(false);
+  const [isStatusPublic, setIsStatePublic] = useState(userData.isStatusPublic);
+  const [isHistoryPublic, setIsHistoryPublic] = useState(userData.isHistoryPublic);
 
   const onClickResetNickname = useCallback(() => {
     setNickname(userData.nickname);
@@ -33,16 +31,24 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
   }, [setEmail, userData.email]);
 
   const onClickSwitchState = useCallback(() => {
-    setIsStatePrivate((prev) => !prev);
+    setIsStatePublic((prev) => !prev);
   }, []);
 
   const onClickSwitchHistory = useCallback(() => {
-    setIsHistoryPrivate((prev) => !prev);
+    setIsHistoryPublic((prev) => !prev);
   }, []);
 
-  const onClickCancel = useCallback(() => {
-    router.back();
-  }, [router]);
+  const onClickReset = useCallback((e) => {
+    e.preventDefault();
+    setNickname(userData.nickname);
+    setEmail(userData.email);
+    setPreviewImagePath(userData.imagePath);
+    setImageFile(null);
+    setIsStatePublic(userData.isStatusPublic);
+    setIsHistoryPublic(userData.isHistoryPublic);
+  },
+  [setNickname, userData.nickname, userData.email, userData.imagePath,
+    userData.isStatusPublic, userData.isHistoryPublic, setEmail]);
 
   useEffect(() => {
     if (imageFile) {
@@ -70,15 +76,15 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
           setEmailError={setEmailError}
           onClickResetEmail={onClickResetEmail}
         />
-        <Switch title="상태공개여부" isLeft={isStatePrivate} onClickSwitch={onClickSwitchState} />
-        <Switch title="기록공개여부" isLeft={isHistoryPrivate} onClickSwitch={onClickSwitchHistory} />
-        <div className="w-56 flex items-center justify-evenly">
+        <Switch title="상태공개 / 비공개" isLeft={isStatusPublic} onClickSwitch={onClickSwitchState} />
+        <Switch title="기록공개 / 비공개" isLeft={isHistoryPublic} onClickSwitch={onClickSwitchHistory} />
+        <div className="w-72 flex items-center justify-evenly">
           <button
             className="bg-white text-sky-600 border-sky-600 border font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
-            onClick={onClickCancel}
+            onClick={onClickReset}
           >
-            Cancel
+            Reset
           </button>
           <button
             className="bg-sky-600 hover:bg-sky-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
