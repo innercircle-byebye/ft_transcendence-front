@@ -61,6 +61,7 @@ export interface IDMChat {
 
 export interface IChatItem {
   userId: number;
+  nickname: string;
   imagePath: string;
   content: string;
   createdAt: Date;
