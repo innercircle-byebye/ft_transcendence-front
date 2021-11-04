@@ -7,10 +7,11 @@ import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import PasswordModal from '@/components/chat-page/PasswordModal';
 import RoomList from '@/components/play-page/RoomList';
 import MainLayout from '@/layouts/MainLayout';
+import { IGameRoom } from '@/typings/db';
 
 const Play = () => {
   const router = useRouter();
-  const [roomToEntrance, setRoomToEntrance] = useState<number | null>(null);
+  const [roomToEntrance, setRoomToEntrance] = useState<IGameRoom | null>(null);
   const [password, onChangePassword, setPassword] = useInput('');
 
   const onClickMakeRoom = useCallback(() => {
@@ -43,7 +44,7 @@ const Play = () => {
           <OnlineFriendList />
         </div>
         <div className="bg-sky-100 col-span-2">
-          {roomToEntrance && roomToEntrance % 2
+          {roomToEntrance && roomToEntrance.isPrivate
             ? (
               <PasswordModal
                 name={`${roomToEntrance}번방 입니다.`}

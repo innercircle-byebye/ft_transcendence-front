@@ -1,13 +1,14 @@
 import {
   Dispatch, SetStateAction, useCallback, VFC,
 } from 'react';
+import { IGameRoom } from '@/typings/db';
 
 interface IProps {
-  roomNumber: number;
-  setRoomToEntrance: Dispatch<SetStateAction<number | null>>;
+  roomInfo: IGameRoom;
+  setRoomToEntrance: Dispatch<SetStateAction<IGameRoom | null>>;
 }
 
-const EntranceModal: VFC<IProps> = ({ roomNumber, setRoomToEntrance }) => {
+const EntranceModal: VFC<IProps> = ({ roomInfo, setRoomToEntrance }) => {
   const onClickCloseModal = useCallback(() => {
     setRoomToEntrance(null);
   }, [setRoomToEntrance]);
@@ -28,11 +29,19 @@ const EntranceModal: VFC<IProps> = ({ roomNumber, setRoomToEntrance }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <p className="text-4xl">{`#${roomNumber}  ${roomNumber}번방입니다.`}</p>
-        <p className="text-center text-xl">kycho  vs  mykang</p>
+        <p className="text-4xl">{`#${roomInfo.gameRoomId}  ${roomInfo.title}`}</p>
+        <p className="text-center text-xl">
+          {roomInfo.gameMembers.at(0)?.nickname}
+          {' vs '}
+          {roomInfo.gameMembers.at(1)?.nickname}
+        </p>
         <div className="flex justify-evenly">
-          <button type="button" onClick={onClickWatch} className="bg-green-500 p-2 rounded-xl">관전하기</button>
-          <button type="button" onClick={onClickPlay} className="bg-blue-500 p-2 rounded-xl">게임하기</button>
+          <button type="button" onClick={onClickWatch} className={`${roomInfo.currentNumberCount === roomInfo.maxParticipantNum ? 'bg-gray-400' : 'bg-green-500'} p-2 rounded-xl`}>
+            관전하기
+          </button>
+          <button type="button" onClick={onClickPlay} className={`${roomInfo.gameMembers.length === 2 ? 'bg-gray-400' : 'bg-blue-500'} p-2 rounded-xl`}>
+            게임하기
+          </button>
         </div>
       </div>
     </div>

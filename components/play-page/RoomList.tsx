@@ -1,30 +1,41 @@
 import {
-  Dispatch, SetStateAction, VFC,
+  Dispatch, SetStateAction, useState, VFC,
 } from 'react';
+import useSWR from 'swr';
 import EntranceModal from '@/components/play-page/EntranceModal';
 import RoomItem from '@/components/play-page/RoomItem';
+import fetcher from '@/utils/fetcher';
+import { IGameRoom } from '@/typings/db';
 
 interface IProps {
-  roomToEntrance: number | null;
-  setRoomToEntrance: Dispatch<SetStateAction<number | null>>;
+  roomToEntrance: IGameRoom | null;
+  setRoomToEntrance: Dispatch<SetStateAction<IGameRoom | null>>;
 }
 
-const RoomList: VFC<IProps> = ({ roomToEntrance, setRoomToEntrance }) => (
-  <div className="relative">
-    <div className="grid grid-cols-2 grid-rows-4 gap-5 p-5 h-full w-full">
-      <RoomItem roomNumber={1} setRoomToEntrance={setRoomToEntrance} />
-      <RoomItem roomNumber={2} setRoomToEntrance={setRoomToEntrance} />
-      <RoomItem roomNumber={3} setRoomToEntrance={setRoomToEntrance} />
-      <RoomItem roomNumber={4} setRoomToEntrance={setRoomToEntrance} />
-      <RoomItem roomNumber={5} setRoomToEntrance={setRoomToEntrance} />
-      <RoomItem roomNumber={6} setRoomToEntrance={setRoomToEntrance} />
-      <RoomItem roomNumber={7} setRoomToEntrance={setRoomToEntrance} />
-      <RoomItem roomNumber={8} setRoomToEntrance={setRoomToEntrance} />
+const RoomList: VFC<IProps> = ({ roomToEntrance, setRoomToEntrance }) => {
+  const [page] = useState(1);
+  const { data: roomList } = useSWR<IGameRoom[]>(`/api/game/room/list?page=${page}`, fetcher);
+
+  if (!roomList) {
+    return <div>로딩중...</div>;
+  }
+
+  return (
+    <div className="relative">
+      <div className="grid grid-cols-2 grid-rows-4 gap-5 p-5 h-full w-full">
+        {roomList.map((room) => (
+          <RoomItem
+            key={room.gameRoomId}
+            roomInfo={room}
+            setRoomToEntrance={setRoomToEntrance}
+          />
+        ))}
+      </div>
+      {roomToEntrance && (
+      <EntranceModal roomInfo={roomToEntrance} setRoomToEntrance={setRoomToEntrance} />
+      )}
     </div>
-    {roomToEntrance && (
-    <EntranceModal roomNumber={roomToEntrance} setRoomToEntrance={setRoomToEntrance} />
-    )}
-  </div>
-);
+  );
+};
 
 export default RoomList;
