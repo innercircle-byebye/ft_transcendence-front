@@ -63,7 +63,7 @@ const CreateChannel = ({
 
   useEffect(() => {
     const equalChannel = allChannelData?.find((data) => data.name === channelName);
-    if (!channelName.trim().length || equalChannel) {
+    if (equalChannel) {
       setChannelNameError(true);
     } else {
       setChannelNameError(false);
@@ -138,7 +138,7 @@ const CreateChannel = ({
           className="bg-amber-600 text-white py-3 rounded-full focus:outline-none focus:shadow-outline"
           type="button"
           onClick={onClickSave}
-          disabled={channelNameError || (isPrivate && passwordError)}
+          disabled={!channelName.trim().length || channelNameError || (isPrivate && passwordError)}
         >
           SAVE
         </button>
