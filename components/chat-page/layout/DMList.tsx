@@ -19,8 +19,6 @@ const DMList: VFC = () => {
     setChannelCollapse((prev) => !prev);
   }, []);
 
-  console.log('test GET /api/dm/users', dmMembersDatas);
-
   return (
     <div className="border-2 border-sky-700 bg-sky-50 rounded-lg w-full h-auto p-3 space-y-3">
       <div className="text-gray-800 font-semibold text-xl flex items-center">
