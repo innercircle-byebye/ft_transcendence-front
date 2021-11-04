@@ -5,10 +5,15 @@ import useInput from '@/hooks/useInput';
 import { IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 
-const SearchDM: VFC = () => {
+interface IProps {
+  allUserInitialData: IUser[];
+}
+
+const SearchDM: VFC<IProps> = ({ allUserInitialData }) => {
   const router = useRouter();
   const [searchNickname, onChangeSearchNickname] = useInput('');
   const { data: allUserData } = useSWR<IUser[]>('/api/user/all', fetcher, {
+    initialData: allUserInitialData,
     dedupingInterval: 10000,
   });
 

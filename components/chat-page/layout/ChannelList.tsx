@@ -1,28 +1,76 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
-  useCallback, useState, VFC,
+  useCallback, useEffect, useState, VFC,
 } from 'react';
 import useSWR from 'swr';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IUser } from '@/typings/db';
+import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
 
 const ChannelList: VFC = () => {
   const router = useRouter();
-  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
-    dedupingInterval: 2000, // 2초
-  });
-  const { data: myChannelData } = useSWR<IChannel[]>(
-    userData ? '/api/channel/me' : null,
-    fetcher,
-  );
-
-  const [channelCollapse, setChannelCollapse] = useState(false);
   const channelName = router.query.name;
+  const [channelCollapse, setChannelCollapse] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
+  const [showDeleteChannelModal, setShowDeleteChannelModal] = useState(false);
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
+  const { data: myChannelData, mutate: mutateMyChannelData } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
   const toggleChannelCollapse = useCallback(() => {
     setChannelCollapse((prev) => !prev);
   }, []);
+
+  const onClickExitChannel = useCallback(async (channel: IChannel) => {
+    if (channelName !== channel.name) { await router.push(`/chat/channel/${channel.name}`); }
+    if (userData?.userId === channel.ownerId) {
+      setShowDeleteChannelModal(true);
+    } else {
+      setShowExitModal(true);
+    }
+  }, [channelName, router, userData?.userId]);
+
+  const onClickExitYes = useCallback(() => {
+    mutateMyChannelData(
+      (prevMyChannelData) => prevMyChannelData?.filter((data) => data.name !== channelName), false,
+    ).then(() => {
+      router.push('/chat');
+      axios.delete(`/api/channel/${channelName}/member`, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        setShowExitModal(false);
+      });
+    });
+  }, [channelName, mutateMyChannelData, router]);
+
+  const onClickExitNo = useCallback(() => {
+    setShowExitModal(false);
+  }, []);
+
+  const onClickDeleteChannelYes = useCallback(() => {
+    axios.delete(`/api/channel/${channelName}`, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      setShowDeleteChannelModal(false);
+      router.push('/chat');
+    }).catch(() => {
+      toast.error(`${channelName} 채널 삭제에 실패했습니다.`, { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [channelName, router]);
+
+  const onClickDeleteChannelNo = useCallback(() => {
+    setShowDeleteChannelModal(false);
+  }, []);
+
+  useEffect(() => {
+    // console.log('hello');
+  }, [channelName]);
 
   return (
     <div className="border-2 border-sky-700 bg-sky-50 rounded-lg w-full h-auto p-3 space-y-3">
@@ -93,7 +141,7 @@ const ChannelList: VFC = () => {
                       : ''
                   }`}
                 >
-                  <div className="flex flex-row items-center">
+                  <div className="flex items-center">
                     {`# ${channel.name} `}
                     {userData?.userId === channel.ownerId ? (
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
@@ -101,7 +149,8 @@ const ChannelList: VFC = () => {
                       </svg>
                     ) : <></>}
                   </div>
-                  {channel.isPrivate && (
+                  <div className="flex">
+                    {channel.isPrivate && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       className="h-5 w-5"
@@ -114,12 +163,24 @@ const ChannelList: VFC = () => {
                         clipRule="evenodd"
                       />
                     </svg>
-                  )}
+                    )}
+                    <button type="button" onClick={() => onClickExitChannel(channel)}>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
                 </span>
               </a>
             </Link>
           ))}
       </div>
+      {showExitModal && (
+        <ChatTwoButtonModal question={`${channelName} 채널에서 나가시겠습니까?`} onClickYes={onClickExitYes} onClickNo={onClickExitNo} yesButtonColor="bg-red-500" />
+      )}
+      {showDeleteChannelModal && (
+        <ChatTwoButtonModal question={`${channelName} 채널을 삭제하시겠습니까?`} onClickYes={onClickDeleteChannelYes} onClickNo={onClickDeleteChannelNo} yesButtonColor="bg-red-500" />
+      )}
     </div>
   );
 };

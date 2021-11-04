@@ -15,6 +15,7 @@
     "@types/react-mentions": "^4.1.4",
     "autosize": "^5.0.1",
     "axios": "^0.22.0",
+    "dayjs": "^1.10.7",
     "emojibase": "^6.0.2",
     "interweave": "^12.9.0",
     "interweave-emoji": "^6.0.2",
