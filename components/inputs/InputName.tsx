@@ -13,7 +13,7 @@ const InputName: VFC<IProps> = ({
   <div className="relative">
     <input
       className="w-80 px-6 py-4 rounded-full bg-gray-100 text-xl outline-none"
-      placeholder="채널명"
+      placeholder={type}
       type="text"
       value={name}
       onChange={onChangeName}
