@@ -59,7 +59,7 @@ const Chat = ({
         <>
           <PasswordModal
             onSubmitPassword={onSubmitPassword}
-            channelName={privateChannelToJoin.name}
+            name={privateChannelToJoin.name}
             password={password}
             onChangePassword={onChangePassword}
             onCloseModal={onClosePasswordModal}
