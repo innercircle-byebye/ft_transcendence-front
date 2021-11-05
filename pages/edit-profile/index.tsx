@@ -3,6 +3,7 @@ import React, {
 } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import Navbar from '@/components/navigation-bar/Navbar';
 import InputImage from '@/components/inputs/InputImage';
 import { IUser } from '@/typings/db';
@@ -14,6 +15,7 @@ import PageContainer from '@/components/edit-profile-page/PageContainer';
 import ContentContainer from '@/components/edit-profile-page/ContentContainer';
 
 const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const router = useRouter();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImagePath, setPreviewImagePath] = useState<string>(userData.imagePath);
   const [nickname, onChangeNickname, setNickname] = useInput<string>(userData.nickname);
@@ -50,6 +52,10 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
   [setNickname, userData.nickname, userData.email, userData.imagePath,
     userData.isStatusPublic, userData.isHistoryPublic, setEmail]);
 
+  const onClickCancel = useCallback(() => {
+    router.push('/');
+  }, [router]);
+
   const onSubmitEditProfile = useCallback((e) => {
     e.preventDefault();
     console.log('submit edit profile');
@@ -67,7 +73,7 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
 
   return (
     <PageContainer>
-      <ContentContainer>
+      <ContentContainer onClickReset={onClickReset}>
         <form onSubmit={onSubmitEditProfile} className="flex flex-col items-center">
           <InputImage size={72} previewImagePath={previewImagePath} setImageFile={setImageFile} />
           <InputNickname
@@ -88,9 +94,9 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
             <button
               className="bg-white text-sky-600 border-sky-600 border font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"
-              onClick={onClickReset}
+              onClick={onClickCancel}
             >
-              Reset
+              Cancel
             </button>
             <button
               className="bg-sky-600 hover:bg-sky-600 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline"
