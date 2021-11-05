@@ -55,7 +55,7 @@ const Play = ({ allRoomList }: InferGetServerSidePropsType<typeof getServerSideP
           {roomToEntrance && roomToEntrance.isPrivate
             ? (
               <PasswordModal
-                name={`${roomToEntrance}번방 입니다.`}
+                name={`${roomToEntrance.title}`}
                 password={password}
                 onChangePassword={onChangePassword}
                 onSubmitPassword={onSubmitPassword}
