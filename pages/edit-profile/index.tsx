@@ -68,7 +68,7 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
   return (
     <PageContainer>
       <ContentContainer>
-        <form onSubmit={onSubmitEditProfile}>
+        <form onSubmit={onSubmitEditProfile} className="flex flex-col items-center">
           <InputImage size={72} previewImagePath={previewImagePath} setImageFile={setImageFile} />
           <InputNickname
             nickname={nickname}
