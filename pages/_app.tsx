@@ -31,10 +31,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
 
   useEffect(() => {
-    if (userData?.userId) {
-      mainSocket?.emit('login', userData?.userId);
+    if (pathname !== '/login') {
+      if (userData?.userId) {
+        mainSocket?.emit('login', userData?.userId);
+      }
     }
-  }, [mainSocket, userData?.userId]);
+  }, [mainSocket, pathname, userData?.userId]);
 
   useEffect(() => {
     mainSocket?.on('dm', (data) => {
