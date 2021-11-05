@@ -8,7 +8,8 @@ import { MenuIcon } from '@heroicons/react/solid';
 import useSocket from '@/hooks/useSocket';
 
 const UserInfoMenu = () => {
-  const { socket: mainSocket } = useSocket('main');
+  // const { socket: mainSocket } = useSocket('main');
+  const { disconnect } = useSocket('main');
 
   const onClickLogout = useCallback((e) => {
     e.preventDefault();
@@ -16,13 +17,13 @@ const UserInfoMenu = () => {
       .get('/auth/logout')
       .then(() => {
         router.push('/login');
-        mainSocket?.disconnect();
+        disconnect();
       })
       .catch((error) => {
         console.dir(error);
         toast.error(error.response?.data, { position: 'bottom-center' });
       });
-  }, [mainSocket]);
+  }, [disconnect]);
 
   return (
     <div className="relative text-white">
