@@ -7,9 +7,9 @@ import ProfileCard from '@/components/play-page/ProfileCard';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import PasswordModal from '@/components/chat-page/PasswordModal';
 import RoomList from '@/components/play-page/RoomList';
-import MainLayout from '@/layouts/MainLayout';
 import { IGameRoom } from '@/typings/db';
 import Pagination from '@/components/play-page/Pagination';
+import Navbar from '@/components/navigation-bar/Navbar';
 
 const Play = ({ allRoomList }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
@@ -105,7 +105,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 };
 
 Play.getLayout = function getLayout(page: ReactElement) {
-  return <MainLayout>{page}</MainLayout>;
+  return (
+    <div className="h-screen flex flex-col">
+      <div className="flex-initial">
+        <Navbar />
+      </div>
+      {page}
+    </div>
+  );
 };
 
 export default Play;
