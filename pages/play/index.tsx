@@ -1,6 +1,7 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import React, { ReactElement, useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
+import axios from 'axios';
 import useInput from '@/hooks/useInput';
 import ProfileCard from '@/components/play-page/ProfileCard';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
@@ -8,11 +9,14 @@ import PasswordModal from '@/components/chat-page/PasswordModal';
 import RoomList from '@/components/play-page/RoomList';
 import MainLayout from '@/layouts/MainLayout';
 import { IGameRoom } from '@/typings/db';
+import Pagination from '@/components/play-page/Pagination';
 
-const Play = () => {
+const Play = ({ allRoomList }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
+  const [page, setPage] = useState(1);
   const [roomToEntrance, setRoomToEntrance] = useState<IGameRoom | null>(null);
   const [password, onChangePassword, setPassword] = useInput('');
+  const [paginationRange] = useState(5);
 
   const onClickMakeRoom = useCallback(() => {
     router.push('/play/create-room');
@@ -31,6 +35,10 @@ const Play = () => {
     setRoomToEntrance(null);
     setPassword('');
   }, [setPassword]);
+
+  if (!allRoomList) {
+    return <div>로딩중...</div>;
+  }
 
   return (
     <div className="mx-auto h-screen max-w-screen-xl">
@@ -55,10 +63,21 @@ const Play = () => {
               />
             )
             : (
-              <RoomList
-                roomToEntrance={roomToEntrance}
-                setRoomToEntrance={setRoomToEntrance}
-              />
+              <>
+                <RoomList
+                  page={page}
+                  roomToEntrance={roomToEntrance}
+                  setRoomToEntrance={setRoomToEntrance}
+                />
+                <div className="flex justify-center">
+                  <Pagination
+                    page={page}
+                    setPage={setPage}
+                    totalPage={parseInt(`${allRoomList.length / paginationRange + 1}`, 10)}
+                    paginationRange={paginationRange}
+                  />
+                </div>
+              </>
             )}
         </div>
       </div>
@@ -66,10 +85,24 @@ const Play = () => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => ({
-  props: {
-  },
-});
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const access_token = process.env.ACCESS_TOKEN || '';
+
+  const allRoomList: IGameRoom[] = await axios
+    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/game/room/list`, {
+      withCredentials: true,
+      headers: {
+        Cookie: `Authentication=${context.req.cookies[access_token]}`,
+      },
+    })
+    .then((response) => response.data);
+
+  return {
+    props: {
+      allRoomList,
+    },
+  };
+};
 
 Play.getLayout = function getLayout(page: ReactElement) {
   return <MainLayout>{page}</MainLayout>;
