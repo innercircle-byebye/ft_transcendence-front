@@ -16,7 +16,7 @@ const RoomItem: VFC<IProps> = ({ roomInfo, setRoomToEntrance }) => {
 
   return (
     <div className={`${roomInfo.isPrivate ? 'bg-yellow-400 text-amber-900' : 'bg-blue-600 text-white'} p-4 space-y-5 rounded-xl`}>
-      <p className="text-2xl font-semibold text-center">{`#${roomInfo.gameRoomId}  ${roomInfo.title}`}</p>
+      <p className={`${roomInfo.title.length > 10 ? 'text-2xl' : 'text-3xl'} font-semibold text-center`}>{`#${roomInfo.gameRoomId}  ${roomInfo.title}`}</p>
       <div className="grid grid-cols-3 justify-items-center">
         <div className="col-span-2 text-center space-y-2">
           <p className="text-xl">

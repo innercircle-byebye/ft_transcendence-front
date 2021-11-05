@@ -29,7 +29,7 @@ const EntranceModal: VFC<IProps> = ({ roomInfo, setRoomToEntrance }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <p className="text-4xl">{`#${roomInfo.gameRoomId}  ${roomInfo.title}`}</p>
+        <p className={`${roomInfo.title.length > 10 ? 'text-3xl' : 'text-4xl'}`}>{`#${roomInfo.gameRoomId}  ${roomInfo.title}`}</p>
         <p className="text-center text-xl">
           {roomInfo.gameMembers.at(0)?.nickname}
           {' vs '}

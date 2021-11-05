@@ -1,5 +1,5 @@
 import {
-  Dispatch, SetStateAction, useState, VFC,
+  Dispatch, SetStateAction, VFC,
 } from 'react';
 import useSWR from 'swr';
 import EntranceModal from '@/components/play-page/EntranceModal';
@@ -8,12 +8,12 @@ import fetcher from '@/utils/fetcher';
 import { IGameRoom } from '@/typings/db';
 
 interface IProps {
+  page: number;
   roomToEntrance: IGameRoom | null;
   setRoomToEntrance: Dispatch<SetStateAction<IGameRoom | null>>;
 }
 
-const RoomList: VFC<IProps> = ({ roomToEntrance, setRoomToEntrance }) => {
-  const [page] = useState(1);
+const RoomList: VFC<IProps> = ({ page, roomToEntrance, setRoomToEntrance }) => {
   const { data: roomList } = useSWR<IGameRoom[]>(`/api/game/room/list?page=${page}`, fetcher);
 
   if (!roomList) {
