@@ -20,8 +20,8 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
   const [roomNameError, setRoomNameError] = useState(false);
   const [difficulty, onChangeDifficulty] = useInput(0);
   const [ballSpeed, setBallSpeed] = useState('slow');
-  const [winScore, onChangeWinScore] = useInput(5);
-  const [numOfSpectator, onChangeNumOfSpectator] = useInput(5);
+  const [winScore, onChangeWinScore, setWinScore] = useInput(5);
+  const [numOfSpectator, onChangeNumOfSpectator, setNumOfSpectator] = useInput(5);
   const [isPrivate, setIsPrivate] = useState(false);
   const [password, onChangePassword, setPassword] = useInput('');
   const [passwordError, setPasswordError] = useState(false);
@@ -62,6 +62,16 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
     }
   }, [allRoomList, roomName]);
 
+  useEffect(() => {
+    if (winScore < 1) setWinScore(1);
+    if (winScore > 10) setWinScore(10);
+  }, [setWinScore, winScore]);
+
+  useEffect(() => {
+    if (numOfSpectator < 2) setNumOfSpectator(2);
+    if (numOfSpectator > 8) setNumOfSpectator(8);
+  }, [numOfSpectator, setNumOfSpectator]);
+
   return (
     <PageContainer>
       <ContentContainerWithTitle isPrivate={isPrivate} title="Create Game Room">
@@ -77,8 +87,8 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
           <option value="1" label="50%" />
           <option value="2" label="100%" />
         </datalist>
-        <InputNumber type="승리점수" value={winScore} onChangeValue={onChangeWinScore} min={1} max={15} />
-        <InputNumber type="최대관전자수" value={numOfSpectator} onChangeValue={onChangeNumOfSpectator} min={0} max={10} />
+        <InputNumber type="승리점수(1 ~ 10)" value={winScore} onChangeValue={onChangeWinScore} min={1} max={10} />
+        <InputNumber type="인원수(2 ~ 8)" value={numOfSpectator} onChangeValue={onChangeNumOfSpectator} min={2} max={8} />
         <SwitchPublicPrivate
           isPrivate={isPrivate}
           setIsPrivate={setIsPrivate}
