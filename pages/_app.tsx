@@ -5,7 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import type { AppProps } from 'next/app';
 import { NextPage } from 'next';
 import {
-  ReactElement, ReactNode, useEffect, useState,
+  ReactElement, ReactNode, useEffect,
 } from 'react';
 import 'tailwindcss/tailwind.css';
 import { useRouter } from 'next/router';
@@ -26,8 +26,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page);
   const router = useRouter();
   const { pathname } = router;
-  const [namespace, setNamespace] = useState('');
-  const { disconnect } = useSocket(namespace);
+  const { disconnect } = useSocket(typeof window !== 'undefined' ? window.localStorage.getItem('namespace') : null);
   const { socket: mainSocket } = useSocket('main');
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
 
@@ -49,16 +48,14 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   }, [mainSocket]);
 
   useEffect(() => {
-    if (pathname.slice(0, 5) === '/chat') {
-      setNamespace('chat');
-    } else {
-      setNamespace('');
+    if (localStorage.getItem('namespace') !== 'chat' && pathname.slice(0, 5) === '/chat') {
+      localStorage.setItem('namespace', 'chat');
     }
-  }, [pathname]);
-
-  useEffect(() => () => {
-    disconnect();
-  }, [disconnect, namespace]);
+    if (localStorage.getItem('namespace') === 'chat' && pathname.slice(0, 5) !== '/chat') {
+      disconnect();
+      localStorage.removeItem('namespace');
+    }
+  }, [disconnect, pathname]);
 
   return getLayout(
     <Component {...pageProps} />,
