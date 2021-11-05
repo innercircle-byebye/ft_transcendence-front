@@ -36,7 +36,7 @@ const EntranceModal: VFC<IProps> = ({ roomInfo, setRoomToEntrance }) => {
           {roomInfo.gameMembers.at(1)?.nickname}
         </p>
         <div className="flex justify-evenly">
-          <button type="button" onClick={onClickWatch} className={`${roomInfo.currentNumberCount === roomInfo.maxParticipantNum ? 'bg-gray-400' : 'bg-green-500'} p-2 rounded-xl`}>
+          <button type="button" onClick={onClickWatch} className={`${roomInfo.currentMemberCount === roomInfo.maxParticipantNum ? 'bg-gray-400' : 'bg-green-500'} p-2 rounded-xl`}>
             관전하기
           </button>
           <button type="button" onClick={onClickPlay} className={`${roomInfo.gameMembers.length === 2 ? 'bg-gray-400' : 'bg-blue-500'} p-2 rounded-xl`}>
