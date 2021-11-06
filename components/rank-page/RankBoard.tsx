@@ -2,7 +2,7 @@ import type { VFC } from 'react';
 import RankPagination from '@/components/rank-page/RankPagination';
 
 interface IProps {
-  userId: string;
+  userId: number;
 }
 
 const dummyRankDatas = [
