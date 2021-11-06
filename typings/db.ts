@@ -100,3 +100,10 @@ export interface ISimpleUser {
   nickname: string;
   imagePath: string;
 }
+
+// TODO: rank api 데이터 정하기
+export interface IRank {
+  rankId: number;
+  nickname: string;
+  experience: number;
+}
