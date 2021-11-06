@@ -83,6 +83,7 @@ const Channel = ({
           });
           return prevChatData;
         }, false).then(() => {
+          localStorage.setItem(`${channelName}`, new Date().getTime().toString());
           setChat('');
           scrollbarRef.current?.scrollToBottom();
         });
@@ -95,7 +96,7 @@ const Channel = ({
         }).catch(console.error);
       }
     },
-    [channelData, chat, channelChatData, mutateChat, setChat, userData],
+    [chat, channelChatData, channelData, userData, mutateChat, channelName, setChat],
   );
 
   const onMessage = useCallback(
@@ -182,6 +183,11 @@ const Channel = ({
       }, 500);
     }
   }, [channelChatData]);
+
+  useEffect(() => {
+    localStorage.setItem(`${channelName}`, `${new Date().getTime()}`);
+    console.log('set time');
+  }, [channelName]);
 
   return (
     <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
