@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import GameScreen from '@/components/play-room-page/GameScreen';
 
 const Room = () => {
   const router = useRouter();
@@ -7,8 +8,8 @@ const Room = () => {
   return (
     <div className="flex justify-center">
       {/* game screen */}
-      <div className="w-1/2 pb-1/2 bg-sky-100">
-        <p className="absolute"> 게임 layout </p>
+      <div className="w-3/4 pb-1/2 bg-sky-100 relative">
+        <GameScreen />
       </div>
       {/* info screen */}
       <div className="w-1/4 bg-amber-100">
