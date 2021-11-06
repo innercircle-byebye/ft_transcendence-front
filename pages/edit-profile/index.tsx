@@ -4,6 +4,7 @@ import React, {
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { toast, ToastContainer } from 'react-toastify';
 import Navbar from '@/components/navigation-bar/Navbar';
 import InputImage from '@/components/inputs/InputImage';
 import { IUser } from '@/typings/db';
@@ -58,8 +59,25 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
 
   const onSubmitEditProfile = useCallback((e) => {
     e.preventDefault();
-    console.log('submit edit profile');
-  }, []);
+    const formData = new FormData();
+    if (imageFile) {
+      formData.append('imagePath', imageFile);
+    }
+    if (nickname !== userData.nickname) formData.append('nickname', nickname);
+    if (email !== userData.email) formData.append('email', email);
+    if (isStatusPublic !== userData.isStatusPublic) formData.append('isStatusPublic', isStatusPublic.toString());
+    if (isHistoryPublic !== userData.isHistoryPublic) formData.append('isStatusPublic', isStatusPublic.toString());
+    axios.patch('/api/user/edit', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      router.push('/');
+    }).catch(() => {
+      toast.error('프로필 수정에 실패했습니다.', { position: 'bottom-center', theme: 'colored' });
+    });
+  }, [email, imageFile, isHistoryPublic, isStatusPublic, nickname, router, userData]);
 
   useEffect(() => {
     if (imageFile) {
@@ -107,6 +125,7 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
           </div>
         </form>
       </ContentContainer>
+      <ToastContainer />
     </PageContainer>
   );
 };
