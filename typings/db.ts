@@ -100,3 +100,10 @@ export interface ISimpleUser {
   nickname: string;
   imagePath: string;
 }
+
+export interface IGameResultWinRate{
+  totalPlayCount: number;
+  winCount: number;
+  loseCount: number;
+  winRate: string;
+}
