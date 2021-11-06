@@ -137,8 +137,9 @@ const Channel = ({
     }
   }, [userData]);
 
-  const onDeleteChannel = useCallback(() => {
+  const onDeleteChannel = useCallback((deleteChannel: string) => {
     router.push('/chat');
+    localStorage.removeItem(`${deleteChannel}`);
   }, [router]);
 
   useEffect(() => {
