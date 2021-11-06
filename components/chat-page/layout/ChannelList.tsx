@@ -31,17 +31,19 @@ const ChannelList: VFC = () => {
   }, [channelName, router, userData?.userId]);
 
   const onClickExitYes = useCallback(() => {
+    const exitChannel = channelName;
     mutateMyChannelData(
       (prevMyChannelData) => prevMyChannelData?.filter((data) => data.name !== channelName), false,
     ).then(() => {
       router.push('/chat');
-      axios.delete(`/api/channel/${channelName}/member`, {
-        headers: {
-          withCredentials: 'true',
-        },
-      }).then(() => {
-        setShowExitModal(false);
-      });
+    });
+    localStorage.removeItem(`${exitChannel}`);
+    axios.delete(`/api/channel/${exitChannel}/member`, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      setShowExitModal(false);
     });
   }, [channelName, mutateMyChannelData, router]);
 
