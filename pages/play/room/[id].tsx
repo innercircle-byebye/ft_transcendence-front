@@ -1,9 +1,10 @@
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useState, VFC } from 'react';
 import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
+import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 
-const Room = () => {
+const Room: VFC = () => {
   const router = useRouter();
   const roomNumber = router.query.id;
   const [isChatting, setIsChatting] = useState(true);
@@ -24,7 +25,7 @@ const Room = () => {
         </div>
         <div className="bg-red-300 h-1/4">
           {/* player Info */}
-          player 1 & player 2
+          <PlayerInfo player1="mykang" player2="kycho" />
         </div>
         <div className="bg-green-300 h-1/12">
           {/* play room buttons */}
