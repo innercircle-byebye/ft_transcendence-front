@@ -100,3 +100,18 @@ export interface ISimpleUser {
   nickname: string;
   imagePath: string;
 }
+
+export interface IGameScreenData {
+  role: string;
+  WIDTH: number;
+  HEIGHT: number;
+}
+
+export interface IGameUpdateData {
+  type: string;
+  role: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
