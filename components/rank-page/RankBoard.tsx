@@ -1,8 +1,8 @@
 import useSWR from 'swr';
-import { VFC } from 'react';
+import type { VFC } from 'react';
 import fetcher from '@/utils/fetcher';
-import RankPagination from '@/components/rank-page/RankPagination';
-import { IRank } from '@/typings/db';
+import RankPagination from './RankPagination';
+import type { IRank } from '@/typings/db';
 
 interface IProps {
   userId: number;
