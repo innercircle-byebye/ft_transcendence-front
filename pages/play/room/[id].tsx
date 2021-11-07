@@ -33,7 +33,7 @@ const Room: VFC = () => {
   const onKeyUp = useCallback(
     (e) => {
       // e.preventDefault();
-      console.log('keyUP event', e);
+      // console.log('keyUP event', e);
       // 방향키 위쪽
       if (e.keyCode === 38) {
         console.log('key up 위');
@@ -52,13 +52,13 @@ const Room: VFC = () => {
   const onKeyDown = useCallback(
     (e) => {
       // e.preventDefault();
-      console.log('keydown event', e);
+      // console.log('keydown event', e);
       // 방향키 위쪽
-      if (e.keyCode === '38') {
+      if (e.keyCode === 38) {
         console.log('key down 위');
         socket?.emit('keyDown', e.key);
       // 뱡향키 아래
-      } else if (e.keyCode === '40') {
+      } else if (e.keyCode === 40) {
         console.log('key down 아래');
         socket?.emit('keyDown', e.key);
       } else if (e.code === 'Space') {
