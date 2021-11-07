@@ -5,7 +5,7 @@ import RankPagination from './RankPagination';
 import type { IRank } from '@/typings/db';
 
 interface IProps {
-  userId: number;
+  userId: number | null;
 }
 
 const paginationData = {
@@ -14,22 +14,25 @@ const paginationData = {
 };
 
 const RankContentRight: VFC<IProps> = ({ userId }) => {
-  const { data: ranks } = useSWR<IRank[]>('/api/game/ranking', fetcher);
+  const { data: ranks, error } = useSWR<IRank[]>('/api/game/ranking', fetcher);
   return (
     <div className="p-4 rounded-md bg-gray-300 ">
       <div className="text-lg">
-        <ul>
-          <li>{`Rank | Name | Experience (temp: ${userId})`}</li>
-          {ranks && ranks.length > 0 ? (
-            ranks.map(({ user, experience }, index) => (
-              <li key={user.nickname}>
-                {`${index + 1} | ${user.nickname} | ${experience}`}
-              </li>
-            ))
-          ) : (
-            <li>No data.</li>
-          )}
-        </ul>
+        {ranks && (
+          <ul>
+            <li>{`Rank | Name | Experience (temp: ${userId ?? 'null'})`}</li>
+            {ranks.length > 0 ? (
+              ranks.map(({ user, experience }, index) => (
+                <li key={user.nickname}>
+                  {`${index + 1} | ${user.nickname} | ${experience}`}
+                </li>
+              ))
+            ) : (
+              <li>No data.</li>
+            )}
+          </ul>
+        )}
+        {error && <div>Something wrong.</div>}
       </div>
       <div className="flex justify-center">
         <RankPagination paginationData={paginationData} />

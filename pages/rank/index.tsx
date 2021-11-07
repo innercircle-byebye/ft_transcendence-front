@@ -14,10 +14,7 @@ import ProfileCard from '@/components/rank-page/ProfileCard';
 import type { IUser } from '@/typings/db';
 
 const Rank = () => {
-  const { data: me } = useSWR<IUser>(
-    '/api/profile/me',
-    fetcher,
-  );
+  const { data: me, error } = useSWR<IUser>('/api/profile/me', fetcher);
 
   return (
     <PageContainer maxWidth="xl">
@@ -36,13 +33,14 @@ const Rank = () => {
               </div>
             </>
           )}
+          {error && <div>Something wrong.</div>}
         </RankContentLeft>
         {/* 랭크 정보 */}
         <RankContentRight>
           <div className="mb-4">
             <h1 className="text-4xl leading-10">Ranks</h1>
           </div>
-          {me && <RankBoard userId={me.userId} />}
+          <RankBoard userId={me ? me.userId : null} />
         </RankContentRight>
       </RankContentContainer>
     </PageContainer>
