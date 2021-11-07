@@ -14,7 +14,6 @@ import {
   IChannel, IChannelChat, IChannelMember, IUser,
 } from '@/typings/db';
 import useSocket from '@/hooks/useSocket';
-import reissueToken from '@/utils/reissueTokens';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
 import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
 import ChatList from '@/components/chat-page/chat/ChatList';
@@ -186,11 +185,8 @@ const Channel = ({
   return (
     <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
       <div className="h-full flex flex-col">
-        <div className="flex flex-row justify-between items-end">
-          <div className="font-semibold text-2xl">
-            {`# ${channelData?.name}`}
-          </div>
-          <ChannelButtons />
+        <div className="font-semibold text-2xl">
+          {`# ${channelData?.name}`}
         </div>
         <ChatList
           chatSections={chatSections}
@@ -212,6 +208,7 @@ const Channel = ({
           }
         />
       </div>
+      <ChannelButtons />
       <ToastContainer />
     </div>
   );
@@ -223,29 +220,7 @@ Channel.getLayout = function getLayout(page: ReactElement) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
   const channelName = context.query.name;
-
-  if (
-    !context.req.cookies[refresh_token]
-    || !context.req.cookies[access_token]
-  ) {
-    return reissueToken(
-      context,
-      access_token,
-      refresh_token,
-      '/chat',
-    );
-  }
-
-  const userInitialData: IUser = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
-      withCredentials: true,
-      headers: {
-        Cookie: `Authentication=${context.req.cookies[access_token]}`,
-      },
-    })
-    .then((response) => response.data);
 
   const channelInitialData: IChannel = await axios
     .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}`), {
@@ -286,7 +261,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      userInitialData,
       channelInitialData,
       myChannelInitialData,
       channelMemberInitialData,
