@@ -88,7 +88,7 @@ const CreateProfile = ({
       };
       fileReader.readAsDataURL(imageFile);
     }
-  }, [email, emailError, imageFile, previewImagePath, userInitialData.imagePath]);
+  }, [imageFile, previewImagePath]);
 
   return (
     <PageContainer>
