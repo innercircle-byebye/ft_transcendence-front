@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next';
 import React, { ReactElement, useCallback, useState } from 'react';
+import { useRouter } from 'next/router';
 import useInput from '@/hooks/useInput';
 import ProfileCard from '@/components/play-page/ProfileCard';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
@@ -8,12 +9,13 @@ import RoomList from '@/components/play-page/RoomList';
 import MainLayout from '@/layouts/MainLayout';
 
 const Play = () => {
+  const router = useRouter();
   const [roomToEntrance, setRoomToEntrance] = useState<number | null>(null);
   const [password, onChangePassword, setPassword] = useInput('');
 
   const onClickMakeRoom = useCallback(() => {
-    console.log('방만들기');
-  }, []);
+    router.push('/play/create-room');
+  }, [router]);
 
   const onClickQuickStart = useCallback(() => {
     console.log('빠른시작');
