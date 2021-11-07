@@ -7,22 +7,20 @@ import {
 } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import useInput from '@/hooks/useInput';
-import reissueToken from '@/utils/reissueTokens';
-import { IUser } from '@/typings/db';
 
 const CreateProfile = ({
-  userData,
+  userInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImagePath, setPreviewImagePath] = useState<string>(
-    userData.imagePath,
+    userInitialData.imagePath,
   );
   const [nickname, onChangeNickname, setNickname] = useInput<string>(
-    userData.nickname,
+    userInitialData.nickname,
   );
-  const [email, onChangeEmail, setEmail] = useInput<string>(userData.email);
+  const [email, onChangeEmail, setEmail] = useInput<string>(userInitialData.email);
   const [emailError, setEmailError] = useState(false);
 
   const onClickUploadImage = useCallback((e) => {
@@ -44,15 +42,15 @@ const CreateProfile = ({
   const onClickReset = useCallback(
     (e) => {
       e.preventDefault();
-      setNickname(userData.nickname);
-      setEmail(userData.email);
-      setPreviewImagePath(userData.imagePath);
+      setNickname(userInitialData.nickname);
+      setEmail(userInitialData.email);
+      setPreviewImagePath(userInitialData.imagePath);
       setImageFile(null);
     },
     [
-      userData.email,
-      userData.imagePath,
-      userData.nickname,
+      userInitialData.email,
+      userInitialData.imagePath,
+      userInitialData.nickname,
       setEmail,
       setNickname,
     ],
@@ -98,7 +96,7 @@ const CreateProfile = ({
       };
       fileReader.readAsDataURL(imageFile);
     }
-  }, [email, emailError, imageFile, previewImagePath, userData.imagePath]);
+  }, [email, emailError, imageFile, previewImagePath, userInitialData.imagePath]);
 
   return (
     <div className="w-screen h-screen bg-sky-700 flex justify-center items-center">
@@ -148,7 +146,7 @@ const CreateProfile = ({
                 className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="button"
                 onClick={() => {
-                  setNickname(userData.nickname);
+                  setNickname(userInitialData.nickname);
                 }}
               >
                 Reset
@@ -157,7 +155,7 @@ const CreateProfile = ({
                 id="nickname"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 type="text"
-                placeholder={userData.nickname}
+                placeholder={userInitialData.nickname}
                 value={nickname}
                 onChange={onChangeNickname}
               />
@@ -177,7 +175,7 @@ const CreateProfile = ({
                 className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 type="button"
                 onClick={() => {
-                  setEmail(userData.email);
+                  setEmail(userInitialData.email);
                 }}
               >
                 Reset
@@ -186,7 +184,7 @@ const CreateProfile = ({
                 id="email"
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 type="email"
-                placeholder={userData.email}
+                placeholder={userInitialData.email}
                 value={email}
                 onChange={onChangeEmail}
               />
@@ -224,46 +222,8 @@ const CreateProfile = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
-
-  if (
-    !context.req.cookies[refresh_token]
-    || !context.req.cookies[access_token]
-  ) {
-    return reissueToken(
-      context,
-      access_token,
-      refresh_token,
-      '/create-profile',
-    );
-  }
-
-  const userData: IUser = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
-      withCredentials: true,
-      headers: {
-        Cookie: `Authentication=${context.req.cookies[access_token]}`,
-      },
-    })
-    .then((response) => response.data);
-
-  const { status } = userData;
-  if (status !== process.env.STATUS_NOT_REGISTER) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      userData,
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async () => ({
+  props: {},
+});
 
 export default CreateProfile;
