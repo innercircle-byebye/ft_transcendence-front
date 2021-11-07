@@ -24,6 +24,10 @@ const Room: VFC = () => {
     };
   }, [disconnect, router.query.id, socket]);
 
+  useEffect(() => {
+    socket?.on('update', (data) => console.log(data));
+  });
+
   const onClickExit = useCallback(
     () => {
       // disconnect();
