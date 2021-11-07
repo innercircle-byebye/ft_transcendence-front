@@ -113,7 +113,6 @@ const DM = () => {
               />
             ))
           }
-          chatlist
         </div>
         <ChatBox
           chat={chat}

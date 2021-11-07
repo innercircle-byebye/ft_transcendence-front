@@ -10,11 +10,9 @@ import {
 import 'tailwindcss/tailwind.css';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-// import useSWR from 'swr';
 import useSocket from '@/hooks/useSocket';
 import reissueToken from '@/utils/reissueTokens';
 import { IUser } from '@/typings/db';
-// import fetcher from '@/utils/fetcher';
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode;
@@ -30,23 +28,15 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const { pathname } = router;
   const { disconnect } = useSocket(typeof window !== 'undefined' ? window.localStorage.getItem('namespace') : null);
   const { socket: mainSocket } = useSocket('main');
-  // const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
-  const { userInitialData } = pageProps;
+  // const { userInitialData } = pageProps;
+  const userData: IUser = pageProps.userInitialData;
 
+  // 이거 계속 login 보내는데 문제가 있다 나중에 수정하겠습니다.
   useEffect(() => {
-    /*
-    if (pathname !== '/login') {
-      if (userData?.userId) {
-        mainSocket?.emit('login', userData?.userId);
-      }
+    if (userData && (userData.status === 'online' || userData.status === 'in_game')) {
+      mainSocket?.emit('login', userData.userId);
     }
-    */
-    // console.log('userData', pageProps.userInitialData);
-    // console.log('userInitialData', userInitialData.userId);
-    if (userInitialData.status === 'online' || userInitialData.status === 'in_game') {
-      mainSocket?.emit('login', userInitialData.userId);
-    }
-  }, [mainSocket, pageProps.userInitialData, userInitialData.status, userInitialData.userId]);
+  });
 
   useEffect(() => {
     mainSocket?.on('dm', (data) => {
