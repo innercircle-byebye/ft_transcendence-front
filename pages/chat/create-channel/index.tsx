@@ -16,7 +16,6 @@ import MentionMember from '@/components/chat-page/common/MentionMember';
 import fetcher from '@/utils/fetcher';
 import { IChannel, IUser } from '@/typings/db';
 import CheckPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
-import reissueToken from '@/utils/reissueTokens';
 
 interface IInviteMember {
   id: number;
@@ -244,19 +243,6 @@ CreateChannel.getLayout = function getLayout(page: ReactElement) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
-
-  if (
-    !context.req.cookies[refresh_token]
-    || !context.req.cookies[access_token]
-  ) {
-    return reissueToken(
-      context,
-      access_token,
-      refresh_token,
-      '/chat/create-channel',
-    );
-  }
 
   const allUserInitialData: IUser[] = await axios
     .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/all`, {
