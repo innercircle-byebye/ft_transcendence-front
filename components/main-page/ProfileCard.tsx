@@ -18,9 +18,9 @@ const ProfileCard: VFC<Props> = ({ userData }) => {
 
   return (
     <div className="bg-gray-200 flex flex-col space-y-2 text-center rounded-2xl h-1/2">
-      <div className="flex justify-center">
+      <div className="flex justify-center py-6">
         {/* 상위 width 1/5 의 1/2 를 적용하고, 중앙 정렬을 위해서 상위 div 설정했습니다. */}
-        <div className="w-56 h-56 py-4 relative">
+        <div className="w-56 h-56 relative">
           <Image
             className="rounded-full"
             src={`${userData.imagePath}`}
