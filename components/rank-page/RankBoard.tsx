@@ -14,7 +14,7 @@ const paginationData = {
 };
 
 const RankContentRight: VFC<IProps> = ({ userId }) => {
-  const { data: ranks } = useSWR<IRank[]>('/api/rank', fetcher);
+  const { data: ranks } = useSWR<IRank[]>('/api/game/ranking', fetcher);
   return (
     <div className="p-4 rounded-md bg-gray-300 ">
       <div className="text-lg">
