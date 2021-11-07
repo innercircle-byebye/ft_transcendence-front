@@ -109,3 +109,22 @@ export interface IRank {
   experience: number;
   user: ISimpleUser;
 }
+
+export interface IGameMember {
+  userId: number;
+  status: string;
+  nickname: string;
+}
+
+export interface IGameRoom {
+  gameRoomId: number;
+  title: string;
+  maxParticipantNum: number;
+  createdAt: Date;
+  lastModifiedAt: Date;
+  deletedAt: Date | null;
+  isPrivate: boolean;
+  gameMembers: IGameMember[];
+  currentNumberCount: number;
+  gameRoomStatus: string;
+}
