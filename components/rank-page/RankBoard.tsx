@@ -1,8 +1,8 @@
 import useSWR from 'swr';
-import type { VFC } from 'react';
+import { VFC } from 'react';
 import fetcher from '@/utils/fetcher';
 import RankPagination from '@/components/rank-page/RankPagination';
-import type { IRank } from '@/typings/db';
+import { IRank } from '@/typings/db';
 
 interface IProps {
   userId: number;
@@ -19,11 +19,11 @@ const RankContentRight: VFC<IProps> = ({ userId }) => {
     <div className="p-4 rounded-md bg-gray-300 ">
       <div className="text-lg">
         <ul>
-          <li>{`Rank | Name | Point (temp: ${userId})`}</li>
+          <li>{`Rank | Name | Experience (temp: ${userId})`}</li>
           {ranks
-            && ranks.map((rankData) => (
-              <li key={rankData.nickname}>
-                {`${rankData.rankId} | ${rankData.nickname} | ${rankData.experience}`}
+            && ranks.map(({ user, experience }, index) => (
+              <li key={user.nickname}>
+                {`${index + 1} | ${user.nickname} | ${experience}`}
               </li>
             ))}
         </ul>

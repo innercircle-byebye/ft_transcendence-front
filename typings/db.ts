@@ -101,9 +101,11 @@ export interface ISimpleUser {
   imagePath: string;
 }
 
-// TODO: rank api 데이터 정하기
 export interface IRank {
-  rankId: number;
-  nickname: string;
+  totalPlayCount: number;
+  winCount: number;
+  loseCount: number;
+  winRate: string;
   experience: number;
+  user: ISimpleUser;
 }
