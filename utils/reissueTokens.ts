@@ -1,12 +1,9 @@
 import axios from 'axios';
-import { GetServerSidePropsContext } from 'next';
-import { ParsedUrlQuery } from 'querystring';
 
 const reissueToken = async (
-  context: GetServerSidePropsContext<ParsedUrlQuery>,
+  context: any,
   access_token: string,
   refresh_token: string,
-  current_url: string,
 ) => {
   if (
     context.req.cookies[refresh_token]
@@ -25,19 +22,17 @@ const reissueToken = async (
       .catch((error) => {
         console.log(error);
       });
-    return {
-      redirect: {
-        destination: current_url,
-        permanent: false,
-      },
-    };
+    context.res.writeHead(302, {
+      Location: context.req.url,
+    });
+    context.res.end();
+    return {};
   }
-  return {
-    redirect: {
-      destination: '/login',
-      permanent: false,
-    },
-  };
+  context.res.writeHead(302, {
+    Location: '/login',
+  });
+  context.res.end();
+  return {};
 };
 
 export default reissueToken;
