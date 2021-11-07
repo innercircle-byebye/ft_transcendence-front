@@ -11,8 +11,9 @@ const Room: VFC = () => {
   const router = useRouter();
   const roomNumber = router.query.id;
   const [isChatting, setIsChatting] = useState(true);
-
   const { socket, disconnect } = useSocket('game');
+  const [isReady1P, setIsReady1P] = useState(false);
+  const [isReady2P, setIsReady2P] = useState(false);
 
   useEffect(() => {
     socket?.emit('joinGameRoom', router.query.id);
@@ -28,6 +29,32 @@ const Room: VFC = () => {
       router.push('/play');
     },
     [router],
+  );
+
+  const onClickReady1P = useCallback(
+    () => {
+      if (isReady1P) {
+        setIsReady1P(false);
+        socket?.emit('unReady');
+      } else {
+        setIsReady1P(true);
+        socket?.emit('ready');
+      }
+    },
+    [isReady1P, socket],
+  );
+
+  const onClickReady2P = useCallback(
+    () => {
+      if (isReady2P) {
+        setIsReady2P(false);
+        socket?.emit('unReady');
+      } else {
+        setIsReady2P(true);
+        socket?.emit('ready');
+      }
+    },
+    [isReady2P, socket],
   );
 
   const onKeyUp = useCallback(
@@ -77,7 +104,15 @@ const Room: VFC = () => {
     <div className="flex justify-center">
       {/* game screen */}
       <div className="w-3/4 pb-1/2 bg-sky-100 relative">
-        <GameScreen />
+        {/* <GameScreen /> */}
+        <GameScreen
+          isReady1P={isReady1P}
+          isReady2P={isReady2P}
+          onClickReady1P={onClickReady1P}
+          onClickReady2P={onClickReady2P}
+          // eslint-disable-next-line jsx-a11y/aria-role
+          role="1P"
+        />
       </div>
       {/* info screen */}
       <div className="w-1/4 bg-amber-100">
