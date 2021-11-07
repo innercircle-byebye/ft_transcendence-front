@@ -82,7 +82,7 @@ const Channel = ({
           });
           return prevChatData;
         }, false).then(() => {
-          localStorage.setItem(`${channelName}`, new Date().getTime().toString());
+          localStorage.setItem(channelName as string, new Date().getTime().toString());
           setChat('');
           scrollbarRef.current?.scrollToBottom();
         });
@@ -138,7 +138,7 @@ const Channel = ({
 
   const onDeleteChannel = useCallback((deleteChannel: string) => {
     router.push('/chat');
-    localStorage.removeItem(`${deleteChannel}`);
+    localStorage.removeItem(deleteChannel);
   }, [router]);
 
   useEffect(() => {
@@ -185,7 +185,7 @@ const Channel = ({
   }, [channelChatData]);
 
   useEffect(() => {
-    localStorage.setItem(`${channelName}`, `${new Date().getTime()}`);
+    localStorage.setItem(channelName as string, new Date().getTime().toString());
     console.log('set time');
   }, [channelName]);
 
