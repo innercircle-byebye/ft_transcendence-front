@@ -16,6 +16,7 @@ const Room: VFC = () => {
   const [isReady2P, setIsReady2P] = useState(false);
 
   useEffect(() => {
+    socket?.on('initSetting', (data) => console.log(data));
     socket?.emit('joinGameRoom', router.query.id);
     return () => {
       // socket?.emit('leaveGameRoom', router.query.id);
@@ -31,6 +32,7 @@ const Room: VFC = () => {
     [router],
   );
 
+  // Ready event
   const onClickReady1P = useCallback(
     () => {
       if (isReady1P) {
