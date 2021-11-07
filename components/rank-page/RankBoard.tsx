@@ -20,12 +20,15 @@ const RankContentRight: VFC<IProps> = ({ userId }) => {
       <div className="text-lg">
         <ul>
           <li>{`Rank | Name | Experience (temp: ${userId})`}</li>
-          {ranks
-            && ranks.map(({ user, experience }, index) => (
+          {ranks && ranks.length > 0 ? (
+            ranks.map(({ user, experience }, index) => (
               <li key={user.nickname}>
                 {`${index + 1} | ${user.nickname} | ${experience}`}
               </li>
-            ))}
+            ))
+          ) : (
+            <li>No data.</li>
+          )}
         </ul>
       </div>
       <div className="flex justify-center">
