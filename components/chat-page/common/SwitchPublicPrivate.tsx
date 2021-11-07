@@ -87,6 +87,7 @@ const CheckPublicPrivate: VFC<IProps> = ({
           <div className="flex flex-row items-center space-x-2">
             <input
               className="px-6 py-2 w-24 rounded-full bg-gray-100 text-lg"
+              autoComplete="on"
               type={inputPasswordType.type}
               value={password}
               onChange={onChangePassword}
