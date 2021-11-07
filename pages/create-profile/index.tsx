@@ -5,8 +5,6 @@ import React, {
   useCallback, useEffect, useState,
 } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import reissueToken from '@/utils/reissueTokens';
-import { IUser } from '@/typings/db';
 import InputEmail from '@/components/inputs/InputEmail';
 import InputNickname from '@/components/inputs/InputNickname';
 import useInput from '@/hooks/useInput';
@@ -15,35 +13,39 @@ import PageContainer from '@/components/create-profile-page/PageContainer';
 import ContentContainer from '@/components/create-profile-page/ContentContainer';
 
 const CreateProfile = ({
-  userData,
+  userInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewImagePath, setPreviewImagePath] = useState<string>(userData.imagePath);
-  const [nickname, onChangeNickname, setNickname] = useInput<string>(userData.nickname);
-  const [email, onChangeEmail, setEmail] = useInput(userData.email);
+  const [previewImagePath, setPreviewImagePath] = useState<string>(
+    userInitialData.imagePath,
+  );
+  const [nickname, onChangeNickname, setNickname] = useInput<string>(
+    userInitialData.nickname,
+  );
+  const [email, onChangeEmail, setEmail] = useInput<string>(userInitialData.email);
   const [emailError, setEmailError] = useState(false);
 
   const onClickResetNickname = useCallback(() => {
-    setNickname(userData.nickname);
-  }, [setNickname, userData.nickname]);
+    setNickname(userInitialData.nickname);
+  }, [setNickname, userInitialData.nickname]);
 
   const onClickResetEmail = useCallback(() => {
-    setEmail(userData.email);
-  }, [setEmail, userData.email]);
+    setEmail(userInitialData.email);
+  }, [setEmail, userInitialData.email]);
 
   const onClickReset = useCallback(
     (e) => {
       e.preventDefault();
-      setNickname(userData.nickname);
-      setEmail(userData.email);
-      setPreviewImagePath(userData.imagePath);
+      setNickname(userInitialData.nickname);
+      setEmail(userInitialData.email);
+      setPreviewImagePath(userInitialData.imagePath);
       setImageFile(null);
     },
     [
-      userData.email,
-      userData.imagePath,
-      userData.nickname,
+      userInitialData.email,
+      userInitialData.imagePath,
+      userInitialData.nickname,
       setEmail,
       setNickname,
     ],
@@ -86,7 +88,7 @@ const CreateProfile = ({
       };
       fileReader.readAsDataURL(imageFile);
     }
-  }, [imageFile, previewImagePath, userData.imagePath]);
+  }, [imageFile, previewImagePath]);
 
   return (
     <PageContainer>
@@ -130,46 +132,8 @@ const CreateProfile = ({
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
-
-  if (
-    !context.req.cookies[refresh_token]
-    || !context.req.cookies[access_token]
-  ) {
-    return reissueToken(
-      context,
-      access_token,
-      refresh_token,
-      '/create-profile',
-    );
-  }
-
-  const userData: IUser = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
-      withCredentials: true,
-      headers: {
-        Cookie: `Authentication=${context.req.cookies[access_token]}`,
-      },
-    })
-    .then((response) => response.data);
-
-  const { status } = userData;
-  if (status !== process.env.STATUS_NOT_REGISTER) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      userData,
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async () => ({
+  props: {},
+});
 
 export default CreateProfile;
