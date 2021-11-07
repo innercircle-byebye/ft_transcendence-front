@@ -17,7 +17,7 @@ const Room: VFC = () => {
   useEffect(() => {
     socket?.emit('joinGameRoom', router.query.id);
     return () => {
-      socket?.emit('leaveGameRoom', router.query.id);
+      // socket?.emit('leaveGameRoom', router.query.id);
       disconnect();
     };
   }, [disconnect, router.query.id, socket]);
@@ -32,16 +32,16 @@ const Room: VFC = () => {
 
   const onKeyUp = useCallback(
     (e) => {
-      // e.preventDefault();
+      e.preventDefault();
       // console.log('keyUP event', e);
       // 방향키 위쪽
       if (e.keyCode === 38) {
         console.log('key up 위');
-        socket?.emit('keyUp', e.key);
+        socket?.emit('keyUp', e.keyCode);
       // 뱡향키 아래
       } else if (e.keyCode === 40) {
         console.log('key up 아래');
-        socket?.emit('keyUp', e.key);
+        socket?.emit('keyUp', e.keyCode);
       } else if (e.code === 'Space') {
         console.log('key up space');
       }
@@ -51,16 +51,16 @@ const Room: VFC = () => {
 
   const onKeyDown = useCallback(
     (e) => {
-      // e.preventDefault();
+      e.preventDefault();
       // console.log('keydown event', e);
       // 방향키 위쪽
       if (e.keyCode === 38) {
         console.log('key down 위');
-        socket?.emit('keyDown', e.key);
+        socket?.emit('keyDown', e.keyCode);
       // 뱡향키 아래
       } else if (e.keyCode === 40) {
         console.log('key down 아래');
-        socket?.emit('keyDown', e.key);
+        socket?.emit('keyDown', e.keyCode);
       } else if (e.code === 'Space') {
         console.log('key down space');
       }
