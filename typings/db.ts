@@ -13,6 +13,7 @@ export interface IUser {
   createdAt: string;
   lastModifiedAt: string;
   deletedAt: string | null;
+  isTwoFactorAuthEnabled?: boolean;
 }
 
 export interface IAnnouncement {
