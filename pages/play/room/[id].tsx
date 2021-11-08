@@ -19,7 +19,10 @@ const Room: VFC = () => {
   const [updateData, setUpdateData] = useState<IGameUpdateData[] | null>(null);
 
   useEffect(() => {
-    socket?.on('initSetting', (data: IGameScreenData) => setInitData(data));
+    socket?.on('initSetting', (data: IGameScreenData) => {
+      setInitData(data);
+      // console.log('initData', data);
+    });
     socket?.emit('joinGameRoom', router.query.id);
     return () => {
       disconnect();

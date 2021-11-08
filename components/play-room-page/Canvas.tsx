@@ -16,8 +16,6 @@ const Canvas: VFC<IProps> = ({ updateData }) => {
   const [ratioY, setRatioY] = useState<number>(1);
 
   useEffect(() => {
-    // console.log('div size', typeof document.getElementById('gameScreen')?.offsetWidth);
-    // console.log('div size', typeof document.getElementById('gameScreen')?.offsetHeight);
     // set canvas size
     setCanvasHeight(document.getElementById('gameScreen')?.offsetHeight);
     setCanvasWidth(document.getElementById('gameScreen')?.offsetWidth);
@@ -33,9 +31,8 @@ const Canvas: VFC<IProps> = ({ updateData }) => {
 
     // clear
     context?.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    // x_pos, y_pos, width, height
     // draw
-    // console.log('updateData 로 그림 그리기', updateData);
+    // x_pos, y_pos, width, height
     if (updateData) {
       if (updateData[0]) {
       // draw 1P

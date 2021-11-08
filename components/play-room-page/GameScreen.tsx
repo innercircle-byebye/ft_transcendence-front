@@ -1,4 +1,4 @@
-import { VFC } from 'react';
+import { useEffect, useState, VFC } from 'react';
 import { IGameScreenData, IGameUpdateData } from '@/typings/db';
 import Canvas from '@/components/play-room-page/Canvas';
 
@@ -16,13 +16,24 @@ const GameScreen: VFC<IProps> = ({
   isReady1P, isReady2P,
   initData, updateData,
 }) => {
-  // 향후 props 를 통해서 이름을 받아온다.
+  // 향후 websocket 를 통해서 이름을 받아온다.
+  // props 에서 바꾼 이유는 role 계속 변할 수 있거든, 실시간 반영을 위해서 websocket 사용
   const player1 = 'mykang';
   const player2 = 'kycho';
   // 향후 state or websocket 을 통해서 score 를 받아온다.
-  const score1 = 0;
-  const score2 = 0;
-  // console.log('initData', initData);
+  const [score1, setScore1] = useState<number>(0);
+  const [score2, setScore2] = useState<number>(0);
+
+  useEffect(() => {
+    if (updateData) {
+      if (updateData[0]) {
+        setScore1(updateData[0].score);
+      }
+      if (updateData[1]) {
+        setScore2(updateData[1].score);
+      }
+    }
+  }, [updateData]);
 
   return (
     <div className="absolute w-full h-full">
