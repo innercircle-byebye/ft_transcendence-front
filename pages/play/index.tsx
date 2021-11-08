@@ -3,7 +3,7 @@ import React, { ReactElement, useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import useInput from '@/hooks/useInput';
-import ProfileCard from '@/components/play-page/ProfileCard';
+import ProfileCard from '@/components/ProfileCard';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import PasswordModal from '@/components/chat-page/PasswordModal';
 import RoomList from '@/components/play-page/RoomList';
@@ -45,7 +45,7 @@ const Play = ({ userInitialData, allRoomList }
     <div className="mx-auto h-screen max-w-screen-xl">
       <div className="grid grid-cols-3 py-8">
         <div className="flex flex-col items-center space-y-3">
-          <ProfileCard userInitialData={userInitialData} />
+          <ProfileCard profileUserData={userInitialData} />
           <div className="flex px-8 w-full justify-evenly">
             <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
             <button type="button" onClick={onClickQuickStart} className="bg-red-500 text-3xl p-5 rounded-md">빠른시작</button>
