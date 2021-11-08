@@ -32,7 +32,7 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
   }, [router]);
 
   const onClickMake = useCallback(() => {
-    axios.post(invite ? `/api/game/room?inviteUserId=${invite}` : '/api/game/room', {
+    axios.post(invite ? `/api/game/room?invitedUserId=${invite}` : '/api/game/room', {
       title: roomName,
       password: isPrivate ? password : null,
       maxParticipantNum: numOfSpectator,
