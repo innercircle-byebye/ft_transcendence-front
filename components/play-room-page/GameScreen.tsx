@@ -9,12 +9,14 @@ interface IProps {
   isReady2P: boolean;
   initData: IGameScreenData | null;
   updateData: IGameUpdateData[] | null;
+  isPlaying: boolean;
 }
 
 const GameScreen: VFC<IProps> = ({
   onClickReady1P, onClickReady2P,
   isReady1P, isReady2P,
   initData, updateData,
+  isPlaying,
 }) => {
   // 향후 websocket 를 통해서 이름을 받아온다.
   // props 에서 바꾼 이유는 role 계속 변할 수 있거든, 실시간 반영을 위해서 websocket 사용
@@ -35,6 +37,8 @@ const GameScreen: VFC<IProps> = ({
     }
   }, [updateData]);
 
+  console.log('isPlaying', isPlaying);
+
   return (
     <div className="absolute w-full h-full">
       {/* player info bar */}
@@ -51,23 +55,28 @@ const GameScreen: VFC<IProps> = ({
       </div>
       <div id="gameScreen" className="w-full bg-gray-400 h-11/12 justify-between items-center">
         {/* game screen */}
-        <Canvas updateData={updateData} />
-        <button
-          type="button"
-          onClick={onClickReady1P}
-          className={`w-1/5 h-1/5 rounded-full ${isReady1P && 'bg-amber-500'} ${!isReady1P && 'bg-gray-200'}`}
-          disabled={initData?.role !== 'player1'}
-        >
-          ready!
-        </button>
-        <button
-          type="button"
-          onClick={onClickReady2P}
-          className={`w-1/5 h-1/5 rounded-full ${isReady2P && 'bg-amber-500'} ${!isReady2P && 'bg-gray-200'}`}
-          disabled={initData?.role !== 'player2'}
-        >
-          ready!
-        </button>
+        {isPlaying
+          ? (<Canvas updateData={updateData} />)
+          : (
+            <>
+              <button
+                type="button"
+                onClick={onClickReady1P}
+                className={`w-1/5 h-1/5 rounded-full ${isReady1P && 'bg-amber-500'} ${!isReady1P && 'bg-gray-200'}`}
+                disabled={initData?.role !== 'player1'}
+              >
+                ready!
+              </button>
+              <button
+                type="button"
+                onClick={onClickReady2P}
+                className={`w-1/5 h-1/5 rounded-full ${isReady2P && 'bg-amber-500'} ${!isReady2P && 'bg-gray-200'}`}
+                disabled={initData?.role !== 'player2'}
+              >
+                ready!
+              </button>
+            </>
+          )}
       </div>
     </div>
   );

@@ -17,6 +17,7 @@ const Room: VFC = () => {
   const [isReady2P, setIsReady2P] = useState(false);
   const [initData, setInitData] = useState<IGameScreenData | null>(null);
   const [updateData, setUpdateData] = useState<IGameUpdateData[] | null>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   useEffect(() => {
     socket?.on('initSetting', (data: IGameScreenData) => {
@@ -69,6 +70,16 @@ const Room: VFC = () => {
     },
     [isReady2P, socket],
   );
+
+  // calc isPlaying
+  useEffect(() => {
+    setInterval(() => { setIsPlaying(true); }, 5000);
+    if (isReady1P && isReady2P) {
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+    }
+  }, [isReady1P, isReady2P]);
 
   const onKeyUp = useCallback(
     (e) => {
@@ -124,6 +135,7 @@ const Room: VFC = () => {
           onClickReady2P={onClickReady2P}
           initData={initData}
           updateData={updateData}
+          isPlaying={isPlaying}
         />
       </div>
       {/* info screen */}
