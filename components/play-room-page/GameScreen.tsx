@@ -9,13 +9,12 @@ interface IProps {
   isReady2P: boolean;
   initData: IGameScreenData | null;
   updateData: IGameUpdateData[] | null;
-  draw: (context: CanvasRenderingContext2D | null | undefined) => void;
 }
 
 const GameScreen: VFC<IProps> = ({
-  onClickReady1P, onClickReady2P, isReady1P, isReady2P,
+  onClickReady1P, onClickReady2P,
+  isReady1P, isReady2P,
   initData, updateData,
-  draw,
 }) => {
   // 향후 props 를 통해서 이름을 받아온다.
   const player1 = 'mykang';
@@ -23,7 +22,7 @@ const GameScreen: VFC<IProps> = ({
   // 향후 state or websocket 을 통해서 score 를 받아온다.
   const score1 = 0;
   const score2 = 0;
-  console.log('initData', initData);
+  // console.log('initData', initData);
 
   return (
     <div className="absolute w-full h-full">
@@ -39,9 +38,9 @@ const GameScreen: VFC<IProps> = ({
           {`${player2}`}
         </div>
       </div>
-      <div id="fuck" className="w-full bg-gray-400 h-11/12 justify-between items-center">
+      <div id="gameScreen" className="w-full bg-gray-400 h-11/12 justify-between items-center">
         {/* game screen */}
-        <Canvas updateData={updateData} role={initData && initData.role} draw={draw} />
+        <Canvas updateData={updateData} />
         <button
           type="button"
           onClick={onClickReady1P}

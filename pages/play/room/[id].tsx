@@ -29,7 +29,7 @@ const Room: VFC = () => {
   useEffect(() => {
     // data update
     socket?.on('update', (data) => setUpdateData(data));
-    console.log('updateData', updateData);
+    // console.log('updateData', updateData);
   });
 
   const onClickExit = useCallback(
@@ -110,15 +110,10 @@ const Room: VFC = () => {
     document.addEventListener('keydown', onKeyDown);
   }, [onKeyDown, onKeyUp]);
 
-  const draw = (context: CanvasRenderingContext2D | null | undefined) => {
-    context?.fillRect(0, 0, 100, 100);
-  };
-
   return (
     <div className="flex justify-center">
       {/* game screen */}
       <div className="w-3/4 pb-1/2 bg-sky-100 relative">
-        {/* <GameScreen /> */}
         <GameScreen
           isReady1P={isReady1P}
           isReady2P={isReady2P}
@@ -126,7 +121,6 @@ const Room: VFC = () => {
           onClickReady2P={onClickReady2P}
           initData={initData}
           updateData={updateData}
-          draw={draw}
         />
       </div>
       {/* info screen */}

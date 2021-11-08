@@ -1,33 +1,37 @@
 import {
-  useEffect, useRef, VFC,
+  useEffect, useRef, useState, VFC,
 } from 'react';
 import { IGameUpdateData } from '@/typings/db';
 
 interface IProps {
   updateData: IGameUpdateData[] | null;
-  role: string | null;
-  draw: (context: CanvasRenderingContext2D | null | undefined) => void;
 }
 
-const Canvas: VFC<IProps> = ({ updateData, role, draw }) => {
+const Canvas: VFC<IProps> = ({ updateData }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [canvasWidth, setCanvasWidth] = useState<number>(600);
+  const [canvasHeight, setCanvasHeight] = useState<number>(400);
 
   useEffect(() => {
+    console.log('div size', document.getElementById('gameScreen')?.offsetWidth);
+    console.log('div size', document.getElementById('gameScreen')?.offsetHeight);
+    if (document.getElementById('gameScreen')) {
+      // setCanvasHeight(document.getElementById('gameScreen').offsetWidth);
+      // setCanvasWidth(document.getElementById('gameScreen').offsetHeight);
+      setCanvasHeight(1200);
+      setCanvasWidth(1800);
+    }
     const canvas = canvasRef.current;
     const context = canvas?.getContext('2d');
-    // context?.fillStyle = 'red';
 
     // clear
     context?.clearRect(0, 0, context.canvas.width, context.canvas.height);
     // x_pos, y_pos, width, height
     // draw
-    // context?.fillRect(100, 100, 20, 80);
-    draw(context);
-    console.log('updateData 로 그림 그리기', updateData);
-    if (role === 'player1') {
-      console.log('1p');
-      // context?.fillRect(100, 200, 20, 80);
-      if (updateData) {
+    // console.log('updateData 로 그림 그리기', updateData);
+    if (updateData) {
+      if (updateData[0]) {
+      // draw 1P
         context?.fillRect(
           updateData[0].x,
           updateData[0].y,
@@ -35,11 +39,8 @@ const Canvas: VFC<IProps> = ({ updateData, role, draw }) => {
           updateData[0].height,
         );
       }
-    }
-    if (role === 'player2') {
-      console.log('2p');
-      // context?.fillRect(0, 0, 20, 80);
-      if (updateData) {
+      if (updateData[1]) {
+      // draw 2P
         context?.fillRect(
           updateData[1].x,
           updateData[1].y,
@@ -47,10 +48,8 @@ const Canvas: VFC<IProps> = ({ updateData, role, draw }) => {
           updateData[1].height,
         );
       }
-    }
-    if (role === 'ball') {
-      console.log('ball');
-      if (updateData) {
+      if (updateData[2]) {
+      // draw ball;
         context?.fillRect(
           updateData[2].x,
           updateData[2].y,
@@ -59,10 +58,14 @@ const Canvas: VFC<IProps> = ({ updateData, role, draw }) => {
         );
       }
     }
-  }, [draw, role, updateData]);
+  }, [updateData]);
 
   return (
-    <canvas ref={canvasRef} width="1400" height="500" />
+    <canvas
+      ref={canvasRef}
+      width={`${canvasWidth}`}
+      height={`${canvasHeight}`}
+    />
   );
 };
 
