@@ -6,6 +6,7 @@ import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
+import { IGameScreenData, IGameUpdateData } from '@/typings/db';
 
 const Room: VFC = () => {
   const router = useRouter();
@@ -14,18 +15,21 @@ const Room: VFC = () => {
   const { socket, disconnect } = useSocket('game');
   const [isReady1P, setIsReady1P] = useState(false);
   const [isReady2P, setIsReady2P] = useState(false);
+  const [initData, setInitData] = useState<IGameScreenData | null>(null);
+  const [updateData, setUpdateData] = useState<IGameUpdateData[] | null>(null);
 
   useEffect(() => {
-    socket?.on('initSetting', (data) => console.log(data));
+    socket?.on('initSetting', (data: IGameScreenData) => setInitData(data));
     socket?.emit('joinGameRoom', router.query.id);
     return () => {
-      // socket?.emit('leaveGameRoom', router.query.id);
       disconnect();
     };
   }, [disconnect, router.query.id, socket]);
 
   useEffect(() => {
-    socket?.on('update', (data) => console.log(data));
+    // data update
+    socket?.on('update', (data) => setUpdateData(data));
+    console.log('updateData', updateData);
   });
 
   const onClickExit = useCallback(
@@ -106,6 +110,10 @@ const Room: VFC = () => {
     document.addEventListener('keydown', onKeyDown);
   }, [onKeyDown, onKeyUp]);
 
+  const draw = (context: CanvasRenderingContext2D | null | undefined) => {
+    context?.fillRect(0, 0, 100, 100);
+  };
+
   return (
     <div className="flex justify-center">
       {/* game screen */}
@@ -116,8 +124,9 @@ const Room: VFC = () => {
           isReady2P={isReady2P}
           onClickReady1P={onClickReady1P}
           onClickReady2P={onClickReady2P}
-          // eslint-disable-next-line jsx-a11y/aria-role
-          role="1P"
+          initData={initData}
+          updateData={updateData}
+          draw={draw}
         />
       </div>
       {/* info screen */}
