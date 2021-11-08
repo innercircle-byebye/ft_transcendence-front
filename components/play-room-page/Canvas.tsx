@@ -9,14 +9,25 @@ interface IProps {
 
 const Canvas: VFC<IProps> = ({ updateData }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // 600 * 400 이 기준 해상도 size
   const [canvasWidth, setCanvasWidth] = useState<number | undefined>(600);
   const [canvasHeight, setCanvasHeight] = useState<number | undefined>(400);
+  const [ratioX, setRatioX] = useState<number>(1);
+  const [ratioY, setRatioY] = useState<number>(1);
 
   useEffect(() => {
     // console.log('div size', typeof document.getElementById('gameScreen')?.offsetWidth);
     // console.log('div size', typeof document.getElementById('gameScreen')?.offsetHeight);
+    // set canvas size
     setCanvasHeight(document.getElementById('gameScreen')?.offsetHeight);
     setCanvasWidth(document.getElementById('gameScreen')?.offsetWidth);
+    // calc ratio
+    if (canvasHeight) {
+      setRatioY(canvasHeight / 400);
+    }
+    if (canvasWidth) {
+      setRatioX(canvasWidth / 600);
+    }
     const canvas = canvasRef.current;
     const context = canvas?.getContext('2d');
 
@@ -29,32 +40,32 @@ const Canvas: VFC<IProps> = ({ updateData }) => {
       if (updateData[0]) {
       // draw 1P
         context?.fillRect(
-          updateData[0].x,
-          updateData[0].y,
-          updateData[0].width,
-          updateData[0].height,
+          updateData[0].x * ratioX,
+          updateData[0].y * ratioY,
+          updateData[0].width * ratioX,
+          updateData[0].height * ratioY,
         );
       }
       if (updateData[1]) {
       // draw 2P
         context?.fillRect(
-          updateData[1].x,
-          updateData[1].y,
-          updateData[1].width,
-          updateData[1].height,
+          updateData[1].x * ratioX,
+          updateData[1].y * ratioY,
+          updateData[1].width * ratioX,
+          updateData[1].height * ratioY,
         );
       }
       if (updateData[2]) {
       // draw ball;
         context?.fillRect(
-          updateData[2].x,
-          updateData[2].y,
-          updateData[2].width,
-          updateData[2].height,
+          updateData[2].x * ratioX,
+          updateData[2].y * ratioY,
+          updateData[2].width * ratioX,
+          updateData[2].height * ratioY,
         );
       }
     }
-  }, [updateData]);
+  }, [canvasHeight, canvasWidth, ratioX, ratioY, updateData]);
 
   return (
     <canvas
