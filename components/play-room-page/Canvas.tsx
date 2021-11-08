@@ -9,18 +9,14 @@ interface IProps {
 
 const Canvas: VFC<IProps> = ({ updateData }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [canvasWidth, setCanvasWidth] = useState<number>(600);
-  const [canvasHeight, setCanvasHeight] = useState<number>(400);
+  const [canvasWidth, setCanvasWidth] = useState<number | undefined>(600);
+  const [canvasHeight, setCanvasHeight] = useState<number | undefined>(400);
 
   useEffect(() => {
-    console.log('div size', document.getElementById('gameScreen')?.offsetWidth);
-    console.log('div size', document.getElementById('gameScreen')?.offsetHeight);
-    if (document.getElementById('gameScreen')) {
-      // setCanvasHeight(document.getElementById('gameScreen').offsetWidth);
-      // setCanvasWidth(document.getElementById('gameScreen').offsetHeight);
-      setCanvasHeight(1200);
-      setCanvasWidth(1800);
-    }
+    // console.log('div size', typeof document.getElementById('gameScreen')?.offsetWidth);
+    // console.log('div size', typeof document.getElementById('gameScreen')?.offsetHeight);
+    setCanvasHeight(document.getElementById('gameScreen')?.offsetHeight);
+    setCanvasWidth(document.getElementById('gameScreen')?.offsetWidth);
     const canvas = canvasRef.current;
     const context = canvas?.getContext('2d');
 
