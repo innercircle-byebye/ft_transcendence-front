@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useEffect, useState } from 'react';
 import useSWR from 'swr';
 import fetcher from '@/utils/fetcher';
 import { IUser } from '@/typings/db';
@@ -12,6 +12,13 @@ const Searches = () => {
   const router = useRouter();
   const { search } = router.query;
   const { data: allUserData } = useSWR<IUser[]>('/api/user/all', fetcher);
+  const [searchUsers, setSearchUsers] = useState<IUser[] | null>(null);
+
+  useEffect(() => {
+    if (allUserData) {
+      setSearchUsers(allUserData.filter((data) => (data.nickname.includes(`${search}`))));
+    }
+  }, [allUserData, search]);
 
   return (
     <PageContainer>
@@ -20,8 +27,11 @@ const Searches = () => {
         <div className="flex justify-center">
           <div className="flex flex-wrap gap-7">
             {
-              allUserData?.filter((data) => (data.nickname.includes(`${search}`)))
-                .map((user) => <SearchProfileCard key={user.userId + user.nickname} user={user} />)
+              searchUsers?.length
+                ? searchUsers.map(
+                  (user) => <SearchProfileCard key={user.userId + user.nickname} user={user} />,
+                )
+                : <p className="text-xl text-gray-700">0 results</p>
             }
           </div>
         </div>
