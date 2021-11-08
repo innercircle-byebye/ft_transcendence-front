@@ -49,7 +49,7 @@ MyApp.getInitialProps = async (context: any) => {
   const access_token = process.env.ACCESS_TOKEN || '';
   const refresh_token = process.env.REFRESH_TOKEN || '';
 
-  if (ctx.pathname === '/login') {
+  if (!ctx.req || ctx.pathname === '/login') {
     return {};
   }
   if (
