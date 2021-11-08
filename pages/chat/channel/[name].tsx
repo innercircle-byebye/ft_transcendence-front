@@ -183,7 +183,7 @@ const Channel = ({
   }, [channelChatData]);
 
   return (
-    <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
+    <div className="relative h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
       <div className="h-full flex flex-col">
         <div className="font-semibold text-2xl">
           {`# ${channelData?.name}`}
