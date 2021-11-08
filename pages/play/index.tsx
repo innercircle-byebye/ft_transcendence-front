@@ -11,7 +11,8 @@ import { IGameRoom } from '@/typings/db';
 import Pagination from '@/components/play-page/Pagination';
 import Navbar from '@/components/navigation-bar/Navbar';
 
-const Play = ({ allRoomList }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Play = ({ userInitialData, allRoomList }
+  : InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const [page, setPage] = useState(1);
   const [roomToEntrance, setRoomToEntrance] = useState<IGameRoom | null>(null);
@@ -44,7 +45,7 @@ const Play = ({ allRoomList }: InferGetServerSidePropsType<typeof getServerSideP
     <div className="mx-auto h-screen max-w-screen-xl">
       <div className="grid grid-cols-3 py-8">
         <div className="flex flex-col items-center space-y-3">
-          <ProfileCard />
+          <ProfileCard userInitialData={userInitialData} />
           <div className="flex px-8 w-full justify-evenly">
             <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
             <button type="button" onClick={onClickQuickStart} className="bg-red-500 text-3xl p-5 rounded-md">빠른시작</button>
