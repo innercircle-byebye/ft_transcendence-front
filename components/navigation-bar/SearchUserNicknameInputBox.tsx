@@ -21,7 +21,9 @@ const SearchUserNicknameInputBox: VFC = () => {
       if (e.key === 'Enter') {
         if (!e.shiftKey) {
           e.preventDefault();
-          router.push(`/searches?search=${search}`);
+          if (search) {
+            router.push(`/searches?search=${search}`);
+          }
         }
       }
     },
