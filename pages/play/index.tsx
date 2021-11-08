@@ -1,7 +1,7 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import React, { ReactElement, useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
-import axios from 'axios';
+import useSWR from 'swr';
 import useInput from '@/hooks/useInput';
 import ProfileCard from '@/components/ProfileCard';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
@@ -10,14 +10,17 @@ import RoomList from '@/components/play-page/RoomList';
 import { IGameRoom } from '@/typings/db';
 import Pagination from '@/components/play-page/Pagination';
 import Navbar from '@/components/navigation-bar/Navbar';
+import fetcher from '@/utils/fetcher';
 
-const Play = ({ userInitialData, allRoomList }
+const Play = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const [page, setPage] = useState(1);
+  const [perPage] = useState(8);
+  const [paginationRange] = useState(5);
   const [roomToEntrance, setRoomToEntrance] = useState<IGameRoom | null>(null);
   const [password, onChangePassword, setPassword] = useInput('');
-  const [paginationRange] = useState(5);
+  const { data: roomCount } = useSWR<number>('/api/game/room/list/count', fetcher);
 
   const onClickMakeRoom = useCallback(() => {
     router.push('/play/create-room');
@@ -37,8 +40,8 @@ const Play = ({ userInitialData, allRoomList }
     setPassword('');
   }, [setPassword]);
 
-  if (!allRoomList) {
-    return <div>로딩중...</div>;
+  if (!roomCount) {
+    return <div>로딩중</div>;
   }
 
   return (
@@ -52,7 +55,7 @@ const Play = ({ userInitialData, allRoomList }
           </div>
           <OnlineFriendList />
         </div>
-        <div className="bg-sky-100 col-span-2">
+        <div className="relative bg-sky-100 col-span-2">
           {roomToEntrance && roomToEntrance.isPrivate
             ? (
               <PasswordModal
@@ -67,14 +70,15 @@ const Play = ({ userInitialData, allRoomList }
               <>
                 <RoomList
                   page={page}
+                  perPage={perPage}
                   roomToEntrance={roomToEntrance}
                   setRoomToEntrance={setRoomToEntrance}
                 />
-                <div className="flex justify-center">
+                <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2">
                   <Pagination
                     page={page}
                     setPage={setPage}
-                    totalPage={parseInt(`${allRoomList.length / paginationRange + 1}`, 10)}
+                    totalPage={parseInt(`${roomCount / perPage + 1}`, 10)}
                     paginationRange={paginationRange}
                   />
                 </div>
@@ -86,24 +90,10 @@ const Play = ({ userInitialData, allRoomList }
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN || '';
-
-  const allRoomList: IGameRoom[] = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/game/room/list`, {
-      withCredentials: true,
-      headers: {
-        Cookie: `Authentication=${context.req.cookies[access_token]}`,
-      },
-    })
-    .then((response) => response.data);
-
-  return {
-    props: {
-      allRoomList,
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async () => ({
+  props: {
+  },
+});
 
 Play.getLayout = function getLayout(page: ReactElement) {
   return (
