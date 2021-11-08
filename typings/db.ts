@@ -114,4 +114,5 @@ export interface IGameUpdateData {
   y: number;
   width: number;
   height: number;
+  score: number;
 }
