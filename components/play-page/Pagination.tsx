@@ -32,15 +32,15 @@ const Pagination: VFC<IProps> = ({
     }
   }, [page, setPage, totalPage]);
 
-  const onClickPrevPrev = useCallback(() => {
-    const nextPage = parseInt(`${(page - 6) / paginationRange}`, 10) * paginationRange + 1;
+  const onClickPrevPageSet = useCallback(() => {
+    const nextPage = parseInt(`${(page - paginationRange - 1) / paginationRange}`, 10) * paginationRange + 1;
     if (nextPage < 1) return;
     setStartPage(nextPage);
     setPage(nextPage);
   }, [page, paginationRange, setPage]);
 
-  const onClickNextNext = useCallback(() => {
-    const nextPage = parseInt(`${(page + 4) / paginationRange}`, 10) * paginationRange + 1;
+  const onClickNextPageSet = useCallback(() => {
+    const nextPage = parseInt(`${(page + paginationRange - 1) / paginationRange}`, 10) * paginationRange + 1;
     if (nextPage > totalPage) return;
     setStartPage(nextPage);
     setPage(nextPage);
@@ -70,7 +70,7 @@ const Pagination: VFC<IProps> = ({
 
   return (
     <div className="inline-block rounded-md border border-gray-50 overflow-hidden bg-gray-50">
-      <button type="button" onClick={onClickPrevPrev}>
+      <button type="button" onClick={onClickPrevPageSet}>
         <span className="mx-px px-2 py-1 bg-sky-700 text-white">{'<<'}</span>
       </button>
       <button type="button" onClick={onClickPrevPage}>
@@ -86,7 +86,7 @@ const Pagination: VFC<IProps> = ({
       <button type="button" onClick={onClickNextPage}>
         <span className="mx-px px-2 py-1 bg-sky-700 text-white">{'>'}</span>
       </button>
-      <button type="button" onClick={onClickNextNext}>
+      <button type="button" onClick={onClickNextPageSet}>
         <span className="mx-px px-2 py-1 bg-sky-700 text-white">{'>>'}</span>
       </button>
     </div>
