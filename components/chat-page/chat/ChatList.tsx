@@ -40,7 +40,7 @@ const ChatList = forwardRef<Scrollbars, IProps>((
             </div>
             {channelChatDatas.map((chat) => (
               <ChatItem
-                key={chat.channelChatId}
+                key={chat.channelChatId + chat.createdAt.toString()}
                 chatData={{
                   userId: chat.userId,
                   nickname: chat.user.nickname,

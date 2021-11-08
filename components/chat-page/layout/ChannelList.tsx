@@ -83,7 +83,7 @@ const ChannelList: VFC = () => {
         {!channelCollapse
           && myChannelData?.map((channel) => (
             <EachChannel
-              key={channel.channelId}
+              key={channel.channelId + channel.name}
               channel={channel}
               onClickExitChannel={onClickExitChannel}
             />
