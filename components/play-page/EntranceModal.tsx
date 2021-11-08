@@ -1,3 +1,4 @@
+import router from 'next/router';
 import {
   Dispatch, SetStateAction, useCallback, VFC,
 } from 'react';
@@ -18,6 +19,8 @@ const EntranceModal: VFC<IProps> = ({ roomNumber, setRoomToEntrance }) => {
 
   const onClickPlay = useCallback(() => {
     console.log('게임하기');
+    // test 를 위해 추가
+    router.push('/play/room/2');
   }, []);
 
   return (
