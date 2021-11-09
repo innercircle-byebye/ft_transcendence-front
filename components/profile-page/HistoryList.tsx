@@ -18,8 +18,8 @@ const HistoryList: VFC<IProps> = ({ userId }) => {
   const [loseCount, setLoseCount] = useState<number>(0);
 
   const onClickHistory = useCallback(() => {
-    router.push('/history');
-  }, [router]);
+    router.push(`/history/${name}`);
+  }, [name, router]);
 
   useEffect(() => {
     if (name && historyData) {
