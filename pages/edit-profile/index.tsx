@@ -7,7 +7,6 @@ import { useRouter } from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
 import Navbar from '@/components/navigation-bar/Navbar';
 import InputImage from '@/components/inputs/InputImage';
-import { IUser } from '@/typings/db';
 import useInput from '@/hooks/useInput';
 import InputNickname from '@/components/inputs/InputNickname';
 import InputEmail from '@/components/inputs/InputEmail';
@@ -15,47 +14,48 @@ import Switch from '@/components/edit-profile-page/Switch';
 import PageContainer from '@/components/edit-profile-page/PageContainer';
 import ContentContainer from '@/components/edit-profile-page/ContentContainer';
 
-const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const EditProfile = ({ userInitialData }
+  : InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewImagePath, setPreviewImagePath] = useState<string>(userData.imagePath);
-  const [nickname, onChangeNickname, setNickname] = useInput<string>(userData.nickname);
-  const [email, onChangeEmail, setEmail] = useInput(userData.email);
+  const [previewImagePath, setPreviewImagePath] = useState<string>(userInitialData.imagePath);
+  const [nickname, onChangeNickname, setNickname] = useInput<string>(userInitialData.nickname);
+  const [email, onChangeEmail, setEmail] = useInput(userInitialData.email);
   const [emailError, setEmailError] = useState(false);
-  const [isStatusPublic, setIsStatePublic] = useState(userData.isStatusPublic);
-  const [isHistoryPublic, setIsHistoryPublic] = useState(userData.isHistoryPublic);
+  const [isStatusPublic, setIsStatePublic] = useState(userInitialData.isStatusPublic);
+  const [isHistoryPublic, setIsHistoryPublic] = useState(userInitialData.isHistoryPublic);
 
   const onClickResetNickname = useCallback(() => {
-    setNickname(userData.nickname);
-  }, [setNickname, userData.nickname]);
+    setNickname(userInitialData.nickname);
+  }, [setNickname, userInitialData.nickname]);
 
   const onClickResetEmail = useCallback(() => {
-    setEmail(userData.email);
-  }, [setEmail, userData.email]);
+    setEmail(userInitialData.email);
+  }, [setEmail, userInitialData.email]);
 
   const onClickSwitchState = useCallback(() => {
-    setIsStatePublic((prev) => !prev);
+    setIsStatePublic((prev: boolean) => !prev);
   }, []);
 
   const onClickSwitchHistory = useCallback(() => {
-    setIsHistoryPublic((prev) => !prev);
+    setIsHistoryPublic((prev: boolean) => !prev);
   }, []);
 
   const onClickReset = useCallback((e) => {
     e.preventDefault();
-    setNickname(userData.nickname);
-    setEmail(userData.email);
-    setPreviewImagePath(userData.imagePath);
+    setNickname(userInitialData.nickname);
+    setEmail(userInitialData.email);
+    setPreviewImagePath(userInitialData.imagePath);
     setImageFile(null);
-    setIsStatePublic(userData.isStatusPublic);
-    setIsHistoryPublic(userData.isHistoryPublic);
+    setIsStatePublic(userInitialData.isStatusPublic);
+    setIsHistoryPublic(userInitialData.isHistoryPublic);
   },
-  [setNickname, userData.nickname, userData.email, userData.imagePath,
-    userData.isStatusPublic, userData.isHistoryPublic, setEmail]);
+  [setNickname, userInitialData.nickname, userInitialData.email, userInitialData.imagePath,
+    userInitialData.isStatusPublic, userInitialData.isHistoryPublic, setEmail]);
 
   const onClickCancel = useCallback(() => {
-    router.push('/');
-  }, [router]);
+    router.push(`/profile/${userInitialData.nickname}`);
+  }, [router, userInitialData.nickname]);
 
   const onSubmitEditProfile = useCallback((e) => {
     e.preventDefault();
@@ -63,10 +63,10 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
     if (imageFile) {
       formData.append('imagePath', imageFile);
     }
-    if (nickname !== userData.nickname) formData.append('nickname', nickname);
-    if (email !== userData.email) formData.append('email', email);
-    if (isStatusPublic !== userData.isStatusPublic) formData.append('isStatusPublic', isStatusPublic.toString());
-    if (isHistoryPublic !== userData.isHistoryPublic) formData.append('isStatusPublic', isStatusPublic.toString());
+    if (nickname !== userInitialData.nickname) formData.append('nickname', nickname);
+    if (email !== userInitialData.email) formData.append('email', email);
+    if (isStatusPublic !== userInitialData.isStatusPublic) formData.append('isStatusPublic', isStatusPublic.toString());
+    if (isHistoryPublic !== userInitialData.isHistoryPublic) formData.append('isStatusPublic', isStatusPublic.toString());
     axios.patch('/api/user/edit', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -77,7 +77,7 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
     }).catch(() => {
       toast.error('프로필 수정에 실패했습니다.', { position: 'bottom-center', theme: 'colored' });
     });
-  }, [email, imageFile, isHistoryPublic, isStatusPublic, nickname, router, userData]);
+  }, [email, imageFile, isHistoryPublic, isStatusPublic, nickname, router, userInitialData]);
 
   useEffect(() => {
     if (imageFile) {
@@ -87,7 +87,7 @@ const EditProfile = ({ userData }: InferGetServerSidePropsType<typeof getServerS
       };
       fileReader.readAsDataURL(imageFile);
     }
-  }, [imageFile, previewImagePath, userData.imagePath]);
+  }, [imageFile, previewImagePath, userInitialData.imagePath]);
 
   return (
     <PageContainer>
@@ -141,27 +141,9 @@ EditProfile.getLayout = function getLayout(page: ReactElement) {
   );
 };
 
-interface IProps {
-  userData: IUser;
-}
-
-export const getServerSideProps: GetServerSideProps<IProps> = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN || '';
-
-  const userData: IUser = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
-      withCredentials: true,
-      headers: {
-        Cookie: `Authentication=${context.req.cookies[access_token]}`,
-      },
-    })
-    .then((response) => response.data);
-
-  return {
-    props: {
-      userData,
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async () => ({
+  props: {
+  },
+});
 
 export default EditProfile;
