@@ -13,7 +13,6 @@ const History = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => (
     <PageContainer maxWidth="xl">
       <RankContentContainer>
-        {/* <div className="flex flex-col items-center space-y-3"> */}
         <RankContentLeft>
           <ProfileCard profileUserData={userInitialData} />
         </RankContentLeft>
