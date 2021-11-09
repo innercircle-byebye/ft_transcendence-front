@@ -7,12 +7,11 @@ interface IProps {
 }
 
 const RankItem: VFC<IProps> = ({ rankInfo }) => (
-  <div className="bg-gray-300 rounded-md">
-    <div className="relative w-40 h-40">
+  <div className="bg-gray-300 rounded-md flex flex-col items-center">
+    <div className="relative w-52 h-52">
       <Image alt="rank-image" src={`/${rankInfo.imagePath}`} layout="fill" />
     </div>
-    <p>{rankInfo.title}</p>
-    <p>{rankInfo.rankId}</p>
+    <p className="text-xl">{rankInfo.title}</p>
   </div>
 );
 
