@@ -7,6 +7,7 @@ import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
 import { IGameScreenData, IGameUpdateData } from '@/typings/db';
+import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 
 const Room: VFC = () => {
   const router = useRouter();
@@ -150,6 +151,16 @@ const Room: VFC = () => {
     document.addEventListener('keydown', onKeyDown);
   }, [onKeyDown, onKeyUp]);
 
+  // [id] 로 이동시키자
+  const onKeyPressHandler = useCallback(
+    (e) => {
+      if (e.key === 'Enter') {
+        socket?.emit('gameChat', e.target.value);
+      }
+    },
+    [socket],
+  );
+
   return (
     <div className="flex justify-center">
       {/* game screen */}
@@ -202,6 +213,9 @@ const Room: VFC = () => {
           <div>
             {isChatting ? (
               <div>
+                <ChatInputBox
+                  onKeyPressHandler={onKeyPressHandler}
+                />
                 채팅입니다.
               </div>
             ) : (
