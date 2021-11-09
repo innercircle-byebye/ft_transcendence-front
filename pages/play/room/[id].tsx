@@ -2,6 +2,8 @@ import { useRouter } from 'next/router';
 import {
   useCallback, useEffect, useState, VFC,
 } from 'react';
+import { InferGetServerSidePropsType } from 'next';
+import { getServerSideProps } from 'pages';
 import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
@@ -9,7 +11,9 @@ import useSocket from '@/hooks/useSocket';
 import { IGameScreenData, IGameUpdateData } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 
-const Room: VFC = () => {
+const Room: VFC = ({
+  userData,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const roomNumber = router.query.id;
   const [isChatting, setIsChatting] = useState(true);
@@ -26,11 +30,11 @@ const Room: VFC = () => {
       // console.log('initData', data);
       // ready 상태 알려주면 그걸로 ready setting 해야합니다.
     });
-    socket?.emit('joinGameRoom', router.query.id);
+    socket?.emit('joinGameRoom', { roomId: router.query.id, userId: userData.userId });
     return () => {
       disconnect();
     };
-  }, [disconnect, router.query.id, socket]);
+  }, [disconnect, router.query.id, socket, userData.userId]);
 
   useEffect(() => {
     // data update
@@ -161,6 +165,13 @@ const Room: VFC = () => {
     [socket],
   );
 
+  // chat event 받아오기
+  useEffect(() => {
+    socket?.on('gameChat', (data) => {
+      console.log('gameChat data', data);
+    });
+  });
+
   return (
     <div className="flex justify-center">
       {/* game screen */}
@@ -213,10 +224,11 @@ const Room: VFC = () => {
           <div>
             {isChatting ? (
               <div>
+                채팅입니다.
+                chatting list
                 <ChatInputBox
                   onKeyPressHandler={onKeyPressHandler}
                 />
-                채팅입니다.
               </div>
             ) : (
               <div>
