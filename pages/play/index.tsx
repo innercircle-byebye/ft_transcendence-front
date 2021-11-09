@@ -8,7 +8,7 @@ import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import PasswordModal from '@/components/chat-page/PasswordModal';
 import RoomList from '@/components/play-page/RoomList';
 import { IGameRoom } from '@/typings/db';
-import Pagination from '@/components/play-page/Pagination';
+import Pagination from '@/components/page-with-profilecard/Pagination';
 import Navbar from '@/components/navigation-bar/Navbar';
 import fetcher from '@/utils/fetcher';
 import PageContainer from '@/components/page-with-profilecard/PageContainer';
@@ -86,6 +86,7 @@ const Play = ({ userInitialData }
                     setPage={setPage}
                     totalPage={parseInt(`${roomCount / perPage + 1}`, 10)}
                     paginationRange={paginationRange}
+                    color="sky"
                   />
                 </div>
               </div>
