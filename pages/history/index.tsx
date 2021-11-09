@@ -9,7 +9,7 @@ import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
 import ContentRight from '@/components/page-with-profilecard/ContentRight';
 import HistorySelect from '@/components/history-page/HistorySelect';
 import useInput from '@/hooks/useInput';
-import HistoryList from '@/components/profile-page/HistoryList';
+import HistoryList from '@/components/history-page/HistoryList';
 
 const History = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
