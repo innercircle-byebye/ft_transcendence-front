@@ -1,10 +1,14 @@
 import React, { ReactElement } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import MainLayout from '@/layouts/MainLayout';
+// import MainLayout from '@/layouts/MainLayout';
+import { ToastContainer } from 'react-toastify';
 import ProfileCard from '@/components/main-page/ProfileCard';
 import AnnouncementList from '@/components/main-page/AnnouncementList';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import JoinedChannelList from '@/components/main-page/JoinedChannelList';
+import Navbar from '@/components/navigation-bar/Navbar';
+import PlayableCard from '@/components/main-page/PlayableCard';
+import ObservableCard from '@/components/main-page/ObservableCard';
 
 const Home = ({
   userInitialData,
@@ -14,17 +18,25 @@ const Home = ({
   }
 
   return (
-    <div className="flex px-12 py-5 space-x-5">
-      {/* 프로필카드와 공지사항 */}
-      <div className="flex-none w-1/5 space-y-5">
-        <ProfileCard userData={userInitialData} />
-        <AnnouncementList />
+    <div className="mx-auto h-screen max-w-screen-xl">
+      <div className="grid grid-cols-3 py-8 gap-10">
+        {/* 프로필카드와 공지사항 */}
+        <div className="flex flex-col items-center space-y-3">
+          <ProfileCard userData={userInitialData} />
+          <AnnouncementList />
+        </div>
+        <div className="col-span-2 space-y-10">
+          <div className="grid grid-cols-2 gap-10">
+            <PlayableCard />
+            <ObservableCard />
+          </div>
+          <div className="grid grid-cols-2 gap-10">
+            <OnlineFriendList />
+            <JoinedChannelList />
+          </div>
+        </div>
       </div>
-      {/* 빠른시작2개, 친구목록과 채널목록 */}
-      <div className="flex space-x-5 w-4/5">
-        <OnlineFriendList />
-        <JoinedChannelList />
-      </div>
+      <ToastContainer />
     </div>
   );
 };
@@ -33,58 +45,15 @@ export const getServerSideProps: GetServerSideProps = async () => ({
   props: {},
 });
 
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const access_token = process.env.ACCESS_TOKEN || '';
-//   const refresh_token = process.env.REFRESH_TOKEN || '';
-
-//   if (
-//     !context.req.cookies[refresh_token]
-//     || !context.req.cookies[access_token]
-//   ) {
-//     return reissueToken(context, access_token, refresh_token, '/');
-//   }
-
-//   const userData: IUser = await axios
-//     .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
-//       withCredentials: true,
-//       headers: {
-//         Cookie: `Authentication=${context.req.cookies[access_token]}`,
-//       },
-//     })
-//     .then((response) => response.data);
-
-//   if (userData.status === process.env.STATUS_NOT_REGISTER) {
-//     return {
-//       redirect: {
-//         destination: '/create-profile',
-//         permanent: false,
-//       },
-//     };
-//   }
-
-//   return {
-//     props: {
-//       userData,
-//     },
-//   };
-// };
-
-// ====================================================
-//   userInitialData,
-// }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
-//   <div>
-//     <OnlineFriendList />
-//     <ProfileCard userData={userInitialData} />
-//     <AnnouncementList />
-//   </div>
-// );
-
-// export const getServerSideProps: GetServerSideProps = async () => ({
-//   props: {},
-// });
-
 Home.getLayout = function getLayout(page: ReactElement) {
-  return <MainLayout>{page}</MainLayout>;
+  return (
+    <div className="h-screen flex flex-col">
+      <div className="flex-initial">
+        <Navbar />
+      </div>
+      {page}
+    </div>
+  );
 };
 
 export default Home;
