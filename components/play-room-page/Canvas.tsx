@@ -61,6 +61,12 @@ const Canvas: VFC<IProps> = ({ updateData }) => {
           updateData[2].height * ratioY,
         );
       }
+      // canvas 에 글씨 넣기
+      context?.fillText(
+        updateData.toString(),
+        (context.canvas.width / 2) * ratioX,
+        (context.canvas.height / 2) * ratioY,
+      );
     }
   }, [canvasHeight, canvasWidth, ratioX, ratioY, updateData]);
 

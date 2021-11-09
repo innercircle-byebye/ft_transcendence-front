@@ -37,8 +37,6 @@ const GameScreen: VFC<IProps> = ({
     }
   }, [updateData]);
 
-  // console.log('isPlaying', isPlaying);
-
   return (
     <div className="absolute w-full h-full">
       {/* player info bar */}

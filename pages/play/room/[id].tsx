@@ -107,9 +107,13 @@ const Room: VFC = () => {
     socket?.on('playing', () => {
       // console.log();
       setIsPlaying(true);
+      setIsReady1P(false);
+      setIsReady2P(false);
     });
-    socket?.on('destroy', () => {
+    socket?.on('gameover', () => {
       setIsPlaying(false);
+      setIsReady1P(false);
+      setIsReady2P(false);
     });
   });
 
