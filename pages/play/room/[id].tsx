@@ -36,6 +36,26 @@ const Room: VFC = () => {
     // console.log('updateData', updateData);
   });
 
+  // on ready unReady
+  useEffect(() => {
+    socket?.on('ready', (data) => {
+      console.log('ready data', data);
+      if (data === 'player1') {
+        setIsReady1P(true);
+      } else if (data === 'player2') {
+        setIsReady2P(true);
+      }
+    });
+    socket?.on('unReady', (data) => {
+      console.log('unReady data', data);
+      if (data === 'player1') {
+        setIsReady1P(false);
+      } else if (data === 'player2') {
+        setIsReady2P(false);
+      }
+    });
+  });
+
   const onClickExit = useCallback(
     () => {
       // disconnect();
@@ -72,14 +92,26 @@ const Room: VFC = () => {
   );
 
   // calc isPlaying
+  // 향후에 없애도 될듯?! 아래에 있는 set isPlaying 으로 대체 가능
+  // useEffect(() => {
+  //   setInterval(() => { setIsPlaying(true); }, 5000);
+  //   if (isReady1P && isReady2P) {
+  //     setIsPlaying(true);
+  //   } else {
+  //     setIsPlaying(false);
+  //   }
+  // }, [isReady1P, isReady2P]);
+
+  // set isPlaying
   useEffect(() => {
-    setInterval(() => { setIsPlaying(true); }, 5000);
-    if (isReady1P && isReady2P) {
+    socket?.on('playing', () => {
+      // console.log();
       setIsPlaying(true);
-    } else {
+    });
+    socket?.on('destroy', () => {
       setIsPlaying(false);
-    }
-  }, [isReady1P, isReady2P]);
+    });
+  });
 
   const onKeyUp = useCallback(
     (e) => {
