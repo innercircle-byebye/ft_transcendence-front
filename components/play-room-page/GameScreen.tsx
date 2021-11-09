@@ -37,7 +37,7 @@ const GameScreen: VFC<IProps> = ({
     }
   }, [updateData]);
 
-  console.log('isPlaying', isPlaying);
+  // console.log('isPlaying', isPlaying);
 
   return (
     <div className="absolute w-full h-full">
@@ -53,12 +53,12 @@ const GameScreen: VFC<IProps> = ({
           {`${player2}`}
         </div>
       </div>
-      <div id="gameScreen" className="w-full bg-gray-400 h-11/12 justify-between items-center">
+      <div id="gameScreen" className="w-full bg-gray-400 h-11/12">
         {/* game screen */}
         {isPlaying
           ? (<Canvas updateData={updateData} />)
           : (
-            <>
+            <div className="w-full h-full flex justify-evenly items-center">
               <button
                 type="button"
                 onClick={onClickReady1P}
@@ -75,7 +75,7 @@ const GameScreen: VFC<IProps> = ({
               >
                 ready!
               </button>
-            </>
+            </div>
           )}
       </div>
     </div>
