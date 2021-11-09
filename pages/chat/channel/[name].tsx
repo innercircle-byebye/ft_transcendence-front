@@ -1,28 +1,28 @@
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useCallback, useEffect, useState,
+  ReactElement, useCallback, useEffect, useRef, useState,
 } from 'react';
-import useSWR from 'swr';
+import useSWR, { useSWRInfinite } from 'swr';
 import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { toast, ToastContainer } from 'react-toastify';
+import Scrollbars from 'react-custom-scrollbars-2';
 import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
 import {
   IChannel, IChannelChat, IChannelMember, IUser,
 } from '@/typings/db';
-import ChatItem from '@/components/chat-page/chat/ChatItem';
 import useSocket from '@/hooks/useSocket';
-import reissueToken from '@/utils/reissueTokens';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
 import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
+import ChatList from '@/components/chat-page/chat/ChatList';
+import makeSection from '@/utils/makeSection';
 
 const Channel = ({
   userInitialData,
   channelInitialData,
   myChannelInitialData,
-  channelChatInitialData,
   channelMemberInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
@@ -30,6 +30,7 @@ const Channel = ({
   const [chat, onChangeChat, setChat] = useInput('');
   const [showEmoji, setShowEmoji] = useState(false);
   const { socket } = useSocket('chat');
+  const scrollbarRef = useRef<Scrollbars>(null);
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher, {
     initialData: userInitialData,
   });
@@ -43,16 +44,18 @@ const Channel = ({
       initialData: myChannelInitialData,
     },
   );
-  const { data: channelChatData, mutate: mutateChat } = useSWR<IChannelChat[]>(
-    `/api/channel/${channelName}/chat`, fetcher, {
-      initialData: channelChatInitialData,
-    },
+  const { data: channelChatData, mutate: mutateChat, setSize } = useSWRInfinite<IChannelChat[]>(
+    (index) => `/api/channel/${channelName}/chat?perPage=20&page=${index + 1}`, fetcher,
   );
   const { data: channelMemberData } = useSWR<IChannelMember[]>(
     `/api/channel/${channelName}/member`, fetcher, {
       initialData: channelMemberInitialData,
     },
   );
+  const isEmpty = channelChatData?.length === 0;
+  const isReachingEnd = isEmpty || false
+    || (channelChatData && channelChatData[channelChatData.length - 1]?.length < 20) || false;
+  const chatSections = makeSection(channelChatData ? channelChatData.flat().reverse() : []);
 
   const onCloseEmoji = useCallback(() => {
     setShowEmoji(false);
@@ -64,8 +67,8 @@ const Channel = ({
       if (chat?.trim() && channelChatData && channelData && userData) {
         const savedChat = chat;
         mutateChat((prevChatData) => {
-          prevChatData?.push({
-            channelChatId: (channelChatData[channelChatData.length - 1]?.channelChatId || 0) + 1,
+          prevChatData?.[0].unshift({
+            channelChatId: (channelChatData[0][0]?.channelChatId || 0) + 1,
             userId: userData.userId,
             channelId: channelData.channelId,
             content: savedChat,
@@ -79,8 +82,8 @@ const Channel = ({
           });
           return prevChatData;
         }, false).then(() => {
-          // 읽지 않은 메시지 처리하기 추가
           setChat('');
+          scrollbarRef.current?.scrollToBottom();
         });
         axios.post(`/api/channel/${channelData.name}/chat`, {
           content: savedChat,
@@ -98,9 +101,19 @@ const Channel = ({
     (data: IChannelChat) => {
       if (data.content && data.userId !== userData?.userId) {
         mutateChat((chatData) => {
-          chatData?.push(data);
+          chatData?.[0].unshift(data);
           return chatData;
-        }, false);
+        }, false).then(() => {
+          if (scrollbarRef.current) {
+            if (scrollbarRef.current.getScrollHeight()
+            < scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
+            ) {
+              setTimeout(() => {
+                scrollbarRef.current?.scrollToBottom();
+              }, 50);
+            }
+          }
+        });
       }
     },
     [userData?.userId, mutateChat],
@@ -161,31 +174,26 @@ const Channel = ({
     }
   }, [channelData, myChannelData, router]);
 
+  useEffect(() => {
+    if (channelChatData?.length === 1) {
+      setTimeout(() => {
+        scrollbarRef.current?.scrollToBottom();
+      }, 500);
+    }
+  }, [channelChatData]);
+
   return (
     <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
       <div className="h-full flex flex-col">
-        <div className="flex flex-row justify-between items-end">
-          <div className="font-semibold text-2xl">
-            {`# ${channelData?.name}`}
-          </div>
-          <ChannelButtons />
+        <div className="font-semibold text-2xl">
+          {`# ${channelData?.name}`}
         </div>
-        <div className="flex-1">
-          {
-            channelChatData?.map((chatData) => (
-              <ChatItem
-                key={chatData.channelChatId}
-                chatData={{
-                  userId: chatData.userId,
-                  nickname: chatData.user.nickname,
-                  imagePath: chatData.user.imagePath,
-                  content: chatData.content,
-                  createdAt: chatData.createdAt,
-                }}
-              />
-            ))
-          }
-        </div>
+        <ChatList
+          chatSections={chatSections}
+          ref={scrollbarRef}
+          setSize={setSize}
+          isReachingEnd={isReachingEnd}
+        />
         <ChatBox
           chat={chat}
           onChangeChat={onChangeChat}
@@ -200,6 +208,7 @@ const Channel = ({
           }
         />
       </div>
+      <ChannelButtons />
       <ToastContainer />
     </div>
   );
@@ -211,29 +220,7 @@ Channel.getLayout = function getLayout(page: ReactElement) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
   const channelName = context.query.name;
-
-  if (
-    !context.req.cookies[refresh_token]
-    || !context.req.cookies[access_token]
-  ) {
-    return reissueToken(
-      context,
-      access_token,
-      refresh_token,
-      '/chat',
-    );
-  }
-
-  const userInitialData: IUser = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
-      withCredentials: true,
-      headers: {
-        Cookie: `Authentication=${context.req.cookies[access_token]}`,
-      },
-    })
-    .then((response) => response.data);
 
   const channelInitialData: IChannel = await axios
     .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}`), {
@@ -246,15 +233,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const myChannelInitialData: IChannel[] = await axios
     .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/me`), {
-      withCredentials: true,
-      headers: {
-        Cookie: `Authentication=${context.req.cookies[access_token]}`,
-      },
-    })
-    .then((response) => response.data);
-
-  const channelChatInitialData: IChannelChat[] = await axios
-    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}/chat`), {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
@@ -283,10 +261,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      userInitialData,
       channelInitialData,
       myChannelInitialData,
-      channelChatInitialData,
       channelMemberInitialData,
     },
   };

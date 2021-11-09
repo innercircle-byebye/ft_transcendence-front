@@ -100,3 +100,22 @@ export interface ISimpleUser {
   nickname: string;
   imagePath: string;
 }
+
+export interface IGameMember {
+  userId: number;
+  status: string;
+  nickname: string;
+}
+
+export interface IGameRoom {
+  gameRoomId: number;
+  title: string;
+  maxParticipantNum: number;
+  createdAt: Date;
+  lastModifiedAt: Date;
+  deletedAt: Date | null;
+  isPrivate: boolean;
+  gameMembers: IGameMember[];
+  currentMemberCount: number;
+  gameRoomStatus: string;
+}
