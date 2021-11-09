@@ -1,9 +1,8 @@
 import { useRouter } from 'next/router';
 import {
-  useCallback, useEffect, useState, VFC,
+  useCallback, useEffect, useState,
 } from 'react';
-import { InferGetServerSidePropsType } from 'next';
-import { getServerSideProps } from 'pages';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
@@ -11,8 +10,8 @@ import useSocket from '@/hooks/useSocket';
 import { IGameScreenData, IGameUpdateData } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 
-const Room: VFC = ({
-  userData,
+const Room = ({
+  userInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const roomNumber = router.query.id;
@@ -27,14 +26,15 @@ const Room: VFC = ({
   useEffect(() => {
     socket?.on('initSetting', (data: IGameScreenData) => {
       setInitData(data);
-      // console.log('initData', data);
+      console.log('initData', data);
       // ready 상태 알려주면 그걸로 ready setting 해야합니다.
     });
-    socket?.emit('joinGameRoom', { roomId: router.query.id, userId: userData.userId });
+    socket?.emit('joinGameRoom', { roomId: router.query.id, userId: userInitialData.userId });
+    // socket?.emit('joinGameRoom', router.query.id);
     return () => {
       disconnect();
     };
-  }, [disconnect, router.query.id, socket, userData.userId]);
+  }, [disconnect, router.query.id, socket, userInitialData.userId]);
 
   useEffect(() => {
     // data update
@@ -158,6 +158,7 @@ const Room: VFC = ({
   // [id] 로 이동시키자
   const onKeyPressHandler = useCallback(
     (e) => {
+      e.preventDefault();
       if (e.key === 'Enter') {
         socket?.emit('gameChat', e.target.value);
       }
@@ -170,7 +171,7 @@ const Room: VFC = ({
     socket?.on('gameChat', (data) => {
       console.log('gameChat data', data);
     });
-  });
+  }, [socket]);
 
   return (
     <div className="flex justify-center">
@@ -241,5 +242,9 @@ const Room: VFC = ({
     </div>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async () => ({
+  props: {},
+});
 
 export default Room;
