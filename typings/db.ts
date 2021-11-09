@@ -117,3 +117,22 @@ export interface IGameUpdateData {
   height: number;
   score: number;
 }
+
+export interface IGameMember {
+  userId: number;
+  status: string;
+  nickname: string;
+}
+
+export interface IGameRoom {
+  gameRoomId: number;
+  title: string;
+  maxParticipantNum: number;
+  createdAt: Date;
+  lastModifiedAt: Date;
+  deletedAt: Date | null;
+  isPrivate: boolean;
+  gameMembers: IGameMember[];
+  currentMemberCount: number;
+  gameRoomStatus: string;
+}
