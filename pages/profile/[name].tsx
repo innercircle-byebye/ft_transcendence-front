@@ -1,8 +1,7 @@
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import React, { ReactElement } from 'react';
-import { InferGetServerSidePropsType } from 'next';
-import { getServerSideProps } from 'pages';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { ToastContainer } from 'react-toastify';
 import fetcher from '@/utils/fetcher';
 import { IUser } from '@/typings/db';
@@ -12,11 +11,13 @@ import RankItem from '@/components/profile-page/RankItem';
 import WinScore from '@/components/profile-page/WinScore';
 import HistoryList from '@/components/profile-page/HistoryList';
 
-const Profile = ({ userInitialData }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+const Profile = ({ userInitialData }
+  : InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { name } = router.query;
+  const { nickname } = userInitialData;
   const { data: profileUserData } = useSWR<IUser>(
-    name && userInitialData.nickname !== name ? `/api/user/nickname/${name}` : '/api/user/me', fetcher,
+    name && nickname !== name ? `/api/user/nickname/${name}` : '/api/user/me', fetcher,
   );
 
   if (!profileUserData) {
@@ -52,5 +53,10 @@ Profile.getLayout = function getLayout(page: ReactElement) {
     </div>
   );
 };
+
+export const getServerSideProps: GetServerSideProps = async () => ({
+  props: {
+  },
+});
 
 export default Profile;
