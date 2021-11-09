@@ -61,37 +61,35 @@ const Play = ({ userInitialData }
             <OnlineFriendList />
           </div>
         </ContentLeft>
-        <ContentRight>
-          <div className="relative bg-sky-100">
-            {roomToEntrance && roomToEntrance.isPrivate
-              ? (
-                <PasswordModal
-                  name={`${roomToEntrance.title}`}
-                  password={password}
-                  onChangePassword={onChangePassword}
-                  onSubmitPassword={onSubmitPassword}
-                  onCloseModal={onClosePasswordModal}
+        <ContentRight bgColor="bg-sky-100">
+          {roomToEntrance && roomToEntrance.isPrivate
+            ? (
+              <PasswordModal
+                name={`${roomToEntrance.title}`}
+                password={password}
+                onChangePassword={onChangePassword}
+                onSubmitPassword={onSubmitPassword}
+                onCloseModal={onClosePasswordModal}
+              />
+            )
+            : (
+              <div className="flex flex-col items-center">
+                <RoomList
+                  page={page}
+                  perPage={perPage}
+                  roomToEntrance={roomToEntrance}
+                  setRoomToEntrance={setRoomToEntrance}
                 />
-              )
-              : (
-                <>
-                  <RoomList
+                <div className="p-5">
+                  <Pagination
                     page={page}
-                    perPage={perPage}
-                    roomToEntrance={roomToEntrance}
-                    setRoomToEntrance={setRoomToEntrance}
+                    setPage={setPage}
+                    totalPage={parseInt(`${roomCount / perPage + 1}`, 10)}
+                    paginationRange={paginationRange}
                   />
-                  <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2">
-                    <Pagination
-                      page={page}
-                      setPage={setPage}
-                      totalPage={parseInt(`${roomCount / perPage + 1}`, 10)}
-                      paginationRange={paginationRange}
-                    />
-                  </div>
-                </>
-              )}
-          </div>
+                </div>
+              </div>
+            )}
         </ContentRight>
       </ContentContainer>
     </PageContainer>
