@@ -44,20 +44,22 @@ const ProfileCard: VFC<IProps> = ({ profileUserData }) => {
         )
       }
       {
-        pathname === '/profile/[name]' && userData?.nickname === profileUserData.nickname
-          ? (
-            <div className="text-center mt-5">
-              <Link href="/edit-profile">
-                <a className="bg-gray-400 px-3 py-1 rounded-full">
-                  Edit Profile
-                </a>
-              </Link>
-            </div>
-          ) : (
-            <div className="text-center mt-5">
-              <ProfileCardButtons profileUser={profileUserData} />
-            </div>
-          )
+        pathname === '/profile/[name]' && (
+          userData?.nickname === profileUserData.nickname
+            ? (
+              <div className="text-center mt-5">
+                <Link href="/edit-profile">
+                  <a className="bg-gray-400 px-3 py-1 rounded-full">
+                    Edit Profile
+                  </a>
+                </Link>
+              </div>
+            ) : (
+              <div className="text-center mt-5">
+                <ProfileCardButtons profileUser={profileUserData} />
+              </div>
+            )
+        )
       }
     </div>
   );
