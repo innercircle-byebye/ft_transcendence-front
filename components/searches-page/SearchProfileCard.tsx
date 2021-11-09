@@ -11,7 +11,7 @@ const SearchProfileCard: VFC<IProps> = ({ user }) => {
   const { nickname, imagePath } = user;
 
   return (
-    <Link href={`/profile?name=${nickname}`}>
+    <Link href={`/profile/${nickname}`}>
       <a className="flex flex-col items-center bg-gray-200">
         <div className="relative w-28 h-28">
           <Image alt="profile-image" src={imagePath} layout="fill" />
