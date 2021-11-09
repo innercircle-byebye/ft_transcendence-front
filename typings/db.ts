@@ -105,6 +105,7 @@ export interface IGameScreenData {
   role: string;
   WIDTH: number;
   HEIGHT: number;
+  // ready 상태 알려주는 거 필요합니다.
 }
 
 export interface IGameUpdateData {

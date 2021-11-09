@@ -23,6 +23,7 @@ const Room: VFC = () => {
     socket?.on('initSetting', (data: IGameScreenData) => {
       setInitData(data);
       // console.log('initData', data);
+      // ready 상태 알려주면 그걸로 ready setting 해야합니다.
     });
     socket?.emit('joinGameRoom', router.query.id);
     return () => {
@@ -39,7 +40,7 @@ const Room: VFC = () => {
   // on ready unReady
   useEffect(() => {
     socket?.on('ready', (data) => {
-      console.log('ready data', data);
+      // console.log('ready data', data);
       if (data === 'player1') {
         setIsReady1P(true);
       } else if (data === 'player2') {
@@ -47,7 +48,7 @@ const Room: VFC = () => {
       }
     });
     socket?.on('unReady', (data) => {
-      console.log('unReady data', data);
+      // console.log('unReady data', data);
       if (data === 'player1') {
         setIsReady1P(false);
       } else if (data === 'player2') {
@@ -91,26 +92,15 @@ const Room: VFC = () => {
     [isReady2P, socket],
   );
 
-  // calc isPlaying
-  // 향후에 없애도 될듯?! 아래에 있는 set isPlaying 으로 대체 가능
-  // useEffect(() => {
-  //   setInterval(() => { setIsPlaying(true); }, 5000);
-  //   if (isReady1P && isReady2P) {
-  //     setIsPlaying(true);
-  //   } else {
-  //     setIsPlaying(false);
-  //   }
-  // }, [isReady1P, isReady2P]);
-
   // set isPlaying
   useEffect(() => {
     socket?.on('playing', () => {
-      // console.log();
       setIsPlaying(true);
       setIsReady1P(false);
       setIsReady2P(false);
     });
-    socket?.on('gameover', () => {
+    socket?.on('gameover', (data) => {
+      console.log('gameover', data);
       setIsPlaying(false);
       setIsReady1P(false);
       setIsReady2P(false);
