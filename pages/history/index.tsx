@@ -2,24 +2,24 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import React, { ReactElement } from 'react';
 import { ToastContainer } from 'react-toastify';
 import Navbar from '@/components/navigation-bar/Navbar';
-import ProfileCard from '@/components/ProfileCard';
+import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import HistoryContentContainer from '@/components/history-page/HistoryContentContainer';
-import PageContainer from '@/components/rank-page/PageContainer';
-import RankContentContainer from '@/components/rank-page/RankContentContainer';
-import RankContentLeft from '@/components/rank-page/RankContentLeft';
-import RankContentRight from '@/components/rank-page/RankContentRight';
+import PageContainer from '@/components/page-with-profilecard/PageContainer';
+import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
+import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
+import ContentRight from '@/components/page-with-profilecard/ContentRight';
 
 const History = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => (
     <PageContainer maxWidth="xl">
-      <RankContentContainer>
-        <RankContentLeft>
+      <ContentContainer>
+        <ContentLeft>
           <ProfileCard profileUserData={userInitialData} />
-        </RankContentLeft>
-        <RankContentRight>
+        </ContentLeft>
+        <ContentRight>
           <HistoryContentContainer />
-        </RankContentRight>
-      </RankContentContainer>
+        </ContentRight>
+      </ContentContainer>
       <ToastContainer />
     </PageContainer>
 );
