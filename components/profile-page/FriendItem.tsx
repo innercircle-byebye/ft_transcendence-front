@@ -108,7 +108,7 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
           </button>
         ) : ''}
       </span>
-      <span className="col-span-1 bg-sky-300">
+      <span className="col-span-1 bg-red-300">
         {
           (() => {
             if (friendData.status === 'online') {
