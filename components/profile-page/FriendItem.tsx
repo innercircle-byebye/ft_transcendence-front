@@ -43,6 +43,18 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
     });
   }, [friendData.nickname, friendData.userId]);
 
+  const onClickCancelReqFriend = useCallback(() => {
+    axios.delete(`/api/friend/${friendData.userId}/request_cancel`, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      toast.success(`${friendData.nickname}님께 보낸 친구요청을 취소했습니다.`, { position: 'bottom-right', theme: 'colored' });
+    }).catch(() => {
+      toast.error(`${friendData.nickname}님께 보낸 친구요청취소하기에 실패했습니다..`, { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [friendData.nickname, friendData.userId]);
+
   const onClickCancelBlockUser = useCallback(() => {
     axios.delete(`/api/block/${friendData.userId}`, {
       headers: {
@@ -56,14 +68,47 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
   }, [friendData.nickname, friendData.userId]);
 
   return (
-    <div className="bg-amber-50 text-xl rounded-md px-5 py-2 grid grid-cols-6 justify-items-center">
-      <span>
-        {friendData.nickname}
+    <div className="bg-amber-50 text-md rounded-md px-5 py-2 grid grid-cols-6 justify-items-center">
+      <span className="col-span-1">
+        {`${friendData.nickname} [${listType !== 'blockedList' ? friendData.status : null}]`}
       </span>
-      <span>
-        {listType !== 'blockedList' ? friendData.status : null}
+      <span className="col-span-2" />
+      <span className="col-span-1">
+        {listType === 'friendList' ? (
+          <button
+            type="button"
+            onClick={() => {
+              onClickDeleteFriend();
+              mutate('/api/friend/list');
+            }}
+          >
+            친구 삭제하기
+          </button>
+        ) : ''}
+        {listType === 'friendNewList' ? (
+          <button
+            type="button"
+            onClick={() => {
+              onClickAcceptFriend();
+              mutate('/api/friend/new');
+            }}
+          >
+            요청 수락하기
+          </button>
+        ) : ''}
+        {listType === 'friendWaitList' ? (
+          <button
+            type="button"
+            onClick={() => {
+              onClickCancelReqFriend();
+              mutate('/api/friend/wait');
+            }}
+          >
+            요청 취소하기
+          </button>
+        ) : ''}
       </span>
-      <span>
+      <span className="col-span-1 bg-sky-300">
         {
           (() => {
             if (listType !== 'blockedList') {
@@ -86,42 +131,19 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
           })()
         }
       </span>
-      {listType === 'friendList' ? (
-        <button
-          type="button"
-          onClick={() => {
-            onClickDeleteFriend();
-            mutate('/api/friend/list');
-          }}
-        >
-          친구 삭제하기
-        </button>
-      ) : ''}
-      <span>
-        {listType === 'friendNewList' ? (
+      <span className="col-span-1 bg-sky-300">
+        {listType !== 'blockedList' ? (<button type="button" onClick={onClickSendDM}>DM보내기</button>) : (
           <button
             type="button"
             onClick={() => {
-              onClickAcceptFriend();
-              mutate('/api/friend/new');
+              onClickCancelBlockUser();
+              mutate('/api/block/list');
             }}
           >
-            요청 수락하기
+            차단 해제하기
           </button>
-        ) : ''}
+        )}
       </span>
-      {listType !== 'blockedList' ? (<button type="button" onClick={onClickSendDM}> DM보내기 </button>) : null}
-      {listType === 'blockedList' ? (
-        <button
-          type="button"
-          onClick={() => {
-            onClickCancelBlockUser();
-            mutate('/api/block/list');
-          }}
-        >
-          차단 해제하기
-        </button>
-      ) : null}
     </div>
   );
 };

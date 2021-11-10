@@ -11,7 +11,7 @@ const FriendListCard: VFC = () => {
     setClickedItem(list);
   };
   return (
-    <div>
+    <div className="w-full">
       <div className="flex items-end justify-left">
         <button
           type="button"
@@ -47,11 +47,6 @@ const FriendListCard: VFC = () => {
         {clickedItem === 'friendNewList' ? <FriendNewList /> : null}
         {clickedItem === 'friendWaitList' ? <FriendWaitList /> : null}
         {clickedItem === 'BlockedList' ? <BlockedList /> : null}
-        {/* <HistoryItem />
-        <HistoryItem />
-        <HistoryItem />
-        <HistoryItem />
-        <HistoryItem /> */}
       </div>
     </div>
   );
