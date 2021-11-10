@@ -69,8 +69,8 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
 
   return (
     <div className="bg-amber-50 text-md rounded-md px-5 py-2 grid grid-cols-6 justify-items-center">
-      <span className="col-span-1">
-        {`${friendData.nickname} [${listType !== 'blockedList' ? friendData.status : null}]`}
+      <span className="col-span-1 justify-self-start">
+        {`${friendData.nickname} [${friendData.status}]`}
       </span>
       <span className="col-span-2" />
       <span className="col-span-1">
@@ -111,21 +111,19 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
       <span className="col-span-1 bg-sky-300">
         {
           (() => {
-            if (listType !== 'blockedList') {
-              if (friendData.status === 'online') {
-                return (
-                  <>
-                    <button type="button" onClick={onClickInviteGame}>게임신청</button>
-                  </>
-                );
-              }
-              if (friendData.status === 'in_game') {
-                return (
-                  <>
-                    <button type="button">관전하기</button>
-                  </>
-                );
-              }
+            if (friendData.status === 'online') {
+              return (
+                <>
+                  <button type="button" onClick={onClickInviteGame}>게임신청</button>
+                </>
+              );
+            }
+            if (friendData.status === 'in_game') {
+              return (
+                <>
+                  <button type="button">관전하기</button>
+                </>
+              );
             }
             return (null);
           })()

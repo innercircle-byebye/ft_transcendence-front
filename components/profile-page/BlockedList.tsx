@@ -1,8 +1,8 @@
 import React, { VFC } from 'react';
 import useSWR from 'swr';
 import { IUser } from '@/typings/db';
-import FriendItem from './FriendItem';
 import fetcher from '@/utils/fetcher';
+import BlockedItem from './BlockedItem';
 
 // interface IProps {
 //   userId: number;
@@ -17,9 +17,7 @@ const BlockedList: VFC = () => {
     <div className="space-y-3">
       {blockedData?.map((data) => (
         <>
-          <li>
-            <FriendItem friendData={data} listType="blockedList" />
-          </li>
+          <BlockedItem blockedData={data} />
         </>
       ))}
     </div>
