@@ -7,9 +7,10 @@ import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
-import { IGameScreenData, IGameUpdateData } from '@/typings/db';
+import { IGameChat, IGameScreenData, IGameUpdateData } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 import useInput from '@/hooks/useInput';
+import GameChatList from '@/components/play-room-page/GameChatList';
 
 const Room = ({
   userInitialData,
@@ -174,12 +175,16 @@ const Room = ({
     document.addEventListener('keydown', onKeyDown);
   }, [onKeyDown, onKeyUp]);
 
+  const [gameChatListData, setGameChatListData] = useState<IGameChat[]>([]);
+
   // chat event 받아오기
   useEffect(() => {
-    socket?.on('gameChat', (data) => {
+    socket?.on('gameChat', (data: IGameChat) => {
       console.log('gameChat data', data);
+      gameChatListData.push(data);
+      setGameChatListData(gameChatListData);
     });
-  }, [socket]);
+  }, [gameChatListData, socket]);
 
   return (
     <div className="flex justify-center">
@@ -235,6 +240,9 @@ const Room = ({
               <div>
                 채팅입니다.
                 chatting list
+                <GameChatList
+                  gameChatList={gameChatListData}
+                />
                 <ChatInputBox
                   onKeyPressHandler={onKeyPressHandler}
                   gameChat={gameChat}
