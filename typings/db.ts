@@ -122,6 +122,7 @@ export interface IGameChat {
   type: string;
   nickname: string;
   content: string;
+  index : number;
 }
 
 export interface IGameMember {
