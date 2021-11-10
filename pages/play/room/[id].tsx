@@ -9,6 +9,7 @@ import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
 import { IGameScreenData, IGameUpdateData } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
+import useInput from '@/hooks/useInput';
 
 const Room = ({
   userInitialData,
@@ -22,10 +23,14 @@ const Room = ({
   const [initData, setInitData] = useState<IGameScreenData | null>(null);
   const [updateData, setUpdateData] = useState<IGameUpdateData[] | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [gameChat, onChangeGameChat, setGameChat] = useInput('');
 
   useEffect(() => {
     socket?.on('initSetting', (data: IGameScreenData) => {
       setInitData(data);
+      setIsReady1P(false);
+      setIsReady2P(false);
+      setIsPlaying(false);
       console.log('initData', data);
       // ready 상태 알려주면 그걸로 ready setting 해야합니다.
     });
@@ -110,7 +115,7 @@ const Room = ({
       setIsReady1P(false);
       setIsReady2P(false);
     });
-  });
+  }, [socket]);
 
   const onKeyUp = useCallback(
     (e) => {
@@ -133,7 +138,8 @@ const Room = ({
 
   const onKeyDown = useCallback(
     (e) => {
-      e.preventDefault();
+      // e.preventDefault();
+      // e.stopPropagation();
       // console.log('keydown event', e);
       // 방향키 위쪽
       if (e.keyCode === 38) {
@@ -143,28 +149,21 @@ const Room = ({
       } else if (e.keyCode === 40) {
         console.log('key down 아래');
         socket?.emit('keyDown', e.keyCode);
-      } else if (e.code === 'Space') {
-        console.log('key down space');
+      } else if (e.key === 'Enter') {
+        // console.log('target value', e.target.value);
+        socket?.emit('gameChat', { content: e.target.value });
+        setGameChat('');
+      } else {
+        onChangeGameChat(e);
       }
     },
-    [socket],
+    [onChangeGameChat, setGameChat, socket],
   );
 
   useEffect(() => {
     document.addEventListener('keyup', onKeyUp);
     document.addEventListener('keydown', onKeyDown);
   }, [onKeyDown, onKeyUp]);
-
-  // [id] 로 이동시키자
-  const onKeyPressHandler = useCallback(
-    (e) => {
-      e.preventDefault();
-      if (e.key === 'Enter') {
-        socket?.emit('gameChat', e.target.value);
-      }
-    },
-    [socket],
-  );
 
   // chat event 받아오기
   useEffect(() => {
@@ -228,7 +227,9 @@ const Room = ({
                 채팅입니다.
                 chatting list
                 <ChatInputBox
-                  onKeyPressHandler={onKeyPressHandler}
+                  onKeyPressHandler={onKeyDown}
+                  gameChat={gameChat}
+                  onChangeGameChat={onChangeGameChat}
                 />
               </div>
             ) : (
