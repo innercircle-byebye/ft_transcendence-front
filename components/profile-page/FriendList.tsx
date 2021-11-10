@@ -16,9 +16,7 @@ const FriendList: VFC = () => {
     <div className="space-y-3">
       {friendData?.map((data) => (
         <>
-          <li>
-            <FriendItem friendData={data} listType="friendList" />
-          </li>
+          <FriendItem friendData={data} listType="friendList" />
         </>
       ))}
     </div>

@@ -1,4 +1,8 @@
-import { VFC } from 'react';
+import { useCallback, VFC } from 'react';
+import { useRouter } from 'next/router';
+import { mutate } from 'swr';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import { IUser } from '@/typings/db';
 
 interface IProps {
@@ -7,30 +11,49 @@ interface IProps {
 }
 
 const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
-  // const [isPlayerOne, setIsPlayerOne] = useState<boolean | null>(null);
-  // const [result, setResult] = useState<string | null>(null);
+  const router = useRouter();
+  const onClickSendDM = useCallback(() => {
+    router.push(`/chat/dm/${friendData.nickname}`);
+  }, [friendData.nickname, router]);
+  const onClickInviteGame = useCallback(() => {
+    router.push(`/play/create-room?invite=${friendData.userId}`);
+  }, [friendData.userId, router]);
 
-  // useEffect(() => {
-  //   if (name) {
-  //     if (name === historyData.playerOneNickname) {
-  //       setIsPlayerOne(true);
-  //     } else {
-  //       setIsPlayerOne(false);
-  //     }
-  //   }
-  // }, [historyData.playerOneId, historyData.playerOneNickname, name]);
+  const onClickDeleteFriend = useCallback(() => {
+    axios.delete(`/api/friend/${friendData.userId}`, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      toast.success(`${friendData.nickname}님께 보낸 친구요청을 취소했습니다.`, { position: 'bottom-right', theme: 'colored' });
+    }).catch(() => {
+      toast.error(`${friendData.nickname}님께 보낸 친구요청취소하기에 실패했습니다..`, { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [friendData.nickname, friendData.userId]);
 
-  // useEffect(() => {
-  //   if (isPlayerOne !== null) {
-  //     if (isPlayerOne && historyData.playerOneScore > historyData.playerTwoScore) {
-  //       setResult('승');
-  //     } else {
-  //       setResult('패');
-  //     }
-  //   }
-  // }, [historyData.playerOneScore, historyData.playerTwoScore, isPlayerOne]);
+  const onClickAcceptFriend = useCallback(() => {
+    axios.patch(`/api/friend/${friendData.userId}/approve`, {}, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      toast.success(`${friendData.nickname}님에게 친구요청을 수락했습니다.`, { position: 'bottom-right', theme: 'colored' });
+    }).catch(() => {
+      toast.error(`${friendData.nickname}님에게 친구요청을 수락에 실패했습니다..`, { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [friendData.nickname, friendData.userId]);
 
-  console.log(`${friendData.nickname} ${friendData.status}`);
+  const onClickCancelBlockUser = useCallback(() => {
+    axios.delete(`/api/block/${friendData.userId}`, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      toast.success(`${friendData.nickname}님을 차단을 풀었습니다.`, { position: 'bottom-right', theme: 'colored' });
+    }).catch(() => {
+      toast.error(`${friendData.nickname}님 차단풀기에 실패했습니다.`, { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [friendData.nickname, friendData.userId]);
 
   return (
     <div className="bg-amber-50 text-xl rounded-md px-5 py-2 grid grid-cols-6 justify-items-center">
@@ -41,22 +64,64 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
         {listType !== 'blockedList' ? friendData.status : null}
       </span>
       <span>
-        {listType === 'friendNewList' ? '요청 수락하기' : ''}
-      </span>
-      <span>
         {
           (() => {
             if (listType !== 'blockedList') {
-              if (friendData.status === 'online') return ('게임신청');
-              if (friendData.status === 'in_game') return ('관전하기');
+              if (friendData.status === 'online') {
+                return (
+                  <>
+                    <button type="button" onClick={onClickInviteGame}>게임신청</button>
+                  </>
+                );
+              }
+              if (friendData.status === 'in_game') {
+                return (
+                  <>
+                    <button type="button">관전하기</button>
+                  </>
+                );
+              }
             }
             return (null);
           })()
         }
       </span>
+      {listType === 'friendList' ? (
+        <button
+          type="button"
+          onClick={() => {
+            onClickDeleteFriend();
+            mutate('/api/friend/list');
+          }}
+        >
+          친구 삭제하기
+        </button>
+      ) : ''}
       <span>
-        {listType === 'blockedList' ? '차단하기' : null}
+        {listType === 'friendNewList' ? (
+          <button
+            type="button"
+            onClick={() => {
+              onClickAcceptFriend();
+              mutate('/api/friend/new');
+            }}
+          >
+            요청 수락하기
+          </button>
+        ) : ''}
       </span>
+      {listType !== 'blockedList' ? (<button type="button" onClick={onClickSendDM}> DM보내기 </button>) : null}
+      {listType === 'blockedList' ? (
+        <button
+          type="button"
+          onClick={() => {
+            onClickCancelBlockUser();
+            mutate('/api/block/list');
+          }}
+        >
+          차단 해제하기
+        </button>
+      ) : null}
     </div>
   );
 };

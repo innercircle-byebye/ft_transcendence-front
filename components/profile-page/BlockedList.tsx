@@ -2,6 +2,7 @@ import React, { VFC } from 'react';
 import useSWR from 'swr';
 import { IUser } from '@/typings/db';
 import FriendItem from './FriendItem';
+import fetcher from '@/utils/fetcher';
 
 // interface IProps {
 //   userId: number;
@@ -10,7 +11,7 @@ import FriendItem from './FriendItem';
 // }
 
 const BlockedList: VFC = () => {
-  const { data: blockedData } = useSWR<IUser[]>('/api/block/list');
+  const { data: blockedData } = useSWR<IUser[]>('/api/block/list', fetcher);
 
   return (
     <div className="space-y-3">
