@@ -10,6 +10,7 @@ import ProfileCard from '@/components/ProfileCard';
 import RankItem from '@/components/profile-page/RankItem';
 import WinScore from '@/components/profile-page/WinScore';
 import HistoryList from '@/components/profile-page/HistoryList';
+import FriendList from '@/components/profile-page/FriendList';
 
 const Profile = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -35,6 +36,7 @@ const Profile = ({ userInitialData }
             <RankItem rankInfo={profileUserData.rankInfo} />
             <WinScore userId={profileUserData.userId} />
           </div>
+          <FriendList />
           <HistoryList />
         </div>
       </div>
