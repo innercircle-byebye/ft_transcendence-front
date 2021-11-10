@@ -128,9 +128,25 @@ export interface IGameRoom {
   gameRoomStatus: string;
 }
 
-export interface IGameResultWinRate{
+export interface IGameResultWinRate {
   totalPlayCount: number;
   winCount: number;
   loseCount: number;
   winRate: string;
+}
+
+export interface IGameResult {
+  gameResultId: number;
+  gameRoomId: number;
+  playerOneId: number;
+  playerTwoId: number;
+  playerOneScore: number;
+  playerTwoScore: number;
+  winPoint: number;
+  ballSpeed: string;
+  startAt: Date;
+  endAt: Date;
+  lastModifiedAt: Date | null;
+  playerOneNickname: string;
+  playerTwoNickname: string;
 }
