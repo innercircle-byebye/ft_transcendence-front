@@ -118,6 +118,12 @@ export interface IGameUpdateData {
   score: number;
 }
 
+export interface IGameChat {
+  type: string;
+  nickname: string;
+  content: string;
+}
+
 export interface IGameMember {
   userId: number;
   status: string;
