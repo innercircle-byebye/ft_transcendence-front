@@ -1,26 +1,83 @@
 import useSWR from 'swr';
 // import FriendItem from '@/components/main-page/FriendItem';
-import { IGameRoom } from '@/typings/db';
+import { useCallback, useEffect, useState } from 'react';
+import Image from 'next/image';
+import { IGameResultWinRate, IGameRoom, IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 
 const ObservableCard = () => {
-  const { data: observableData } = useSWR<IGameRoom>('/api/game/observable', fetcher);
+  const { data: observableData, revalidate } = useSWR<IGameRoom>('/api/game/observable', fetcher);
+  const [playerOneId, setPlayerOneId] = useState<number | null>(null);
+  const [playerTwoId, setPlayerTwoId] = useState<number | null>(null);
+
+  const { data: playerOne } = useSWR<IUser>(playerOneId ? `/api/user/${playerOneId}` : null, fetcher);
+  const { data: playerOneWinRate } = useSWR<IGameResultWinRate>(playerOneId ? `/api/game/${playerOneId}/win_rate` : null, fetcher);
+
+  const { data: playerTwo } = useSWR<IUser>(playerTwoId ? `/api/user/${playerTwoId}` : null, fetcher);
+  const { data: playerTwoWinRate } = useSWR<IGameResultWinRate>(playerTwoId ? `/api/game/${playerTwoId}/win_rate` : null, fetcher);
+
+  const onClickRefresh = useCallback(() => {
+    revalidate();
+  }, [revalidate]);
+
+  useEffect(() => {
+    if (observableData) {
+      const playablePlayerOneId = observableData.gameMembers.find((v) => v.status === 'player1')?.userId;
+      setPlayerOneId(playablePlayerOneId || null);
+
+      const playablePlayerTwoId = observableData.gameMembers.find((v) => v.status === 'player2')?.userId;
+      setPlayerTwoId(playablePlayerTwoId || null);
+    }
+  }, [observableData]);
 
   return (
-    <div className="rounded-xl bg-yellow-300 text-center flex flex-grow flex-col space-y-2">
-      {/* title */}
-      {/* <div className="text-white font-medium text-xl pt-3 pb-2">접속중인 친구목록</div> */}
-      {/* content list */}
-      <div className="flex flex-col  mx-4 py-2 space-y-2">
-        {/* {friendData?.map((item: IUser) => {
-          if (item.status === 'offline' || item.status === 'not_registed') {
-            return null;
-          }
-          return <FriendItem key={item.userId} nickname={item.nickname} />;
-        })} */}
-        <p>{observableData?.title}</p>
-        <p>{observableData?.gameMembers.find((v) => v.status === 'player1')?.nickname}</p>
-        <p>{observableData?.gameMembers.find((v) => v.status === 'player2')?.nickname}</p>
+    <div className="rounded-xl bg-yellow-500 text-center flex flex-grow flex-col space-y-2">
+      <div className="flex flex-row mx-4 py-2 space-y-2 space-x-2">
+        <div className="flex flex-col w-4/5">
+          <div className="flex flex-row rounded-xl items-center bg-yellow-100 ">
+            <div className="flex flex-col mx-auto items-center">
+              <div className="relative bg-blue-300 w-10 h-10 rounded-full shadow-lg">
+                <Image
+                  src={playerOne?.imagePath ? playerOne.imagePath : '/image/rank/bronze.jpg'}
+                  alt="previewImage"
+                  objectFit="cover"
+                  layout="fill"
+                  className="rounded-full"
+                />
+              </div>
+              <div className="w-auto flex-grow items-center">
+                <a className="text-lg">{playerOne?.nickname}</a>
+                <br />
+                {playerOne?.rankInfo.title}
+                <br />
+                {`승률 ${playerOneWinRate?.winRate}%`}
+              </div>
+            </div>
+            <div className="mx-6 text-lg">vs</div>
+            <div className="flex flex-col mx-auto  items-center">
+              <div className="relative bg-blue-300 w-10 h-10 rounded-full shadow-lg">
+                <Image
+                  src={playerTwo?.imagePath ? playerTwo.imagePath : '/image/rank/bronze.jpg'}
+                  alt="previewImage"
+                  objectFit="cover"
+                  layout="fill"
+                  className="rounded-full"
+                />
+              </div>
+              <div className="w-auto flex-grow items-center">
+                <a className="text-lg">{playerTwo?.nickname}</a>
+                <br />
+                {playerTwo?.rankInfo.title}
+                <br />
+                {`승률 ${playerTwoWinRate?.winRate}%`}
+              </div>
+            </div>
+          </div>
+          <button type="button" onClick={onClickRefresh} className="self-center flex flex-grow space-y-2 text-lg">refresh</button>
+        </div>
+        <div className="flex flex-col w-1/5">
+          <button type="button" className="rounded-xl bg-yellow-300 text-center flex flex-wrap space-y-2 text-4xl">빠른관전하기</button>
+        </div>
       </div>
     </div>
   );

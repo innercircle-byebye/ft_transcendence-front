@@ -26,9 +26,13 @@ const Home = ({
           <AnnouncementList />
         </div>
         <div className="col-span-2 space-y-10">
-          <div className="grid grid-cols-2 gap-10">
-            <PlayableCard />
-            <ObservableCard />
+          <div className="grid grid-cols-12 gap-8">
+            <div className="col-span-5">
+              <PlayableCard />
+            </div>
+            <div className="col-span-7">
+              <ObservableCard />
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-10">
             <OnlineFriendList />

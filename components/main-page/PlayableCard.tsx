@@ -26,10 +26,10 @@ const PlayableCard = () => {
   return (
     <div className="rounded-xl bg-red-500 text-center flex flex-grow flex-col space-y-2">
       <div className="flex flex-row mx-4 py-2 space-y-2 space-x-2">
-        <div className="flex flex-col w-4/5">
+        <div className="flex flex-col w-9/12">
           <div className="flex flex-row rounded-xl items-center bg-red-100 ">
-            <div className="mx-14">vs</div>
-            <div className="flex flex-col items-center">
+            <div className="mx-6 text-lg">vs</div>
+            <div className="flex flex-col mx-10 items-center">
               <div className="relative bg-blue-300 w-10 h-10 rounded-full shadow-lg">
                 <Image
                   src={playerOne?.imagePath ? playerOne.imagePath : '/image/rank/bronze.jpg'}
@@ -39,14 +39,18 @@ const PlayableCard = () => {
                   className="rounded-full"
                 />
               </div>
-              <p className="text-xl">{playerOne?.nickname}</p>
-              <p>{playerOne?.rankInfo.title}</p>
-              <p>{`승률 ${playerOneWinRate?.winRate}%`}</p>
+              <div className="w-auto flex-grow items-center">
+                <a className="text-lg">{playerOne?.nickname}</a>
+                <br />
+                {playerOne?.rankInfo.title}
+                <br />
+                {`승률 ${playerOneWinRate?.winRate}%`}
+              </div>
             </div>
           </div>
           <button type="button" onClick={onClickRefresh} className="self-center flex flex-grow space-y-2 text-lg">refresh</button>
         </div>
-        <div className="flex flex-col w-1/5">
+        <div className="flex flex-col w-3/12">
           <button type="button" className="rounded-xl bg-red-300 text-center flex flex-wrap space-y-2 text-4xl">빠른시작하기</button>
         </div>
       </div>
