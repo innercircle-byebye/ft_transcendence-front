@@ -12,7 +12,7 @@ const ChatInputBox: VFC<IProps> = ({
   <div>
     <input
       type="text"
-      className="w-full h-16 rounded-sm text-gray-900"
+      className="w-full h-1/12 rounded-sm text-gray-900"
       onChange={onChangeGameChat}
       onKeyPress={onKeyPressHandler}
       placeholder="아무거나 쓰셔"

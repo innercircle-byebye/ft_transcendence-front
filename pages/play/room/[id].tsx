@@ -163,8 +163,8 @@ const Room = ({
         // console.log('enter game chat', gameChat);
         if (gameChat && gameChat.trim()) {
           socket?.emit('gameChat', { content: gameChat });
+          setGameChat('');
         }
-        setGameChat('');
       }
     },
     [gameChat, setGameChat, socket],
@@ -181,6 +181,7 @@ const Room = ({
   useEffect(() => {
     socket?.on('gameChat', (data: IGameChat) => {
       console.log('gameChat data', data);
+      // gameChatList 추가
       gameChatListData.push(data);
       setGameChatListData(gameChatListData);
     });
@@ -235,11 +236,9 @@ const Room = ({
               participant
             </button>
           </div>
-          <div>
+          <div className="h-11/12">
             {isChatting ? (
-              <div>
-                채팅입니다.
-                chatting list
+              <div className="h-full">
                 <GameChatList
                   gameChatList={gameChatListData}
                 />

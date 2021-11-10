@@ -7,20 +7,17 @@ interface IProps {
 
 const GameChatList: VFC<IProps> = ({
   gameChatList,
-}) => {
-  console.log('chat data', gameChatList);
+}) => (
+  <div className="w-full h-11/12 max-h-11/12 bg-amber-100 overflow-y-auto">
+    {gameChatList.map((item: IGameChat) => (
+      <div
+        key={item.index}
+        className="pl-2 font-medium"
+      >
+        {`${item.nickname} : ${item.content}`}
+      </div>
+    ))}
+  </div>
+);
 
-  return (
-    <div className="w-full h-11/12 bg-amber-100">
-      {gameChatList.map((item: IGameChat) => (
-        <div
-          key={1}
-          className="pl-2 font-medium"
-        >
-          {`${item.nickname} : ${item.content}`}
-        </div>
-      ))}
-    </div>
-  );
-};
 export default GameChatList;
