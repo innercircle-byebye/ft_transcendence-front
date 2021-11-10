@@ -1,7 +1,6 @@
 import React, { useState, VFC } from 'react';
-import HistoryItem from './HistoryItem';
 
-const FriendList: VFC = () => {
+const FriendListCard: VFC = () => {
   const [clickedItem, setClickedItem] = useState('friendList');
 
   const handleClick = (list: string) => {
@@ -40,14 +39,18 @@ const FriendList: VFC = () => {
         </button>
       </div>
       <div className="bg-sky-700 p-5 space-y-5 rounded-r-md rounded-bl-md">
+        {clickedItem === 'friendList' ? 'friendList' : null}
+        {clickedItem === 'friendReceivedList' ? 'friendReceivedList' : null}
+        {clickedItem === 'friendSentList' ? 'friendSentList' : null}
+        {clickedItem === 'friendBlockedList' ? 'friendBlockedList' : null}
+        {/* <HistoryItem />
         <HistoryItem />
         <HistoryItem />
         <HistoryItem />
-        <HistoryItem />
-        <HistoryItem />
+        <HistoryItem /> */}
       </div>
     </div>
   );
 };
 
-export default FriendList;
+export default FriendListCard;
