@@ -1,6 +1,7 @@
 import React, { VFC } from 'react';
 import useSWR from 'swr';
 import { IUser } from '@/typings/db';
+import FriendItem from './FriendItem';
 
 // interface IProps {
 //   userId: number;
@@ -16,7 +17,7 @@ const FriendList: VFC = () => {
       {friendData?.map((data) => (
         <>
           <li>
-            {`${data.nickname} ${data.status}`}
+            <FriendItem friendData={data} listType="friendList" />
           </li>
         </>
       ))}
