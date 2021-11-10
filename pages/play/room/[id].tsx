@@ -149,15 +149,24 @@ const Room = ({
       } else if (e.keyCode === 40) {
         console.log('key down 아래');
         socket?.emit('keyDown', e.keyCode);
-      } else if (e.key === 'Enter') {
-        // console.log('target value', e.target.value);
-        socket?.emit('gameChat', { content: e.target.value });
-        setGameChat('');
-      } else {
-        onChangeGameChat(e);
       }
     },
-    [onChangeGameChat, setGameChat, socket],
+    [socket],
+  );
+
+  // enter key press event handler
+  const onKeyPressHandler = useCallback(
+    (e) => {
+      if (e.key === 'Enter') {
+        // console.log('enter game chat', e.target.value);
+        // console.log('enter game chat', gameChat);
+        if (gameChat && gameChat.trim()) {
+          socket?.emit('gameChat', { content: gameChat });
+        }
+        setGameChat('');
+      }
+    },
+    [gameChat, setGameChat, socket],
   );
 
   useEffect(() => {
@@ -227,7 +236,7 @@ const Room = ({
                 채팅입니다.
                 chatting list
                 <ChatInputBox
-                  onKeyPressHandler={onKeyDown}
+                  onKeyPressHandler={onKeyPressHandler}
                   gameChat={gameChat}
                   onChangeGameChat={onChangeGameChat}
                 />
