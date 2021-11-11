@@ -134,6 +134,12 @@ export interface IGameChat {
   index : number;
 }
 
+export interface IParticipant {
+  key: number;
+  role: string;
+  nickname: string;
+}
+
 export interface IGameMember {
   userId: number;
   status: string;
