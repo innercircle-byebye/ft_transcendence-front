@@ -2,6 +2,9 @@ import React, {
   useCallback, useEffect, useRef, useState, VFC,
 } from 'react';
 import regexifyString from 'regexify-string';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
 import useInput from '@/hooks/useInput';
 import MentionMember from '@/components/chat-page/common/MentionMember';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
@@ -18,6 +21,8 @@ interface IProps {
 }
 
 const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMemberData }) => {
+  const router = useRouter();
+  const channelName = router.query.name;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [inviteMember, onChangeInviteMember, setInviteMember] = useInput('');
   const [inviteMembers, setInviteMembers] = useState<IInviteMember[]>([]);
@@ -28,8 +33,22 @@ const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMember
   }, []);
 
   const onClickInvite = useCallback(() => {
-    console.log('invite members');
-  }, []);
+    console.log('invite');
+    if (inviteMembers.length > 0) {
+      axios.post(`/api/channel/${channelName}/invite`, {
+        invitedUsers: inviteMembers,
+      }, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        setInviteMembers([]);
+        toast.success('초대하기 dm을 보냈습니다.', { position: 'bottom-right', theme: 'colored' });
+      }).catch(() => {
+        toast.error('초대하기를 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
+      });
+    }
+  }, [channelName, inviteMembers]);
 
   useEffect(() => {
     if (channelData?.maxParticipantNum && channelMemberData?.length) {
@@ -58,7 +77,7 @@ const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMember
   }, [inviteMember, inviteMembers, setInviteMember]);
 
   return (
-    <div className="absolute bg-sky-700 top-32 right-10 w-auto h-auto flex flex-col items-center p-6 space-y-3">
+    <div className="absolute bg-sky-700 top-7 right-16 w-auto h-auto flex flex-col items-center p-6 space-y-3">
       <div className="text-2xl font-bold text-amber-50 pb-1">멤버 초대하기</div>
       <div className="w-36 bg-gray-100 rounded-full">
         <div className="flex flex-row pl-4">

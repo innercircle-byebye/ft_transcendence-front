@@ -35,7 +35,7 @@ const ChatItem: FC<Props> = ({ chatData }) => {
   );
 
   return (
-    <div className="flex flex-row">
+    <div className="flex flex-row w-full">
       <div className="relative bg-blue-300 w-10 h-10 mr-2">
         <Image
           src={chatData.imagePath}
@@ -45,12 +45,16 @@ const ChatItem: FC<Props> = ({ chatData }) => {
           className="rounded-md"
         />
       </div>
-      <div>
+      <div className="flex-1">
         <div className="space-x-2">
-          <b>{chatData.nickname}</b>
+          <Link href={`/profile?name=${chatData.nickname}`}>
+            <a className="font-bold">
+              {chatData.nickname}
+            </a>
+          </Link>
           <span className="text-sm text-gray-700">{dayjs(chatData.createdAt).format('h:mm A')}</span>
         </div>
-        <p>{result}</p>
+        <p className="w-full">{result}</p>
       </div>
     </div>
   );

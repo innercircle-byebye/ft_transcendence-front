@@ -21,7 +21,7 @@ const UserInfoMenu = () => {
   }, []);
 
   return (
-    <div className="relative text-white">
+    <div className="relative text-white z-20">
       <Menu>
         <Menu.Button className="flex items-center">
           <MenuIcon className="w-8 h-8" />
