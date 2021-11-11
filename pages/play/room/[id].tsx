@@ -56,19 +56,23 @@ const Room = ({
       }
       if (data.player1Ready) {
         setIsReady1P(true);
-      } else {
-        setIsReady1P(false);
       }
+      // else {
+      //   setIsReady1P(false);
+      // }
       if (data.player2Ready) {
         setIsReady2P(true);
-      } else {
-        setIsReady2P(false);
       }
-      setIsPlaying(false);
+      // else {
+      //   setIsReady2P(false);
+      // }
       // set participant data
       setParticipantListData(setParticipantData, data);
     });
-    socket?.emit('joinGameRoom', { roomId: router.query.id, userId: userInitialData.userId });
+    socket?.emit('joinGameRoom', {
+      roomId: router.query.id,
+      userId: userInitialData.userId,
+    });
     return () => {
       disconnect();
     };
@@ -102,40 +106,41 @@ const Room = ({
     });
   });
 
-  const onClickExit = useCallback(
-    () => {
-      // disconnect();
-      router.push('/play');
-    },
-    [router],
-  );
+  // 나가기 button event handler
+  const onClickExit = useCallback(() => {
+    // disconnect();
+    router.push('/play');
+  }, [router]);
+
+  // 관전하기 참여하기 button event handler
+  const onClickMove = useCallback(() => {
+    if (myRole === 'observer') {
+      socket?.emit('toPlayer');
+    } else {
+      socket?.emit('toObserver');
+    }
+  }, [myRole, socket]);
 
   // Ready event
-  const onClickReady1P = useCallback(
-    () => {
-      if (isReady1P) {
-        setIsReady1P(false);
-        socket?.emit('unReady');
-      } else {
-        setIsReady1P(true);
-        socket?.emit('ready');
-      }
-    },
-    [isReady1P, socket],
-  );
+  const onClickReady1P = useCallback(() => {
+    if (isReady1P) {
+      setIsReady1P(false);
+      socket?.emit('unReady');
+    } else {
+      setIsReady1P(true);
+      socket?.emit('ready');
+    }
+  }, [isReady1P, socket]);
 
-  const onClickReady2P = useCallback(
-    () => {
-      if (isReady2P) {
-        setIsReady2P(false);
-        socket?.emit('unReady');
-      } else {
-        setIsReady2P(true);
-        socket?.emit('ready');
-      }
-    },
-    [isReady2P, socket],
-  );
+  const onClickReady2P = useCallback(() => {
+    if (isReady2P) {
+      setIsReady2P(false);
+      socket?.emit('unReady');
+    } else {
+      setIsReady2P(true);
+      socket?.emit('ready');
+    }
+  }, [isReady2P, socket]);
 
   // set isPlaying
   useEffect(() => {
@@ -167,7 +172,7 @@ const Room = ({
       if (e.keyCode === 38) {
         console.log('key up 위');
         socket?.emit('keyUp', e.keyCode);
-      // 뱡향키 아래
+        // 뱡향키 아래
       } else if (e.keyCode === 40) {
         console.log('key up 아래');
         socket?.emit('keyUp', e.keyCode);
@@ -187,7 +192,7 @@ const Room = ({
       if (e.keyCode === 38) {
         console.log('key down 위');
         socket?.emit('keyDown', e.keyCode);
-      // 뱡향키 아래
+        // 뱡향키 아래
       } else if (e.keyCode === 40) {
         console.log('key down 아래');
         socket?.emit('keyDown', e.keyCode);
@@ -249,9 +254,7 @@ const Room = ({
       <div className="w-1/4 bg-amber-100">
         {/* 제목이 수평 기준으로 center 정렬이 되는데, 수직기준으로 center 정렬이 안됩니다... 어찌하는 거지?! */}
         <div className="bg-gray-400 h-1/12 flex text-center justify-center items-center">
-          <div>
-            {`# ${roomNumber} 방제목 api 로 받아서 사용하시오`}
-          </div>
+          <div>{`# ${roomNumber} 방제목 api 로 받아서 사용하시오`}</div>
         </div>
         <div className="bg-red-300 h-1/4">
           {/* player Info */}
@@ -261,7 +264,12 @@ const Room = ({
         <div className="bg-green-300 h-1/12">
           {/* play room buttons */}
           {/* 3button opt & replace & exit */}
-          <RoomButtonList onClickExit={onClickExit} />
+          <RoomButtonList
+            myRole={myRole}
+            isPlaying={isPlaying}
+            onClickExit={onClickExit}
+            onClickMove={onClickMove}
+          />
         </div>
         <div className="bg-sky-300 h-7/12">
           {/* participant chatting swap button */}
@@ -269,14 +277,18 @@ const Room = ({
             <button
               type="button"
               onClick={() => setIsChatting(true)}
-              className={`w-1/2 ${isChatting && 'bg-sky-200'} ${!isChatting && 'bg-gray-400'}`}
+              className={`w-1/2 ${isChatting && 'bg-sky-200'} ${
+                !isChatting && 'bg-gray-400'
+              }`}
             >
               chatting
             </button>
             <button
               type="button"
               onClick={() => setIsChatting(false)}
-              className={`w-1/2 ${!isChatting && 'bg-sky-200'} ${isChatting && 'bg-gray-400'}`}
+              className={`w-1/2 ${!isChatting && 'bg-sky-200'} ${
+                isChatting && 'bg-gray-400'
+              }`}
             >
               participant
             </button>
@@ -284,9 +296,7 @@ const Room = ({
           <div className="h-11/12">
             {isChatting ? (
               <div className="h-full">
-                <GameChatList
-                  gameChatList={gameChatListData}
-                />
+                <GameChatList gameChatList={gameChatListData} />
                 <ChatInputBox
                   onKeyPressHandler={onKeyPressHandler}
                   gameChat={gameChat}
@@ -295,9 +305,7 @@ const Room = ({
               </div>
             ) : (
               <div className="h-full">
-                <ParticipantList
-                  participantData={participantData}
-                />
+                <ParticipantList participantData={participantData} />
               </div>
             )}
           </div>
