@@ -7,6 +7,7 @@ import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { toast, ToastContainer } from 'react-toastify';
 import Scrollbars from 'react-custom-scrollbars-2';
+import dayjs from 'dayjs';
 import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
@@ -64,6 +65,11 @@ const Channel = ({
   const onSubmitChat = useCallback(
     (e) => {
       e.preventDefault();
+      const myChannelMemberData = channelMemberData?.find((v) => v.userId === userData?.userId);
+      if (myChannelMemberData?.mutedDate) {
+        toast.error(`${dayjs(myChannelMemberData.mutedDate).format('YYYY-MM-DD h:mm A')}까지 채팅금지입니다.`, { position: 'bottom-right', theme: 'colored' });
+        return;
+      }
       if (chat?.trim() && channelChatData && channelData && userData) {
         const savedChat = chat;
         mutateChat((prevChatData) => {
@@ -95,7 +101,8 @@ const Channel = ({
         }).catch(console.error);
       }
     },
-    [chat, channelChatData, channelData, userData, mutateChat, channelName, setChat],
+    [channelChatData, channelData, channelMemberData, channelName, chat,
+      mutateChat, setChat, userData],
   );
 
   const onMessage = useCallback(

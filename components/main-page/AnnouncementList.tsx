@@ -24,7 +24,7 @@ const AnnouncementList = () => {
   };
 
   return (
-    <div className="bg-gray-700 flex flex-col w-1/5 h-1/4 text-center py-6 space-y-6 rounded-2xl">
+    <div className="bg-gray-700 flex flex-col text-center py-6 space-y-6 rounded-2xl">
       <div className="flex flex-row h-1/5 space-x-6 text-white justify-center items-center">
         <div className="w-4 h-4">
           <SpeakerphoneIcon />
