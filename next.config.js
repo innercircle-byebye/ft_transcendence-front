@@ -15,10 +15,6 @@ module.exports = {
         destination: `http://back-nestjs:${process.env.BACK_PORT}/auth/:path*`,
       },
       {
-        source: '/profile_image/:path*',
-        destination: `http://back-nestjs:${process.env.BACK_PORT}/profile_image/:path*`,
-      },
-      {
         source: '/image/:path*',
         destination: `http://back-nestjs:${process.env.BACK_PORT}/image/:path*`,
       },

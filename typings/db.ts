@@ -1,3 +1,10 @@
+export interface IRankInfo {
+  rankId: number;
+  title: string;
+  imagePath: string;
+  criteriaExperience: number;
+}
+
 export interface IUser {
   userId: number;
   email: string;
@@ -13,6 +20,7 @@ export interface IUser {
   createdAt: string;
   lastModifiedAt: string;
   deletedAt: string | null;
+  rankInfo: IRankInfo;
 }
 
 export interface IAnnouncement {
