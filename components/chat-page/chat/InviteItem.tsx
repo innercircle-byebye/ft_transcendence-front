@@ -1,44 +1,37 @@
-import React, { FC, useMemo } from 'react';
+import React, { FC, useCallback } from 'react';
 import Image from 'next/image';
-import regexifyString from 'regexify-string';
-import Link from 'next/link';
 import dayjs from 'dayjs';
-import { IChatItem } from '@/typings/db';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/router';
+import { IInviteItem } from '@/typings/db';
 
 interface Props {
-  chatData: IChatItem;
+  invitationData: IInviteItem;
 }
 
-const ChatItem: FC<Props> = ({ chatData }) => {
-  const result = useMemo(
-    () => (
-      regexifyString({
-        input: chatData.content,
-        pattern: /@\[(.+?)]\((\d+?)\)|\n/g,
-        decorator(match, index) {
-          const arr: string[] | null = match.match(/@\[(.+?)]\((\d+?)\)/);
-          if (arr) {
-            return (
-              <Link key={match + index} href={`/chat/dm/${arr[1]}`}>
-                <a className="bg-amber-400">
-                  @
-                  {arr[1]}
-                </a>
-              </Link>
-            );
-          }
-          return <br key={index} />;
-        },
-      })
-    ),
-    [chatData.content],
-  );
+const InviteItem: FC<Props> = ({ invitationData }) => {
+  const router = useRouter();
+  const onClickJoinGame = useCallback(() => {
+    axios.post(`/api/game/room/${invitationData?.targetId}/join`, {
+      role: 'player2',
+    }, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      router.push(`/play/room/${invitationData.targetId}`);
+    }).catch(() => {
+      console.log('error');
+      toast.error(`${invitationData.nickname}이 보낸 게임방 초대에 입장할 수 없습니다.`, { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [invitationData.nickname, invitationData.targetId, router]);
 
   return (
     <div className="flex flex-row w-full">
       <div className="relative bg-blue-300 w-10 h-10 mr-2">
         <Image
-          src={chatData.imagePath}
+          src={invitationData.imagePath}
           alt="previewImage"
           objectFit="cover"
           layout="fill"
@@ -47,12 +40,29 @@ const ChatItem: FC<Props> = ({ chatData }) => {
       </div>
       <div className="flex-1">
         <div className="space-x-2">
-          <b>{chatData.nickname}</b>
-          <span className="text-sm text-gray-700">{dayjs(chatData.createdAt).format('h:mm A')}</span>
+          <b>{invitationData.nickname}</b>
+          <span className="text-sm text-gray-700">{dayjs(invitationData.createdAt).format('h:mm A')}</span>
         </div>
-        <p className="w-full">{result}</p>
+        <span className="w-full font-bold">
+          {'님이 '}
+          {invitationData.type === 'channel_invite' ? '채널' : '게임으'}
+          로 초대합니다.
+          {' '}
+          {invitationData.type === 'channel_invite'
+            ? (
+              <button type="button">
+                채널
+              </button>
+            )
+            : (
+              <button type="button" onClick={onClickJoinGame}>
+                [게임 입장하기]
+              </button>
+            )}
+
+        </span>
       </div>
     </div>
   );
 };
-export default ChatItem;
+export default InviteItem;

@@ -11,6 +11,7 @@ import fetcher from '@/utils/fetcher';
 import useInput from '@/hooks/useInput';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
 import ChatItem from '@/components/chat-page/chat/ChatItem';
+import InviteItem from '@/components/chat-page/chat/InviteItem';
 
 const DM = () => {
   const router = useRouter();
@@ -101,18 +102,35 @@ const DM = () => {
         </div>
         <div className="flex-1">
           {
-            chatDatas?.slice(0).reverse().map((chatData) => (
-              <ChatItem
-                key={chatData.dmId}
-                chatData={{
-                  createdAt: chatData.createdAt,
-                  userId: chatData.sender.userId,
-                  nickname: chatData.sender.nickname,
-                  imagePath: chatData.sender.imagePath,
-                  content: chatData.content,
-                }}
-              />
-            ))
+            chatDatas?.slice(0).reverse().map((chatData) => {
+              if (chatData.type !== 'plain') {
+                return (
+                  <InviteItem
+                    key={chatData.dmId}
+                    invitationData={{
+                      createdAt: chatData.createdAt,
+                      userId: chatData.sender.userId,
+                      nickname: chatData.sender.nickname,
+                      type: chatData.type,
+                      imagePath: chatData.sender.imagePath,
+                      targetId: Number(chatData.content),
+                    }}
+                  />
+                );
+              }
+              return (
+                <ChatItem
+                  key={chatData.dmId}
+                  chatData={{
+                    createdAt: chatData.createdAt,
+                    userId: chatData.sender.userId,
+                    nickname: chatData.sender.nickname,
+                    imagePath: chatData.sender.imagePath,
+                    content: chatData.content,
+                  }}
+                />
+              );
+            })
           }
         </div>
         <ChatBox

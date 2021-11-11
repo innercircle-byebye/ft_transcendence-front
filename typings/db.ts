@@ -68,6 +68,14 @@ export interface IChatItem {
   createdAt: Date;
 }
 
+export interface IInviteItem {
+  userId: number;
+  nickname: string;
+  imagePath: string;
+  type: string;
+  targetId: number;
+  createdAt: Date;
+}
 export interface IChannelUser {
   nickname: string;
   imagePath: string;
