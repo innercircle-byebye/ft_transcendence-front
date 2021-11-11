@@ -119,3 +119,10 @@ export interface IGameRoom {
   currentMemberCount: number;
   gameRoomStatus: string;
 }
+
+export interface IGameResultWinRate{
+  totalPlayCount: number;
+  winCount: number;
+  loseCount: number;
+  winRate: string;
+}
