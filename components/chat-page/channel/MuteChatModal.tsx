@@ -69,9 +69,11 @@ const MuteChatModal: VFC<IProps> = ({
   }, [setMuteMember]);
 
   useEffect(() => {
-    setMuteDay(`${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()}`);
+    const month = current.getMonth() + 1 < 10 ? `0${current.getMonth() + 1}` : current.getMonth() + 1;
+    const date = current.getDate() < 10 ? `0${current.getDate()}` : current.getDate();
     const hours = current.getHours() < 10 ? `0${current.getHours()}` : current.getHours();
     const minutes = current.getMinutes() < 10 ? `0${current.getMinutes()}` : current.getMinutes();
+    setMuteDay(`${current.getFullYear()}-${month}-${date}`);
     setMuteTime(`${hours}:${minutes}:00`);
   }, [current, setMuteDay, setMuteTime]);
 
