@@ -7,11 +7,14 @@ import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
-import { IGameChat, IGameRoomData, IGameUpdateData } from '@/typings/db';
+import {
+  IGameChat, IGameRoomData, IGameUpdateData, IParticipant,
+} from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 import useInput from '@/hooks/useInput';
 import GameChatList from '@/components/play-room-page/GameChatList';
 import ParticipantList from '@/components/play-room-page/ParticipantList';
+import setParticipantListData from '@/utils/setParticipantListData';
 
 const Room = ({
   userInitialData,
@@ -32,12 +35,13 @@ const Room = ({
   const [isReady2P, setIsReady2P] = useState(false);
   // my role
   const [myRole, setMyRole] = useState<string>('');
+  // participant data
+  const [participantData, setParticipantData] = useState<IParticipant[]>([]);
 
   useEffect(() => {
     // initSetting -> gameRoomData
     socket?.on('gameRoomData', (data: IGameRoomData) => {
       console.log('gameRoomData', data);
-      // setGameRoomData(data);
       setName1P(data.participants.player1.nickname);
       setName2P(data.participants.player2.nickname);
       setMyRole(data.role);
@@ -46,14 +50,17 @@ const Room = ({
       }
       if (data.plyaer1Ready) {
         setIsReady1P(true);
+      } else {
+        setIsReady1P(false);
       }
       if (data.plyaer2Ready) {
         setIsReady2P(true);
+      } else {
+        setIsReady2P(false);
       }
-      // setIsReady1P(false);
-      // setIsReady2P(false);
       setIsPlaying(false);
-      // ready 상태 알려주면 그걸로 ready setting 해야합니다.
+      // set participant data
+      setParticipantListData(setParticipantData, data);
     });
     socket?.emit('joinGameRoom', { roomId: router.query.id, userId: userInitialData.userId });
     return () => {
@@ -275,7 +282,9 @@ const Room = ({
               </div>
             ) : (
               <div className="h-full">
-                <ParticipantList />
+                <ParticipantList
+                  participantData={participantData}
+                />
               </div>
             )}
           </div>
