@@ -2,8 +2,10 @@ import React, {
   forwardRef, MutableRefObject, useCallback,
 } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-import { IChannelChat } from '@/typings/db';
+import useSWR from 'swr';
+import { IChannelChat, IChannelMember } from '@/typings/db';
 import ChatItem from './ChatItem';
+import fetcher from '@/utils/fetcher';
 
 interface IProps {
   chatSections: { [key: string]: (IChannelChat)[] };
@@ -14,6 +16,8 @@ interface IProps {
 const ChatList = forwardRef<Scrollbars, IProps>((
   { chatSections, setSize, isReachingEnd }, scrollRef,
 ) => {
+  const { data: blockMemberData } = useSWR<IChannelMember[]>('/api/block/list', fetcher);
+
   const onScroll = useCallback(
     (values) => {
       if (values.scrollTop === 0 && !isReachingEnd) {
@@ -38,18 +42,23 @@ const ChatList = forwardRef<Scrollbars, IProps>((
                 {date}
               </button>
             </div>
-            {channelChatDatas.map((chat) => (
-              <ChatItem
-                key={chat.channelChatId + chat.createdAt.toString()}
-                chatData={{
-                  userId: chat.userId,
-                  nickname: chat.user.nickname,
-                  imagePath: chat.user.imagePath,
-                  content: chat.content,
-                  createdAt: chat.createdAt,
-                }}
-              />
-            ))}
+            {channelChatDatas.map((chat) => {
+              if (blockMemberData?.map((member) => member.userId).includes(chat.userId)) {
+                return null;
+              }
+              return (
+                <ChatItem
+                  key={chat.channelChatId}
+                  chatData={{
+                    userId: chat.userId,
+                    nickname: chat.user.nickname,
+                    imagePath: chat.user.imagePath,
+                    content: chat.content,
+                    createdAt: chat.createdAt,
+                  }}
+                />
+              );
+            })}
           </div>
         ))}
       </Scrollbars>

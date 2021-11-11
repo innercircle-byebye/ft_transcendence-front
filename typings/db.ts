@@ -116,6 +116,6 @@ export interface IGameRoom {
   deletedAt: Date | null;
   isPrivate: boolean;
   gameMembers: IGameMember[];
-  currentNumberCount: number;
+  currentMemberCount: number;
   gameRoomStatus: string;
 }
