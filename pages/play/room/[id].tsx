@@ -40,8 +40,8 @@ const Room = ({
       setName1P(data.participants.player1.nickname);
       setName2P(data.participants.player2.nickname);
       setMyRole(data.role);
-      setIsReady1P(false);
-      setIsReady2P(false);
+      // setIsReady1P(false);
+      // setIsReady2P(false);
       setIsPlaying(false);
       // ready 상태 알려주면 그걸로 ready setting 해야합니다.
     });
@@ -225,7 +225,7 @@ const Room = ({
         </div>
         <div className="bg-red-300 h-1/4">
           {/* player Info */}
-          <PlayerInfo player1={name1P} player2={name1P} />
+          <PlayerInfo player1={name1P} player2={name2P} />
           {/* 향후 전적 정보도 포함해주기 */}
         </div>
         <div className="bg-green-300 h-1/12">
