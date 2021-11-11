@@ -34,6 +34,8 @@ const Room = ({
   const [name2P, setName2P] = useState<string>('');
   const [isReady1P, setIsReady1P] = useState(false);
   const [isReady2P, setIsReady2P] = useState(false);
+  // const [info1P, setInfo1P] = useState<IUser>();
+  // const [info2P, setInfo2P] = useState<IUser>();
   // my role
   const [myRole, setMyRole] = useState<string>('');
   // participant data
@@ -246,7 +248,7 @@ const Room = ({
       {/* info screen */}
       <div className="w-1/4 bg-amber-100">
         {/* 제목이 수평 기준으로 center 정렬이 되는데, 수직기준으로 center 정렬이 안됩니다... 어찌하는 거지?! */}
-        <div className="bg-gray-400 h-1/12 text-center">
+        <div className="bg-gray-400 h-1/12 flex text-center justify-center items-center">
           <div>
             {`# ${roomNumber} 방제목 api 로 받아서 사용하시오`}
           </div>
