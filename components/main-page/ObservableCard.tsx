@@ -2,10 +2,14 @@ import useSWR from 'swr';
 // import FriendItem from '@/components/main-page/FriendItem';
 import { useCallback, useEffect, useState } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/router';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import { IGameResultWinRate, IGameRoom, IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 
 const ObservableCard = () => {
+  const router = useRouter();
   const { data: observableData, revalidate } = useSWR<IGameRoom>('/api/game/observable', fetcher);
   const [playerOneId, setPlayerOneId] = useState<number | null>(null);
   const [playerTwoId, setPlayerTwoId] = useState<number | null>(null);
@@ -19,6 +23,21 @@ const ObservableCard = () => {
   const onClickRefresh = useCallback(() => {
     revalidate();
   }, [revalidate]);
+
+  const onClickQuickObserve = useCallback(() => {
+    console.log('관전하기');
+    axios.post(`/api/game/room/${observableData?.gameRoomId}/join`, {
+      role: 'observer',
+    }, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      router.push(`/play/room/${observableData?.gameRoomId}`);
+    }).catch(() => {
+      toast.error('빠른관전 입장에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [observableData?.gameRoomId, router]);
 
   useEffect(() => {
     if (observableData) {
@@ -76,7 +95,7 @@ const ObservableCard = () => {
           <button type="button" onClick={onClickRefresh} className="self-center flex flex-grow space-y-2 text-lg">refresh</button>
         </div>
         <div className="flex flex-col w-1/5">
-          <button type="button" className="rounded-xl bg-yellow-300 text-center flex flex-wrap space-y-2 text-4xl">빠른관전하기</button>
+          <button type="button" onClick={onClickQuickObserve} className="rounded-xl bg-yellow-300 text-center flex flex-wrap space-y-2 text-4xl">빠른관전하기</button>
         </div>
       </div>
     </div>
