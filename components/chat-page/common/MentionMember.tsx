@@ -13,10 +13,12 @@ interface IProps {
   inputRef: RefObject<HTMLTextAreaElement> | ((instance: HTMLInputElement | null) => void);
   onKeyPress?: (e: any) => void;
   placeholder?: string;
+  className?: string;
 }
 
 const MentionMember: VFC<IProps> = ({
   trigger, value, onChangeValue, data, inputRef, onKeyPress, placeholder,
+  className = 'mentions-input',
 }) => {
   const renderSuggestion = useCallback(
     (
@@ -50,7 +52,7 @@ const MentionMember: VFC<IProps> = ({
 
   return (
     <MentionsInput
-      className="mentions-input"
+      className={className}
       value={value}
       onChange={onChangeValue}
       onKeyPress={onKeyPress}
