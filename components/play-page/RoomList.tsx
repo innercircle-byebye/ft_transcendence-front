@@ -9,12 +9,15 @@ import { IGameRoom } from '@/typings/db';
 
 interface IProps {
   page: number;
+  perPage: number;
   roomToEntrance: IGameRoom | null;
   setRoomToEntrance: Dispatch<SetStateAction<IGameRoom | null>>;
 }
 
-const RoomList: VFC<IProps> = ({ page, roomToEntrance, setRoomToEntrance }) => {
-  const { data: roomList } = useSWR<IGameRoom[]>(`/api/game/room/list?page=${page}`, fetcher);
+const RoomList: VFC<IProps> = ({
+  page, perPage, roomToEntrance, setRoomToEntrance,
+}) => {
+  const { data: roomList } = useSWR<IGameRoom[]>(`/api/game/room/list?perPage=${perPage}&page=${page}`, fetcher);
 
   if (!roomList) {
     return <div>로딩중...</div>;

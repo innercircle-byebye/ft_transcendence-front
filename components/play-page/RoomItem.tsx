@@ -11,8 +11,8 @@ interface IProps {
 const RoomItem: VFC<IProps> = ({ roomInfo, setRoomToEntrance }) => {
   const [player1] = useState(roomInfo.gameMembers.find((v) => v.status === 'player1'));
   const [player2] = useState(roomInfo.gameMembers.find((v) => v.status === 'player2'));
+
   const onClickEntrance = useCallback(() => {
-    console.log('입장하기');
     setRoomToEntrance(roomInfo);
   }, [roomInfo, setRoomToEntrance]);
 
