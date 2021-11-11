@@ -18,9 +18,9 @@ const Rank = () => {
 
   return (
     <PageContainer maxWidth="xl">
-      <RankContentContainer>
+      <ContentContainer>
         {/* 사용자 정보 */}
-        <RankContentLeft>
+        <ContentLeft>
           {me && (
             <>
               <ProfileCard nickname={me.nickname} imagePath={me.imagePath} />
@@ -34,15 +34,15 @@ const Rank = () => {
             </>
           )}
           {error && <div>Something wrong.</div>}
-        </RankContentLeft>
+        </ContentLeft>
         {/* 랭크 정보 */}
-        <RankContentRight>
+        <ContentRight>
           <div className="mb-4">
             <h1 className="text-4xl leading-10">Ranks</h1>
           </div>
           <RankBoard userId={me ? me.userId : null} />
-        </RankContentRight>
-      </RankContentContainer>
+        </ContentRight>
+      </ContentContainer>
     </PageContainer>
   );
 };
