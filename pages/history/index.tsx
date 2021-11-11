@@ -2,27 +2,39 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import React, { ReactElement } from 'react';
 import { ToastContainer } from 'react-toastify';
 import Navbar from '@/components/navigation-bar/Navbar';
-import ProfileCard from '@/components/ProfileCard';
-import HistoryContentContainer from '@/components/history-page/HistoryContentContainer';
-import PageContainer from '@/components/rank-page/PageContainer';
-import RankContentContainer from '@/components/rank-page/RankContentContainer';
-import RankContentLeft from '@/components/rank-page/RankContentLeft';
-import RankContentRight from '@/components/rank-page/RankContentRight';
+import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
+import PageContainer from '@/components/page-with-profilecard/PageContainer';
+import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
+import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
+import ContentRight from '@/components/page-with-profilecard/ContentRight';
+import HistorySelect from '@/components/history-page/HistorySelect';
+import useInput from '@/hooks/useInput';
+import HistoryList from '@/components/history-page/HistoryList';
 
 const History = ({ userInitialData }
-  : InferGetServerSidePropsType<typeof getServerSideProps>) => (
+  : InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const [nickname, onChangeNickname] = useInput('');
+
+  return (
     <PageContainer maxWidth="xl">
-      <RankContentContainer>
-        <RankContentLeft>
+      <ContentContainer>
+        <ContentLeft>
           <ProfileCard profileUserData={userInitialData} />
-        </RankContentLeft>
-        <RankContentRight>
-          <HistoryContentContainer />
-        </RankContentRight>
-      </RankContentContainer>
+        </ContentLeft>
+        <ContentRight>
+          <div className="mb-4">
+            <h1 className="text-4xl leading-10">History</h1>
+          </div>
+          <div className="p-4 rounded-md bg-gray-300 space-y-5">
+            <HistorySelect nickname={nickname} onChangeNickname={onChangeNickname} />
+            <HistoryList />
+          </div>
+        </ContentRight>
+      </ContentContainer>
       <ToastContainer />
     </PageContainer>
-);
+  );
+};
 
 History.getLayout = function getLayout(page: ReactElement) {
   return (

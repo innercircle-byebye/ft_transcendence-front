@@ -1,10 +1,10 @@
 import { ReactElement } from 'react';
 import Link from 'next/link';
 import MainLayout from '@/layouts/MainLayout';
-import PageContainer from '@/components/rank-page/PageContainer';
-import RankContentContainer from '@/components/rank-page/RankContentContainer';
-import RankContentLeft from '@/components/rank-page/RankContentLeft';
-import RankContentRight from '@/components/rank-page/RankContentRight';
+import PageContainer from '@/components/page-with-profilecard/PageContainer';
+import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
+import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
+import ContentRight from '@/components/page-with-profilecard/ContentRight';
 import RankBoard from '@/components/rank-page/RankBoard';
 import ProfileCard from '@/components/rank-page/ProfileCard';
 
@@ -16,9 +16,9 @@ const dummyUserProfile = {
 
 const Rank = () => (
   <PageContainer maxWidth="xl">
-    <RankContentContainer>
+    <ContentContainer>
       {/* 사용자 정보 */}
-      <RankContentLeft>
+      <ContentLeft>
         <ProfileCard
           nickname={dummyUserProfile.nickname}
           imagePath={dummyUserProfile.imagePath}
@@ -30,15 +30,15 @@ const Rank = () => (
             </a>
           </Link>
         </div>
-      </RankContentLeft>
+      </ContentLeft>
       {/* 랭크 정보 */}
-      <RankContentRight>
+      <ContentRight>
         <div className="mb-4">
           <h1 className="text-4xl leading-10">Ranks</h1>
         </div>
         <RankBoard userId={dummyUserProfile.userId} />
-      </RankContentRight>
-    </RankContentContainer>
+      </ContentRight>
+    </ContentContainer>
   </PageContainer>
 );
 

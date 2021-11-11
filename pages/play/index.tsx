@@ -3,14 +3,18 @@ import React, { ReactElement, useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import useInput from '@/hooks/useInput';
-import ProfileCard from '@/components/ProfileCard';
+import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import PasswordModal from '@/components/chat-page/PasswordModal';
 import RoomList from '@/components/play-page/RoomList';
 import { IGameRoom } from '@/typings/db';
-import Pagination from '@/components/play-page/Pagination';
+import Pagination from '@/components/page-with-profilecard/Pagination';
 import Navbar from '@/components/navigation-bar/Navbar';
 import fetcher from '@/utils/fetcher';
+import PageContainer from '@/components/page-with-profilecard/PageContainer';
+import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
+import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
+import ContentRight from '@/components/page-with-profilecard/ContentRight';
 
 const Play = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -45,17 +49,19 @@ const Play = ({ userInitialData }
   }
 
   return (
-    <div className="mx-auto h-screen max-w-screen-xl">
-      <div className="grid grid-cols-3 py-8">
-        <div className="flex flex-col items-center space-y-3">
-          <ProfileCard profileUserData={userInitialData} />
-          <div className="flex px-8 w-full justify-evenly">
-            <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
-            <button type="button" onClick={onClickQuickStart} className="bg-red-500 text-3xl p-5 rounded-md">빠른시작</button>
+    <PageContainer maxWidth="xl">
+      <ContentContainer>
+        <ContentLeft>
+          <div className="space-y-5">
+            <ProfileCard profileUserData={userInitialData} />
+            <div className="flex w-full justify-evenly">
+              <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
+              <button type="button" onClick={onClickQuickStart} className="bg-red-500 text-3xl p-5 rounded-md">빠른시작</button>
+            </div>
+            <OnlineFriendList />
           </div>
-          <OnlineFriendList />
-        </div>
-        <div className="relative bg-sky-100 col-span-2">
+        </ContentLeft>
+        <ContentRight bgColor="bg-sky-100">
           {roomToEntrance && roomToEntrance.isPrivate
             ? (
               <PasswordModal
@@ -67,26 +73,27 @@ const Play = ({ userInitialData }
               />
             )
             : (
-              <>
+              <div className="flex flex-col items-center">
                 <RoomList
                   page={page}
                   perPage={perPage}
                   roomToEntrance={roomToEntrance}
                   setRoomToEntrance={setRoomToEntrance}
                 />
-                <div className="absolute bottom-5 left-1/2 transform -translate-x-1/2">
+                <div className="p-5">
                   <Pagination
                     page={page}
                     setPage={setPage}
                     totalPage={parseInt(`${roomCount / perPage + 1}`, 10)}
                     paginationRange={paginationRange}
+                    color="sky"
                   />
                 </div>
-              </>
+              </div>
             )}
-        </div>
-      </div>
-    </div>
+        </ContentRight>
+      </ContentContainer>
+    </PageContainer>
   );
 };
 
