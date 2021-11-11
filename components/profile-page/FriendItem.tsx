@@ -1,9 +1,12 @@
-import { useCallback, VFC } from 'react';
+import {
+  useCallback, useEffect, useState, VFC,
+} from 'react';
 import { useRouter } from 'next/router';
-import { mutate, trigger } from 'swr';
+import useSWR, { mutate, trigger } from 'swr';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { IUser } from '@/typings/db';
+import { IGameRoom, IUser } from '@/typings/db';
+import fetcher from '@/utils/fetcher';
 
 interface IProps {
   friendData: IUser;
@@ -12,6 +15,10 @@ interface IProps {
 
 const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
   const router = useRouter();
+
+  const { data: checkUserGameroom } = useSWR<IGameRoom>(friendData.status === 'in_game' ? `/api/game/room/find_user/${friendData.userId}` : null, fetcher);
+  const [gameRoomId, setGameRoomId] = useState<number | null>(null);
+
   const onClickSendDM = useCallback(() => {
     router.push(`/chat/dm/${friendData.nickname}`);
   }, [friendData.nickname, router]);
@@ -67,20 +74,29 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
     });
   }, [friendData.nickname, friendData.userId]);
 
-  // const onClickObserve = useCallback(() => {
-  //   console.log('관전하기');
-  //   axios.post(`/api/game/room/${observableData?.gameRoomId}/join`, {
-  //     role: 'observer',
-  //   }, {
-  //     headers: {
-  //       withCredentials: 'true',
-  //     },
-  //   }).then(() => {
-  //     router.push(`/play/room/${observableData?.gameRoomId}`);
-  //   }).catch(() => {
-  //     toast.error('빠른관전 입장에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
-  //   });
-  // }, [observableData?.gameRoomId, router]);
+  const onClickParticipate = useCallback(() => {
+    console.log(gameRoomId);
+    console.log('관전하기');
+    axios.post(`/api/game/room/${gameRoomId}/join`, {
+      role: 'observer',
+    }, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      router.push(`/play/room/${gameRoomId}`);
+    }).catch(() => {
+      toast.error('빠른관전 입장에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [gameRoomId, router]);
+
+  useEffect(() => {
+    if (checkUserGameroom) {
+      console.log(checkUserGameroom);
+      const foundGameRoomId = checkUserGameroom.gameRoomId;
+      setGameRoomId(foundGameRoomId || null);
+    }
+  }, [checkUserGameroom]);
 
   return (
     <div className="bg-amber-50 text-md rounded-md px-5 py-2 grid grid-cols-6 justify-items-center">
@@ -136,7 +152,7 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
             if (friendData.status === 'in_game') {
               return (
                 <>
-                  <button type="button">관전하기</button>
+                  <button type="button" onClick={onClickParticipate}>참여하기</button>
                 </>
               );
             }
