@@ -18,7 +18,7 @@ const DM = () => {
   const [chat, onChangeChat, setChat] = useInput('');
   const [showEmoji, setShowEmoji] = useState(false);
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
-  const { socket } = useSocket('chat');
+  const { socket: mainSocket } = useSocket('main');
   const { data: chatDatas, mutate: mutateChat } = useSWR<IDMChat[]>(
     `/api/dm/${DMUserName}/chats`,
     fetcher,
@@ -50,7 +50,6 @@ const DM = () => {
         });
         axios
           .post(
-            // `/api/dm/${userData?.userId}/chats`,
             `/api/dm/${DMUserName}/chats`,
             {
               content: savedChat,
@@ -80,11 +79,11 @@ const DM = () => {
   );
 
   useEffect(() => {
-    socket?.on('dm', onMessage);
+    mainSocket?.on('dm', onMessage);
     return () => {
-      socket?.off('dm', onMessage);
+      mainSocket?.off('dm', onMessage);
     };
-  }, [socket, onMessage]);
+  }, [mainSocket, onMessage]);
 
   return (
     <div
@@ -114,7 +113,6 @@ const DM = () => {
               />
             ))
           }
-          chatlist
         </div>
         <ChatBox
           chat={chat}

@@ -4,10 +4,10 @@ import useSWR from 'swr';
 import fetcher from '@/utils/fetcher';
 
 import MainLayout from '@/layouts/MainLayout';
-import PageContainer from '@/components/rank-page/PageContainer';
-import RankContentContainer from '@/components/rank-page/RankContentContainer';
-import RankContentLeft from '@/components/rank-page/RankContentLeft';
-import RankContentRight from '@/components/rank-page/RankContentRight';
+import PageContainer from '@/components/page-with-profilecard/PageContainer';
+import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
+import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
+import ContentRight from '@/components/page-with-profilecard/ContentRight';
 import RankBoard from '@/components/rank-page/RankBoard';
 import ProfileCard from '@/components/rank-page/ProfileCard';
 

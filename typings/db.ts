@@ -1,3 +1,10 @@
+export interface IRankInfo {
+  rankId: number;
+  title: string;
+  imagePath: string;
+  criteriaExperience: number;
+}
+
 export interface IUser {
   userId: number;
   email: string;
@@ -13,6 +20,7 @@ export interface IUser {
   createdAt: string;
   lastModifiedAt: string;
   deletedAt: string | null;
+  rankInfo: IRankInfo;
 }
 
 export interface IAnnouncement {
@@ -125,6 +133,29 @@ export interface IGameRoom {
   deletedAt: Date | null;
   isPrivate: boolean;
   gameMembers: IGameMember[];
-  currentNumberCount: number;
+  currentMemberCount: number;
   gameRoomStatus: string;
+}
+
+export interface IGameResultWinRate{
+  totalPlayCount: number;
+  winCount: number;
+  loseCount: number;
+  winRate: string;
+}
+
+export interface IGameResult {
+    gameResultId: number;
+    gameRoomId: number;
+    playerOneId: number;
+    playerTwoId: number;
+    playerOneScore: number;
+    playerTwoScore: number;
+    winPoint: number;
+    ballSpeed:string;
+    startAt: Date;
+    endAt: Date;
+    lastModifiedAt: Date | null;
+    playerOneNickname: string;
+    playerTwoNickname: string;
 }

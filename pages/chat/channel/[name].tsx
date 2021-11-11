@@ -7,6 +7,7 @@ import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { toast, ToastContainer } from 'react-toastify';
 import Scrollbars from 'react-custom-scrollbars-2';
+import dayjs from 'dayjs';
 import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
@@ -64,6 +65,11 @@ const Channel = ({
   const onSubmitChat = useCallback(
     (e) => {
       e.preventDefault();
+      const myChannelMemberData = channelMemberData?.find((v) => v.userId === userData?.userId);
+      if (myChannelMemberData?.mutedDate) {
+        toast.error(`${dayjs(myChannelMemberData.mutedDate).format('YYYY-MM-DD h:mm A')}까지 채팅금지입니다.`, { position: 'bottom-right', theme: 'colored' });
+        return;
+      }
       if (chat?.trim() && channelChatData && channelData && userData) {
         const savedChat = chat;
         mutateChat((prevChatData) => {
@@ -82,6 +88,7 @@ const Channel = ({
           });
           return prevChatData;
         }, false).then(() => {
+          localStorage.setItem(`${channelName}`, new Date().getTime().toString());
           setChat('');
           scrollbarRef.current?.scrollToBottom();
         });
@@ -94,7 +101,8 @@ const Channel = ({
         }).catch(console.error);
       }
     },
-    [channelData, chat, channelChatData, mutateChat, setChat, userData],
+    [channelChatData, channelData, channelMemberData, channelName, chat,
+      mutateChat, setChat, userData],
   );
 
   const onMessage = useCallback(
@@ -135,8 +143,9 @@ const Channel = ({
     }
   }, [userData]);
 
-  const onDeleteChannel = useCallback(() => {
+  const onDeleteChannel = useCallback((deleteChannel: string) => {
     router.push('/chat');
+    localStorage.removeItem(deleteChannel);
   }, [router]);
 
   useEffect(() => {
@@ -182,8 +191,13 @@ const Channel = ({
     }
   }, [channelChatData]);
 
+  useEffect(() => {
+    localStorage.setItem(`${channelName}`, new Date().getTime().toString());
+    console.log('set time');
+  }, [channelName]);
+
   return (
-    <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
+    <div className="relative h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
       <div className="h-full flex flex-col">
         <div className="font-semibold text-2xl">
           {`# ${channelData?.name}`}

@@ -42,6 +42,10 @@ const MembersModal: VFC = () => {
     '/api/block/list', fetcher,
   );
 
+  const onClickInviteGame = useCallback((inviteMemberId: number) => {
+    router.push(`/play/create-room?invite=${inviteMemberId}`);
+  }, [router]);
+
   const onClickMuteMember = useCallback((member: IChannelMember) => {
     setMuteMember(member);
   }, []);
@@ -234,7 +238,7 @@ const MembersModal: VFC = () => {
   }
   return (
     <>
-      <div className="absolute bg-sky-700 top-28 right-16 w-auto p-6 h-auto flex flex-col items-center space-y-3">
+      <div className="absolute bg-sky-700 top-7 right-16 w-auto p-6 h-auto flex flex-col items-center space-y-3">
         <div className="text-2xl font-semibold text-amber-50 tracking-wide">
           {`# ${channelData.name} (${channelData.currentChatMemberCount})`}
         </div>
@@ -253,7 +257,7 @@ const MembersModal: VFC = () => {
                     {data.user.nickname}
                   </a>
                 </Link>
-                <button type="button" className="bg-blue-400 font-semibold text-sm rounded-full w-16 h-7">게임신청</button>
+                <button type="button" onClick={() => onClickInviteGame(data.userId)} className="bg-blue-400 font-semibold text-sm rounded-full w-16 h-7">게임신청</button>
                 {blockMemberData.map((v) => v.userId).includes(data.userId)
                   ? <button type="button" onClick={() => onClickCancelBlockMember(data)} className="bg-amber-500 font-semibold text-sm rounded-full w-16 h-7">차단풀기</button>
                   : <button type="button" onClick={() => onClickBlockMember(data)} className="bg-yellow-400 font-semibold text-sm rounded-full w-16 h-7">차단하기</button>}

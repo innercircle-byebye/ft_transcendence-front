@@ -16,6 +16,7 @@ import ContentContainerWithTitle from '@/components/create-page/ContentContainer
 
 const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
+  const { invite } = router.query;
   const [roomName, onChangeRoomName] = useInput('');
   const [roomNameError, setRoomNameError] = useState(false);
   const [difficulty, onChangeDifficulty] = useInput(0);
@@ -31,7 +32,7 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
   }, [router]);
 
   const onClickMake = useCallback(() => {
-    axios.post('/api/game/room', {
+    axios.post(invite ? `/api/game/room?invitedUserId=${invite}` : '/api/game/room', {
       title: roomName,
       password: isPrivate ? password : null,
       maxParticipantNum: numOfSpectator,
@@ -46,7 +47,7 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
     }).catch(() => {
       toast.error('방만들기에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
     });
-  }, [ballSpeed, isPrivate, numOfSpectator, password, roomName, router, winScore]);
+  }, [ballSpeed, invite, isPrivate, numOfSpectator, password, roomName, router, winScore]);
 
   useEffect(() => {
     if (difficulty === 0) { setBallSpeed('slow'); }

@@ -1,17 +1,30 @@
-import { GetServerSideProps } from 'next';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import React, { ReactElement, useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
+import useSWR from 'swr';
 import useInput from '@/hooks/useInput';
-import ProfileCard from '@/components/play-page/ProfileCard';
+import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import PasswordModal from '@/components/chat-page/PasswordModal';
 import RoomList from '@/components/play-page/RoomList';
-import MainLayout from '@/layouts/MainLayout';
+import { IGameRoom } from '@/typings/db';
+import Pagination from '@/components/page-with-profilecard/Pagination';
+import Navbar from '@/components/navigation-bar/Navbar';
+import fetcher from '@/utils/fetcher';
+import PageContainer from '@/components/page-with-profilecard/PageContainer';
+import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
+import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
+import ContentRight from '@/components/page-with-profilecard/ContentRight';
 
-const Play = () => {
+const Play = ({ userInitialData }
+  : InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
-  const [roomToEntrance, setRoomToEntrance] = useState<number | null>(null);
+  const [page, setPage] = useState(1);
+  const [perPage] = useState(8);
+  const [paginationRange] = useState(5);
+  const [roomToEntrance, setRoomToEntrance] = useState<IGameRoom | null>(null);
   const [password, onChangePassword, setPassword] = useInput('');
+  const { data: roomCount } = useSWR<number>('/api/game/room/list/count', fetcher);
 
   const onClickMakeRoom = useCallback(() => {
     router.push('/play/create-room');
@@ -31,22 +44,28 @@ const Play = () => {
     setPassword('');
   }, [setPassword]);
 
+  if (!roomCount) {
+    return <div>로딩중</div>;
+  }
+
   return (
-    <div className="mx-auto h-screen max-w-screen-xl">
-      <div className="grid grid-cols-3 py-8">
-        <div className="flex flex-col items-center space-y-3">
-          <ProfileCard />
-          <div className="flex px-8 w-full justify-evenly">
-            <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
-            <button type="button" onClick={onClickQuickStart} className="bg-red-500 text-3xl p-5 rounded-md">빠른시작</button>
+    <PageContainer maxWidth="xl">
+      <ContentContainer>
+        <ContentLeft>
+          <div className="space-y-5">
+            <ProfileCard profileUserData={userInitialData} />
+            <div className="flex w-full justify-evenly">
+              <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
+              <button type="button" onClick={onClickQuickStart} className="bg-red-500 text-3xl p-5 rounded-md">빠른시작</button>
+            </div>
+            <OnlineFriendList />
           </div>
-          <OnlineFriendList />
-        </div>
-        <div className="bg-sky-100 col-span-2">
-          {roomToEntrance && roomToEntrance % 2
+        </ContentLeft>
+        <ContentRight bgColor="bg-sky-100">
+          {roomToEntrance && roomToEntrance.isPrivate
             ? (
               <PasswordModal
-                name={`${roomToEntrance}번방 입니다.`}
+                name={`${roomToEntrance.title}`}
                 password={password}
                 onChangePassword={onChangePassword}
                 onSubmitPassword={onSubmitPassword}
@@ -54,14 +73,27 @@ const Play = () => {
               />
             )
             : (
-              <RoomList
-                roomToEntrance={roomToEntrance}
-                setRoomToEntrance={setRoomToEntrance}
-              />
+              <div className="flex flex-col items-center">
+                <RoomList
+                  page={page}
+                  perPage={perPage}
+                  roomToEntrance={roomToEntrance}
+                  setRoomToEntrance={setRoomToEntrance}
+                />
+                <div className="p-5">
+                  <Pagination
+                    page={page}
+                    setPage={setPage}
+                    totalPage={parseInt(`${roomCount / perPage + 1}`, 10)}
+                    paginationRange={paginationRange}
+                    color="sky"
+                  />
+                </div>
+              </div>
             )}
-        </div>
-      </div>
-    </div>
+        </ContentRight>
+      </ContentContainer>
+    </PageContainer>
   );
 };
 
@@ -71,7 +103,14 @@ export const getServerSideProps: GetServerSideProps = async () => ({
 });
 
 Play.getLayout = function getLayout(page: ReactElement) {
-  return <MainLayout>{page}</MainLayout>;
+  return (
+    <div className="h-screen flex flex-col">
+      <div className="flex-initial">
+        <Navbar />
+      </div>
+      {page}
+    </div>
+  );
 };
 
 export default Play;

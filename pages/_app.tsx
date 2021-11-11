@@ -27,6 +27,27 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const router = useRouter();
   const { pathname } = router;
   const { disconnect } = useSocket(typeof window !== 'undefined' ? window.localStorage.getItem('namespace') : null);
+  const { socket: mainSocket } = useSocket('main');
+  // const { userInitialData } = pageProps;
+  const userData: IUser = pageProps.userInitialData;
+
+  // 이거 계속 login 보내는데 문제가 있다 나중에 수정하겠습니다.
+  useEffect(() => {
+    if (userData && (userData.status === 'online' || userData.status === 'in_game')) {
+      mainSocket?.emit('login', userData.userId);
+    }
+  });
+
+  useEffect(() => {
+    mainSocket?.on('dm', (data) => {
+      console.log('dm 왔을때', data);
+    });
+    return () => {
+      mainSocket?.off('dm', (data) => {
+        console.log('dm 온거 확인 끝!', data);
+      });
+    };
+  }, [mainSocket]);
 
   useEffect(() => {
     if (localStorage.getItem('namespace') !== 'chat' && pathname.slice(0, 5) === '/chat') {
@@ -49,7 +70,7 @@ MyApp.getInitialProps = async (context: any) => {
   const access_token = process.env.ACCESS_TOKEN || '';
   const refresh_token = process.env.REFRESH_TOKEN || '';
 
-  if (ctx.pathname === '/login') {
+  if (!ctx.req || ctx.pathname === '/login') {
     return {};
   }
   if (
