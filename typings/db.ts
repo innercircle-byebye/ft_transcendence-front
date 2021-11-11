@@ -109,8 +109,8 @@ export interface IGameRoomData{
     obserber: IUser[],
   };
   role: string; // 'player1' | 'player2' | 'observer'
-  WIDTH: number; // 600
-  HEIGHT: number; // 400
+  width : number; // 600
+  height : number; // 400
   // ready 상태 알려주는 거 필요합니다.
 }
 
