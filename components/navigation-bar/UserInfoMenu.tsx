@@ -5,20 +5,25 @@ import React, { useCallback } from 'react';
 import { toast } from 'react-toastify';
 import { Menu } from '@headlessui/react';
 import { MenuIcon } from '@heroicons/react/solid';
+import useSocket from '@/hooks/useSocket';
 
 const UserInfoMenu = () => {
+  // const { socket: mainSocket } = useSocket('main');
+  const { disconnect } = useSocket('main');
+
   const onClickLogout = useCallback((e) => {
     e.preventDefault();
     axios
       .get('/auth/logout')
       .then(() => {
         router.push('/login');
+        disconnect();
       })
       .catch((error) => {
         console.dir(error);
         toast.error(error.response?.data, { position: 'bottom-center' });
       });
-  }, []);
+  }, [disconnect]);
 
   return (
     <div className="relative text-white z-20">
