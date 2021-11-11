@@ -113,7 +113,7 @@ const DM = () => {
                       nickname: chatData.sender.nickname,
                       type: chatData.type,
                       imagePath: chatData.sender.imagePath,
-                      targetId: Number(chatData.content),
+                      targetInfo: chatData.content,
                     }}
                   />
                 );

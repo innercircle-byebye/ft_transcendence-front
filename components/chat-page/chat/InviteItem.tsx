@@ -13,19 +13,20 @@ interface Props {
 const InviteItem: FC<Props> = ({ invitationData }) => {
   const router = useRouter();
   const onClickJoinGame = useCallback(() => {
-    axios.post(`/api/game/room/${invitationData?.targetId}/join`, {
+    // 비밀번호 처리 필요
+    axios.post(`/api/game/room/${Number(invitationData?.targetInfo)}/join`, {
       role: 'player2',
     }, {
       headers: {
         withCredentials: 'true',
       },
     }).then(() => {
-      router.push(`/play/room/${invitationData.targetId}`);
+      router.push(`/play/room/${invitationData.targetInfo}`);
     }).catch(() => {
       console.log('error');
       toast.error(`${invitationData.nickname}이 보낸 게임방 초대에 입장할 수 없습니다.`, { position: 'bottom-right', theme: 'colored' });
     });
-  }, [invitationData.nickname, invitationData.targetId, router]);
+  }, [invitationData.nickname, invitationData.targetInfo, router]);
 
   return (
     <div className="flex flex-row w-full">
@@ -45,13 +46,13 @@ const InviteItem: FC<Props> = ({ invitationData }) => {
         </div>
         <span className="w-full font-bold">
           {'님이 '}
-          {invitationData.type === 'channel_invite' ? '채널' : '게임으'}
+          {invitationData.type === 'channel_invite' ? `채널 '${invitationData.targetInfo}' ` : '게임으'}
           로 초대합니다.
           {' '}
           {invitationData.type === 'channel_invite'
             ? (
               <button type="button">
-                채널
+                [채널 입장하기]
               </button>
             )
             : (

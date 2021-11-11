@@ -73,7 +73,7 @@ export interface IInviteItem {
   nickname: string;
   imagePath: string;
   type: string;
-  targetId: number;
+  targetInfo: string;
   createdAt: Date;
 }
 export interface IChannelUser {
