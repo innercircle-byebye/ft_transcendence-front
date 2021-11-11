@@ -40,7 +40,7 @@ const Profile = ({ userInitialData }
               <RankItem rankInfo={profileUserData.rankInfo} />
               <WinScore userId={profileUserData.userId} />
             </div>
-            <HistoryList />
+            <HistoryList userId={profileUserData.userId} />
           </div>
         </ContentRight>
       </ContentContainer>

@@ -1,5 +1,5 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import React, { ReactElement } from 'react';
+import React, { ReactElement, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 import Navbar from '@/components/navigation-bar/Navbar';
 import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
@@ -14,6 +14,8 @@ import HistoryList from '@/components/history-page/HistoryList';
 const History = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const [nickname, onChangeNickname] = useInput('');
+  const [page] = useState(0);
+  const [perPage] = useState(10);
 
   return (
     <PageContainer maxWidth="xl">
@@ -27,7 +29,7 @@ const History = ({ userInitialData }
           </div>
           <div className="p-4 rounded-md bg-gray-300 space-y-5">
             <HistorySelect nickname={nickname} onChangeNickname={onChangeNickname} />
-            <HistoryList />
+            <HistoryList userId={userInitialData.userId} perPage={perPage} page={page} />
           </div>
         </ContentRight>
       </ContentContainer>
