@@ -54,6 +54,7 @@ export interface IDMChat {
   dmId: number;
   sender: IUser;
   receiver: IUser;
+  type: string;
   content: string;
   createdAt: Date;
   lastModifiedAt: Date;

@@ -38,6 +38,7 @@ const DM = () => {
           prevChatData?.unshift({
             dmId: (chatDatas[chatDatas.length - 1]?.dmId || 0) + 1,
             sender: userData,
+            type: chatDatas[chatDatas.length - 1].type,
             receiver: chatDatas[chatDatas.length - 1]?.sender,
             content: savedChat,
             createdAt: chatDatas[chatDatas.length - 1]?.createdAt,
