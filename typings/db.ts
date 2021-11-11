@@ -104,7 +104,9 @@ export interface ISimpleUser {
 // initSetting -> gameRoomData
 export interface IGameRoomData{
   participants: {
-
+    player1: IUser,
+    player2: IUser,
+    obserber: IUser[],
   };
   role: string; // 'player1' | 'player2' | 'observer'
   WIDTH: number; // 600
