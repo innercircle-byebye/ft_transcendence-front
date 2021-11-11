@@ -109,6 +109,15 @@ export interface ISimpleUser {
   imagePath: string;
 }
 
+export interface IRank {
+  totalPlayCount: number;
+  winCount: number;
+  loseCount: number;
+  winRate: string;
+  experience: number;
+  user: ISimpleUser;
+}
+
 export interface IGameMember {
   userId: number;
   status: string;
