@@ -1,6 +1,6 @@
 import { useCallback, VFC } from 'react';
 import { useRouter } from 'next/router';
-import { mutate } from 'swr';
+import { mutate, trigger } from 'swr';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { IUser } from '@/typings/db';
@@ -25,9 +25,9 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
         withCredentials: 'true',
       },
     }).then(() => {
-      toast.success(`${friendData.nickname}님께 보낸 친구요청을 취소했습니다.`, { position: 'bottom-right', theme: 'colored' });
+      toast.success(`${friendData.nickname}을 친구에서 삭제했습니다.`, { position: 'bottom-right', theme: 'colored' });
     }).catch(() => {
-      toast.error(`${friendData.nickname}님께 보낸 친구요청취소하기에 실패했습니다..`, { position: 'bottom-right', theme: 'colored' });
+      toast.error(`${friendData.nickname}의 친구 삭제가 실패했습니다.`, { position: 'bottom-right', theme: 'colored' });
     });
   }, [friendData.nickname, friendData.userId]);
 
@@ -67,6 +67,21 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
     });
   }, [friendData.nickname, friendData.userId]);
 
+  // const onClickObserve = useCallback(() => {
+  //   console.log('관전하기');
+  //   axios.post(`/api/game/room/${observableData?.gameRoomId}/join`, {
+  //     role: 'observer',
+  //   }, {
+  //     headers: {
+  //       withCredentials: 'true',
+  //     },
+  //   }).then(() => {
+  //     router.push(`/play/room/${observableData?.gameRoomId}`);
+  //   }).catch(() => {
+  //     toast.error('빠른관전 입장에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
+  //   });
+  // }, [observableData?.gameRoomId, router]);
+
   return (
     <div className="bg-amber-50 text-md rounded-md px-5 py-2 grid grid-cols-6 justify-items-center">
       <span className="col-span-1 justify-self-start">
@@ -90,7 +105,7 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
             type="button"
             onClick={() => {
               onClickAcceptFriend();
-              mutate('/api/friend/new');
+              trigger('/api/friend/new');
             }}
           >
             요청 수락하기
@@ -101,7 +116,7 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
             type="button"
             onClick={() => {
               onClickCancelReqFriend();
-              mutate('/api/friend/wait');
+              trigger('/api/friend/wait', false);
             }}
           >
             요청 취소하기

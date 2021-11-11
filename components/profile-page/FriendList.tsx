@@ -1,7 +1,8 @@
-import React, { VFC } from 'react';
+import React, { useEffect, useState, VFC } from 'react';
 import useSWR from 'swr';
 import { IUser } from '@/typings/db';
 import FriendItem from './FriendItem';
+import fetcher from '@/utils/fetcher';
 
 // interface IProps {
 //   userId: number;
@@ -10,11 +11,18 @@ import FriendItem from './FriendItem';
 // }
 
 const FriendList: VFC = () => {
-  const { data: friendData } = useSWR<IUser[]>('/api/friend/list');
+  const [dataTest, setData] = useState<IUser[] | null>(null);
+  const { data: friendData } = useSWR<IUser[]>('/api/friend/list', fetcher);
 
+  useEffect(() => {
+    if (friendData) {
+      console.log(friendData);
+      setData(friendData);
+    }
+  }, [friendData]);
   return (
     <div className="space-y-3">
-      {friendData?.map((data) => (
+      {dataTest?.map((data) => (
         <>
           <FriendItem friendData={data} listType="friendList" />
         </>
