@@ -17,22 +17,24 @@ const TwoFactorAuthentication: VFC = () => {
   const inputRefs = useRef<HTMLInputElement[]>([]);
 
   const onClickSwitch2Fa = useCallback(() => {
+    setAuthNum('');
     if (userData?.isTwoFactorAuthEnabled && is2Fa === true) {
       axios.post('/auth/2fa/turn_off', {}, {
         headers: {
           withCredentials: 'true',
         },
       }).then(() => {
+        toast.success('2FA 인증을 비활성화했습니다.', { position: 'bottom-right', theme: 'colored' });
         mutateUserData((prev) => {
           const newUserData = prev;
-          if (newUserData?.isTwoFactorAuthEnabled) {
+          if (newUserData && newUserData.isTwoFactorAuthEnabled) {
             newUserData.isTwoFactorAuthEnabled = false;
           }
           return newUserData;
-        });
+        }, false);
         setIs2Fa(false);
       }).catch(() => {
-        toast.error('2FA 인증을 비활성화하는데 실패했습니다.');
+        toast.error('2FA 인증을 비활성화하는데 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
       });
     } else {
       setIs2Fa((prev) => !prev);
@@ -53,13 +55,14 @@ const TwoFactorAuthentication: VFC = () => {
 
   const onClickActivate2Fa = useCallback(() => {
     if (authNum.length === 6) {
+      setIs2Fa(true);
       mutateUserData((prev) => {
         const newUserData = prev;
-        if (newUserData?.isTwoFactorAuthEnabled) {
+        if (newUserData && !newUserData.isTwoFactorAuthEnabled) {
           newUserData.isTwoFactorAuthEnabled = true;
         }
         return newUserData;
-      });
+      }, false);
       axios.post('/auth/2fa/turn_on', {
         twoFactorAuthCode: authNum,
       }, {
@@ -67,9 +70,11 @@ const TwoFactorAuthentication: VFC = () => {
           withCredentials: 'true',
         },
       }).then(() => {
-        console.log('success');
+        setAuthNum('');
+        toast.success('2FA 인증을 활성화했습니다.', { position: 'bottom-right', theme: 'colored' });
       }).catch(() => {
-        console.log('fail');
+        setAuthNum('');
+        toast.error('2FA 인증을 활성화하는데 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
       });
     }
   }, [authNum, mutateUserData]);
