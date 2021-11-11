@@ -20,5 +20,11 @@ export default function handler(
     createdAt: '2021-11-06T14:37:52.653Z',
     lastModifiedAt: '2021-11-06T14:37:52.653Z',
     deletedAt: null,
+    rankInfo: {
+      rankId: 1,
+      title: 'tempString',
+      imagePath: 'tempImagePath',
+      criteriaExperience: 0,
+    },
   });
 }
