@@ -33,14 +33,14 @@ const ProfileCard: VFC<IProps> = ({ profileUserData }) => {
       {
         pathname === '/play'
         && (
-        <div className="mt-5 text-xl py-2 text-center flex flex-col bg-gray-400 mx-16 rounded-md">
-          <p>
-            승률:
-            <span className="text-3xl">{winData?.winRate}</span>
-            %
-          </p>
-          <p className="text-xl">{`${winData?.totalPlayCount}전 ${winData?.winCount}승 ${winData?.loseCount}패`}</p>
-        </div>
+          <div className="mt-5 text-xl py-2 text-center flex flex-col bg-gray-400 mx-16 rounded-md">
+            <p>
+              승률:
+              <span className="text-3xl">{winData?.winRate}</span>
+              %
+            </p>
+            <p className="text-xl">{`${winData?.totalPlayCount}전 ${winData?.winCount}승 ${winData?.loseCount}패`}</p>
+          </div>
         )
       }
       {
