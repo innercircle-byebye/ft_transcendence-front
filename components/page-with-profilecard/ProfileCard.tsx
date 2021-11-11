@@ -5,7 +5,7 @@ import useSWR from 'swr';
 import Link from 'next/link';
 import { IGameResultWinRate, IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
-import ProfileCardButtons from './profile-page/ProfileCardButtons';
+import ProfileCardButtons from '../profile-page/ProfileCardButtons';
 
 interface IProps {
   profileUserData: IUser;
@@ -44,20 +44,22 @@ const ProfileCard: VFC<IProps> = ({ profileUserData }) => {
         )
       }
       {
-        pathname === '/profile/[name]' && userData?.nickname === profileUserData.nickname
-          ? (
-            <div className="text-center mt-5">
-              <Link href="/edit-profile">
-                <a className="bg-gray-400 px-3 py-1 rounded-full">
-                  Edit Profile
-                </a>
-              </Link>
-            </div>
-          ) : (
-            <div className="text-center mt-5">
-              <ProfileCardButtons profileUser={profileUserData} />
-            </div>
-          )
+        pathname === '/profile/[name]' && (
+          userData?.nickname === profileUserData.nickname
+            ? (
+              <div className="text-center mt-5">
+                <Link href="/edit-profile">
+                  <a className="bg-gray-400 px-3 py-1 rounded-full">
+                    Edit Profile
+                  </a>
+                </Link>
+              </div>
+            ) : (
+              <div className="text-center mt-5">
+                <ProfileCardButtons profileUser={profileUserData} />
+              </div>
+            )
+        )
       }
     </div>
   );

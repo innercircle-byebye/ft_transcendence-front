@@ -11,10 +11,10 @@
 
 .mentions-input textarea {
   height: 44px;
-  padding: 9px 10px !important;
-  outline: none !important;
-  border-radius: 4px !important;
-  resize: none !important;
+  padding: 9px 10px;
+  outline: none;
+  border-radius: 4px;
+  resize: none;
   line-height: 22px;
   border: none;
 }
@@ -38,8 +38,8 @@
 
 .navbar-mentions-input textarea {
   outline: none;
-  border-radius: 4px !important;
-  resize: none !important;
+  border-radius: 4px;
+  resize: none;
   border: none;
 }
 
