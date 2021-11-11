@@ -110,8 +110,8 @@ export interface IGameRoomData{
   };
   role: string; // 'player1' | 'player2' | 'observer'
   isPlaying : boolean,
-  plyaer1Ready : boolean,
-  plyaer2Ready : boolean,
+  player1Ready : boolean,
+  player2Ready : boolean,
   width : number; // 600
   height : number; // 400
   // ready 상태 알려주는 거 필요합니다.
