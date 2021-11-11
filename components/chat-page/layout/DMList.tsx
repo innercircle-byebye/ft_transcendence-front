@@ -30,7 +30,7 @@ const DMList: VFC = () => {
             <Link
               // href={`/chat/dm/${member.nickname}`}
               href={`/chat/dm/${member.userId}`}
-              key={member.intraUsername}
+              key={member.userId + member.intraUsername}
             >
               <a>
                 <span
