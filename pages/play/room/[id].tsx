@@ -11,6 +11,7 @@ import { IGameChat, IGameRoomData, IGameUpdateData } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 import useInput from '@/hooks/useInput';
 import GameChatList from '@/components/play-room-page/GameChatList';
+import ParticipantList from '@/components/play-room-page/ParticipantList';
 
 const Room = ({
   userInitialData,
@@ -273,8 +274,8 @@ const Room = ({
                 />
               </div>
             ) : (
-              <div>
-                관전자입니다.
+              <div className="h-full">
+                <ParticipantList />
               </div>
             )}
           </div>
