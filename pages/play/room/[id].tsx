@@ -7,7 +7,7 @@ import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
-import { IGameChat, IGameScreenData, IGameUpdateData } from '@/typings/db';
+import { IGameChat, IGameRoomData, IGameUpdateData } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 import useInput from '@/hooks/useInput';
 import GameChatList from '@/components/play-room-page/GameChatList';
@@ -19,35 +19,46 @@ const Room = ({
   const roomNumber = router.query.id;
   const [isChatting, setIsChatting] = useState(true);
   const { socket, disconnect } = useSocket('game');
-  const [isReady1P, setIsReady1P] = useState(false);
-  const [isReady2P, setIsReady2P] = useState(false);
-  const [initData, setInitData] = useState<IGameScreenData | null>(null);
+  // const [initData, setInitData] = useState<IGameScreenData | null>(null);
+  // const [gameRoomData, setGameRoomData] = useState<IGameRoomData>();
   const [updateData, setUpdateData] = useState<IGameUpdateData[] | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [gameChat, onChangeGameChat, setGameChat] = useInput('');
+  // player Info
+  const [name1P, setName1P] = useState<string>('');
+  const [name2P, setName2P] = useState<string>('');
+  const [isReady1P, setIsReady1P] = useState(false);
+  const [isReady2P, setIsReady2P] = useState(false);
+  // my role
+  const [myRole, setMyRole] = useState<string>('');
 
   useEffect(() => {
-    socket?.on('initSetting', (data: IGameScreenData) => {
-      setInitData(data);
+    // initSetting -> gameRoomData
+    socket?.on('gameRoomData', (data: IGameRoomData) => {
+      console.log('gameRoomData', data);
+      // setGameRoomData(data);
+      setName1P(data.participants.player1.nickname);
+      setName2P(data.participants.player2.nickname);
+      setMyRole(data.role);
       setIsReady1P(false);
       setIsReady2P(false);
       setIsPlaying(false);
-      console.log('initData', data);
       // ready 상태 알려주면 그걸로 ready setting 해야합니다.
     });
     socket?.emit('joinGameRoom', { roomId: router.query.id, userId: userInitialData.userId });
-    // socket?.emit('joinGameRoom', router.query.id);
     return () => {
       disconnect();
     };
   }, [disconnect, router.query.id, socket, userInitialData.userId]);
 
+  // playing
   useEffect(() => {
     // data update
     socket?.on('update', (data) => setUpdateData(data));
     // console.log('updateData', updateData);
   });
 
+  // not playing
   // on ready unReady
   useEffect(() => {
     socket?.on('ready', (data) => {
@@ -196,7 +207,10 @@ const Room = ({
           isReady2P={isReady2P}
           onClickReady1P={onClickReady1P}
           onClickReady2P={onClickReady2P}
-          initData={initData}
+          // gameRoomData={gameRoomData}
+          name1p={name1P}
+          name2p={name2P}
+          role={myRole}
           updateData={updateData}
           isPlaying={isPlaying}
         />
@@ -211,7 +225,8 @@ const Room = ({
         </div>
         <div className="bg-red-300 h-1/4">
           {/* player Info */}
-          <PlayerInfo player1="mykang" player2="kycho" />
+          <PlayerInfo player1={name1P} player2={name1P} />
+          {/* 향후 전적 정보도 포함해주기 */}
         </div>
         <div className="bg-green-300 h-1/12">
           {/* play room buttons */}
