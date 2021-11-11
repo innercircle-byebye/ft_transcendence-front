@@ -15,6 +15,7 @@ import useInput from '@/hooks/useInput';
 import GameChatList from '@/components/play-room-page/GameChatList';
 import ParticipantList from '@/components/play-room-page/ParticipantList';
 import setParticipantListData from '@/utils/setParticipantListData';
+import GameResultModal from '@/components/play-room-page/GameResult';
 
 const Room = ({
   userInitialData,
@@ -37,6 +38,9 @@ const Room = ({
   const [myRole, setMyRole] = useState<string>('');
   // participant data
   const [participantData, setParticipantData] = useState<IParticipant[]>([]);
+  // game result modal
+  const [gameResultMessage, setGameResultMessage] = useState<string>('');
+  const [isShowModal, setIsShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     // initSetting -> gameRoomData
@@ -143,8 +147,15 @@ const Room = ({
       setIsPlaying(false);
       setIsReady1P(false);
       setIsReady2P(false);
+      setGameResultMessage(data);
+      setIsShowModal(true);
     });
   }, [socket]);
+
+  // game result modal
+  const onClickExitButton = useCallback(() => {
+    setIsShowModal(false);
+  }, []);
 
   const onKeyUp = useCallback(
     (e) => {
@@ -290,6 +301,12 @@ const Room = ({
           </div>
         </div>
       </div>
+      {isShowModal && (
+        <GameResultModal
+          gameResult={gameResultMessage}
+          onClickExitButton={onClickExitButton}
+        />
+      )}
     </div>
   );
 };
