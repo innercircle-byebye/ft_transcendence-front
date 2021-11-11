@@ -40,6 +40,15 @@ const Room = ({
       setName1P(data.participants.player1.nickname);
       setName2P(data.participants.player2.nickname);
       setMyRole(data.role);
+      if (data.isPlaying) {
+        setIsPlaying(true);
+      }
+      if (data.plyaer1Ready) {
+        setIsReady1P(true);
+      }
+      if (data.plyaer2Ready) {
+        setIsReady2P(true);
+      }
       // setIsReady1P(false);
       // setIsReady2P(false);
       setIsPlaying(false);
