@@ -234,7 +234,7 @@ const MembersModal: VFC = () => {
   }
   return (
     <>
-      <div className="absolute bg-sky-700 top-28 right-16 w-auto p-6 h-auto flex flex-col items-center space-y-3">
+      <div className="absolute bg-sky-700 top-7 right-16 w-auto p-6 h-auto flex flex-col items-center space-y-3">
         <div className="text-2xl font-semibold text-amber-50 tracking-wide">
           {`# ${channelData.name} (${channelData.currentChatMemberCount})`}
         </div>
