@@ -101,10 +101,14 @@ export interface ISimpleUser {
   imagePath: string;
 }
 
-export interface IGameScreenData {
-  role: string;
-  WIDTH: number;
-  HEIGHT: number;
+// initSetting -> gameRoomData
+export interface IGameRoomData{
+  participants: {
+
+  };
+  role: string; // 'player1' | 'player2' | 'observer'
+  WIDTH: number; // 600
+  HEIGHT: number; // 400
   // ready 상태 알려주는 거 필요합니다.
 }
 
