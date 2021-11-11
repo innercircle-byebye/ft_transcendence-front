@@ -48,12 +48,12 @@ const Room = ({
       if (data.isPlaying) {
         setIsPlaying(true);
       }
-      if (data.plyaer1Ready) {
+      if (data.player1Ready) {
         setIsReady1P(true);
       } else {
         setIsReady1P(false);
       }
-      if (data.plyaer2Ready) {
+      if (data.player2Ready) {
         setIsReady2P(true);
       } else {
         setIsReady2P(false);
