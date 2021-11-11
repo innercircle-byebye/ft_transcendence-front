@@ -47,7 +47,11 @@ const ChatItem: FC<Props> = ({ chatData }) => {
       </div>
       <div className="flex-1">
         <div className="space-x-2">
-          <b>{chatData.nickname}</b>
+          <Link href={`/profile?name=${chatData.nickname}`}>
+            <a className="font-bold">
+              {chatData.nickname}
+            </a>
+          </Link>
           <span className="text-sm text-gray-700">{dayjs(chatData.createdAt).format('h:mm A')}</span>
         </div>
         <p className="w-full">{result}</p>
