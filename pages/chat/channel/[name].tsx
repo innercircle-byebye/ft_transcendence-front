@@ -88,6 +88,7 @@ const Channel = ({
           });
           return prevChatData;
         }, false).then(() => {
+          localStorage.setItem(`${channelName}`, new Date().getTime().toString());
           setChat('');
           scrollbarRef.current?.scrollToBottom();
         });
@@ -100,7 +101,8 @@ const Channel = ({
         }).catch(console.error);
       }
     },
-    [channelMemberData, chat, channelChatData, channelData, userData, mutateChat, setChat],
+    [channelChatData, channelData, channelMemberData, channelName, chat,
+      mutateChat, setChat, userData],
   );
 
   const onMessage = useCallback(
@@ -141,8 +143,9 @@ const Channel = ({
     }
   }, [userData]);
 
-  const onDeleteChannel = useCallback(() => {
+  const onDeleteChannel = useCallback((deleteChannel: string) => {
     router.push('/chat');
+    localStorage.removeItem(deleteChannel);
   }, [router]);
 
   useEffect(() => {
@@ -187,6 +190,11 @@ const Channel = ({
       }, 500);
     }
   }, [channelChatData]);
+
+  useEffect(() => {
+    localStorage.setItem(`${channelName}`, new Date().getTime().toString());
+    console.log('set time');
+  }, [channelName]);
 
   return (
     <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
