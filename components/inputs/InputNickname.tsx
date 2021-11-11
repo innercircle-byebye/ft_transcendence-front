@@ -11,11 +11,11 @@ const InputNickname: VFC<IProps> = ({
 }) => (
   <div className="mb-4 w-64">
     <label htmlFor="nickname">
-      <span className="text-gray-700 text-sm font-bold mb-2">
+      <span className="text-gray-700 text-sm font-bold mb-2 mr-1">
         Nickname
       </span>
       <button
-        className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className=" text-sky-600 py-1 px-3 rounded-full focus:outline-none focus:shadow-outline"
         type="button"
         onClick={onClickResetNickname}
       >
