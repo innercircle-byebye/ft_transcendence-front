@@ -16,6 +16,7 @@ import GameChatList from '@/components/play-room-page/GameChatList';
 import ParticipantList from '@/components/play-room-page/ParticipantList';
 import setParticipantListData from '@/utils/setParticipantListData';
 import GameResultModal from '@/components/play-room-page/GameResult';
+import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
 
 const Room = ({
   userInitialData,
@@ -42,7 +43,9 @@ const Room = ({
   const [participantData, setParticipantData] = useState<IParticipant[]>([]);
   // game result modal
   const [gameResultMessage, setGameResultMessage] = useState<string>('');
-  const [isShowModal, setIsShowModal] = useState<boolean>(false);
+  const [isShowGameResultModal, setIsShowGameResultModal] = useState<boolean>(false);
+  // game room exit modal
+  const [isShowExitRoomModal, setIsShowExitRoomModal] = useState<boolean>(false);
 
   useEffect(() => {
     // initSetting -> gameRoomData
@@ -57,15 +60,9 @@ const Room = ({
       if (data.player1Ready) {
         setIsReady1P(true);
       }
-      // else {
-      //   setIsReady1P(false);
-      // }
       if (data.player2Ready) {
         setIsReady2P(true);
       }
-      // else {
-      //   setIsReady2P(false);
-      // }
       // set participant data
       setParticipantListData(setParticipantData, data);
     });
@@ -109,8 +106,15 @@ const Room = ({
   // 나가기 button event handler
   const onClickExit = useCallback(() => {
     // disconnect();
-    router.push('/play');
-  }, [router]);
+    console.log('일단 버튼은 눌렸다.');
+    if (isPlaying && (myRole !== 'observer')) {
+      console.log('겜중이고 player');
+      setIsShowExitRoomModal(true);
+    } else {
+      console.log('그냥 나갈 수 있음');
+      router.push('/play');
+    }
+  }, [isPlaying, myRole, router]);
 
   // 관전하기 참여하기 button event handler
   const onClickMove = useCallback(() => {
@@ -151,17 +155,31 @@ const Room = ({
     });
     socket?.on('gameover', (data) => {
       console.log('gameover', data);
+      // 기존에 열려있을 수 있는 모든 modal 창 닫기
+      setIsShowGameResultModal(false);
+      setIsShowExitRoomModal(false);
+
       setIsPlaying(false);
       setIsReady1P(false);
       setIsReady2P(false);
       setGameResultMessage(data);
-      setIsShowModal(true);
+      setIsShowGameResultModal(true);
     });
   }, [socket]);
 
-  // game result modal
-  const onClickExitButton = useCallback(() => {
-    setIsShowModal(false);
+  // game result modal button event handler
+  const onClickOKButton = useCallback(() => {
+    setIsShowGameResultModal(false);
+  }, []);
+
+  // game room exit modal button event handler
+  const onClickExitRoomButton = useCallback(() => {
+    setIsShowExitRoomModal(false);
+    router.push('/play');
+  }, [router]);
+
+  const onClickNoExitRoomButton = useCallback(() => {
+    setIsShowExitRoomModal(false);
   }, []);
 
   const onKeyUp = useCallback(
@@ -311,10 +329,19 @@ const Room = ({
           </div>
         </div>
       </div>
-      {isShowModal && (
+      {isShowGameResultModal && (
         <GameResultModal
           gameResult={gameResultMessage}
-          onClickExitButton={onClickExitButton}
+          onClickExitButton={onClickOKButton}
+        />
+      )}
+      {isShowExitRoomModal && (
+        <ChatTwoButtonModal
+          question="진짜 나가려고?"
+          onClickYes={onClickExitRoomButton}
+          onClickNo={onClickNoExitRoomButton}
+          yesButtonColor="bg-red-300"
+          noButtonColor="bg-green-300"
         />
       )}
     </div>
