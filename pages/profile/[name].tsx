@@ -6,10 +6,14 @@ import { ToastContainer } from 'react-toastify';
 import fetcher from '@/utils/fetcher';
 import { IUser } from '@/typings/db';
 import Navbar from '@/components/navigation-bar/Navbar';
-import ProfileCard from '@/components/ProfileCard';
+import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import RankItem from '@/components/profile-page/RankItem';
 import WinScore from '@/components/profile-page/WinScore';
 import HistoryList from '@/components/profile-page/HistoryList';
+import PageContainer from '@/components/page-with-profilecard/PageContainer';
+import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
+import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
+import ContentRight from '@/components/page-with-profilecard/ContentRight';
 
 const Profile = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -25,21 +29,23 @@ const Profile = ({ userInitialData }
   }
 
   return (
-    <div className="mx-auto h-screen max-w-screen-xl">
-      <div className="grid grid-cols-3 py-8 gap-10">
-        <div className="flex flex-col items-center space-y-3">
+    <PageContainer maxWidth="xl">
+      <ContentContainer>
+        <ContentLeft>
           <ProfileCard profileUserData={profileUserData} />
-        </div>
-        <div className="col-span-2 space-y-10">
-          <div className="grid grid-cols-2 gap-10">
-            <RankItem rankInfo={profileUserData.rankInfo} />
-            <WinScore userId={profileUserData.userId} />
+        </ContentLeft>
+        <ContentRight>
+          <div className="space-y-10">
+            <div className="grid grid-cols-2 gap-10">
+              <RankItem rankInfo={profileUserData.rankInfo} />
+              <WinScore userId={profileUserData.userId} />
+            </div>
+            <HistoryList userId={profileUserData.userId} />
           </div>
-          <HistoryList />
-        </div>
-      </div>
+        </ContentRight>
+      </ContentContainer>
       <ToastContainer />
-    </div>
+    </PageContainer>
   );
 };
 
