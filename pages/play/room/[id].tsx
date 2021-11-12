@@ -1,15 +1,16 @@
 import { useRouter } from 'next/router';
 import {
-  useCallback, useEffect, useState,
+  useCallback, useEffect, useState, VFC,
 } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import useSWR from 'swr';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
 import {
-  IGameChat, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant,
+  IGameChat, IGameOptionPatch, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant, IUser,
 } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 import useInput from '@/hooks/useInput';
@@ -19,10 +20,14 @@ import setParticipantListData from '@/utils/setParticipantListData';
 import GameResultModal from '@/components/play-room-page/GameResult';
 import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
 import GameOptionModal from '@/components/play-room-page/GameOptionModal';
-import fetcher from '@/utils/fetcher';
 
-const Room = ({
+interface IProps {
+  userInitialData: IUser;
+  roomData: IGameRoom;
+}
+const Room: VFC<IProps> = ({
   userInitialData,
+  roomData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const roomNumber = router.query.id;
@@ -189,14 +194,98 @@ const Room = ({
   }, [router]);
 
   // game option
-  const { data: gameRoomData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
-
+  // const { data: gameRoomData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
   const [ballSpeed, setBallSpeed] = useState<string>('medium');
   console.log(ballSpeed);
+  const [gameOptionPatchData, setGameOptionPatchData] = useState<IGameOptionPatch>({
+    title: roomData.title,
+    password: '',
+    maxParticipantNum: roomData.maxParticipantNum,
+    winPoint: 1,
+    ballSpeed,
+  });
+  // const [title, onChangeTitle] = useInput(gameRoomData?.title);
+  const [title, onChangeTitle] = useInput<string>(roomData.title);
+  // public | private state
+  const [
+    isShowPasswordInputBox, setIsShowPasswordInputBox,
+  // ] = useState<boolean | undefined>(gameRoomData?.isPrivate);
+  ] = useState<boolean>(roomData.isPrivate);
+  const [roomPassword, onChangeRoomPassword] = useInput('');
+  const [difficulty, onChangeDifficulty] = useInput(0);
+  const [winScore, onChangeWinScore, setWinScore] = useInput(1);
+  const [
+    numOfParticipant,
+    onChangeNumOfParticipant,
+    setNumOfParticipant,
+  // ] = useInput(gameRoomData?.maxParticipantNum);
+  ] = useInput<number>(roomData.maxParticipantNum);
+
+  const onChangeShowPasswordInputBox = useCallback(
+    () => {
+      if (isShowPasswordInputBox) {
+        setIsShowPasswordInputBox(false);
+      } else {
+        setIsShowPasswordInputBox(true);
+      }
+    },
+    [isShowPasswordInputBox],
+  );
+
+  useEffect(() => {
+    if (difficulty === 0) { setBallSpeed('slow'); }
+    if (difficulty === 1) { setBallSpeed('medium'); }
+    if (difficulty === 2) { setBallSpeed('fast'); }
+  }, [difficulty, setBallSpeed]);
+
+  useEffect(() => {
+    if (winScore < 1) setWinScore(1);
+    if (winScore > 10) setWinScore(10);
+  }, [setWinScore, winScore]);
+
+  useEffect(() => {
+    if (numOfParticipant) {
+      if (numOfParticipant < 2) setNumOfParticipant(2);
+      if (numOfParticipant > 8) setNumOfParticipant(8);
+    }
+  }, [numOfParticipant, setNumOfParticipant]);
 
   const onClickGameOptionApplyButton = useCallback(() => {
+    // const newData: IGameOptionPatch = {
+    //   title,
+    //   password: roomPassword,
+    //   maxParticipantNum: numOfParticipant,
+    //   winPoint: winScore,
+    //   ballSpeed,
+    // };
+    // const newData: IGameOptionPatch = makeGameOptionPatchData(
+    //   gameRoomData?.title,
+    //   password: pw,
+    //   maxParticipantNum: maxParticipantNum,
+    //   winPoint: winPoing,
+    //   ballSpeed,
+    // );
+    setGameOptionPatchData({
+      title,
+      password: roomPassword,
+      maxParticipantNum: numOfParticipant,
+      winPoint: winScore,
+      ballSpeed,
+    });
+    console.log('new patch data', gameOptionPatchData);
+    axios.patch(`/api/game/room/${roomNumber}`,
+      gameOptionPatchData,
+      {
+        headers: {
+          withCredentials: 'true',
+        },
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error('방장권한부여가 실패되었습니다.', { position: 'bottom-right', theme: 'colored' });
+      });
     setIsShowGameOptionModal(false);
-  }, []);
+  }, [ballSpeed, gameOptionPatchData, numOfParticipant, roomNumber, roomPassword, title, winScore]);
 
   const onClickGameOptionCancleButton = useCallback(() => {
     setIsShowGameOptionModal(false);
@@ -287,7 +376,7 @@ const Room = ({
       <div className="w-1/4 bg-amber-100">
         {/* 제목이 수평 기준으로 center 정렬이 되는데, 수직기준으로 center 정렬이 안됩니다... 어찌하는 거지?! */}
         <div className="bg-gray-400 h-1/12 flex text-center justify-center items-center">
-          <div>{`# ${roomNumber} ${gameRoomData?.title}`}</div>
+          <div>{`# ${roomNumber} ${roomData.title}`}</div>
         </div>
         <div className="bg-red-300 h-1/4">
           {/* player Info */}
@@ -362,18 +451,43 @@ const Room = ({
       )}
       {isShowGameOptionModal && (
         <GameOptionModal
+          title={title}
+          onChangeTitle={onChangeTitle}
+          difficulty={difficulty}
+          onChangeDifficulty={onChangeDifficulty}
+          winScore={winScore}
+          onChangeWinScore={onChangeWinScore}
+          numOfParticipant={numOfParticipant}
+          onChangeNumOfParticipant={onChangeNumOfParticipant}
+          onChangeShowPasswordInputBox={onChangeShowPasswordInputBox}
+          isShowPasswordInputBox={isShowPasswordInputBox}
+          roomPassword={roomPassword}
+          onChangeRoomPassword={onChangeRoomPassword}
           onClickGameOptionApplyButton={onClickGameOptionApplyButton}
           onClickGameOptionCancleButton={onClickGameOptionCancleButton}
-          gameRoomData={gameRoomData}
-          setBallSpeed={setBallSpeed}
         />
       )}
     </div>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => ({
-  props: {},
-});
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const access_token = process.env.ACCESS_TOKEN || '';
+
+  const roomData: IGameRoom = await axios
+    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/game/room/${context.query.id}`, {
+      withCredentials: true,
+      headers: {
+        Cookie: `Authentication=${context.req.cookies[access_token]}`,
+      },
+    })
+    .then((response) => response.data);
+
+  return {
+    props: {
+      roomData,
+    },
+  };
+};
 
 export default Room;
