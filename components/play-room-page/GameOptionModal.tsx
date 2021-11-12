@@ -1,20 +1,34 @@
-import { useCallback, useState, VFC } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useCallback, useEffect, useState, VFC,
+} from 'react';
 import useInput from '@/hooks/useInput';
+import InputNumber from '../inputs/InputNumber';
+import { IGameRoom } from '@/typings/db';
 
 interface IProps {
   onClickGameOptionApplyButton: () => void;
   onClickGameOptionCancleButton: () => void;
+  gameRoomData: IGameRoom | undefined;
+  setBallSpeed: Dispatch<SetStateAction<string>>;
 }
 
 const GameOptionModal: VFC<IProps> = ({
   onClickGameOptionApplyButton,
   onClickGameOptionCancleButton,
+  gameRoomData,
+  setBallSpeed,
 }) => {
   const [roomName, onChangeRoomName] = useInput('');
   // public | private state
   const [isShowPasswordInputBox, setIsShowPasswordInputBox] = useState<boolean>(false);
   const [roomPassword, onChangeRoomPassword] = useInput('');
+  const [difficulty, onChangeDifficulty] = useInput(0);
+  const [winScore, onChangeWinScore, setWinScore] = useInput(5);
+  const [numOfParticipant, onChangeNumOfParticipant, setNumOfParticipant] = useInput(5);
 
+  console.log('gameData 이거 맞아?', gameRoomData);
   const onChangeShowPasswordInputBox = useCallback(
     () => {
       if (isShowPasswordInputBox) {
@@ -26,8 +40,24 @@ const GameOptionModal: VFC<IProps> = ({
     [isShowPasswordInputBox],
   );
 
+  useEffect(() => {
+    if (difficulty === 0) { setBallSpeed('slow'); }
+    if (difficulty === 1) { setBallSpeed('medium'); }
+    if (difficulty === 2) { setBallSpeed('fast'); }
+  }, [difficulty, setBallSpeed]);
+
+  useEffect(() => {
+    if (winScore < 1) setWinScore(1);
+    if (winScore > 10) setWinScore(10);
+  }, [setWinScore, winScore]);
+
+  useEffect(() => {
+    if (numOfParticipant < 2) setNumOfParticipant(2);
+    if (numOfParticipant > 8) setNumOfParticipant(8);
+  }, [numOfParticipant, setNumOfParticipant]);
+
   return (
-    <div className="absolute top-1/2 left-1/2 bg-white rounded-md p-5 space-y-5">
+    <div className="absolute top-1/4 left-1/3 bg-white rounded-md p-5 space-y-5">
       {/* title */}
       <div className="font-medium text-lg text-center">Chang Game Room Option</div>
       {/* room name */}
@@ -36,7 +66,7 @@ const GameOptionModal: VFC<IProps> = ({
         <input
           className="border-none"
           type="text"
-          placeholder="박찬영 바보"
+          placeholder={gameRoomData ? gameRoomData.title : 'loading title'}
           onChange={onChangeRoomName}
           value={roomName}
         />
@@ -44,32 +74,22 @@ const GameOptionModal: VFC<IProps> = ({
       {/* 난이도 */}
       <div className="flex justify-between">
         <div>난이도</div>
-        <select className="border-none" id="slt_difficulty">
-          <option value="EASY">쉬움</option>
-          <option value="NORMAL">보통</option>
-          <option value="HARD">어려움</option>
-        </select>
+        <input type="range" min="0" max="2" value={difficulty} onChange={onChangeDifficulty} list="tickmarks" className="outline-none" />
+        <datalist id="tickmarks">
+          <option value="0" label="0%" />
+          <option value="1" label="50%" />
+          <option value="2" label="100%" />
+        </datalist>
       </div>
       {/* 승리점수 */}
       <div className="flex justify-between">
-        <div>승리점수</div>
-        <select className="border-none" id="slt_score">
-          <option value="A">1</option>
-          <option value="B">2</option>
-          <option value="C">3</option>
-          <option value="D">4</option>
-          <option value="E">5</option>
-        </select>
+        <InputNumber type="승리점수(1 ~ 10)" value={winScore} onChangeValue={onChangeWinScore} min={1} max={10} />
       </div>
       {/* 최대인원 */}
       <div className="flex justify-between">
-        <div>최대인원</div>
-        <select className="border-none">
-          <option value="A">5</option>
-          <option value="B">6</option>
-          <option value="C">7</option>
-        </select>
+        <InputNumber type="인원수(2 ~ 8)" value={numOfParticipant} onChangeValue={onChangeNumOfParticipant} min={2} max={8} />
       </div>
+      {/* 최대인원 */}
       {/* public | private */}
       <div className="flex justify-between">
         <div>public / private</div>
