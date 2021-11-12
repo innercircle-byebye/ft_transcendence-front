@@ -5,18 +5,21 @@ import React, {
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import useSWR from 'swr';
 import useInput from '@/hooks/useInput';
 import SwitchPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
 import Navbar from '@/components/navigation-bar/Navbar';
-import { IGameRoom } from '@/typings/db';
+import { IGameRoom, IUser } from '@/typings/db';
 import InputName from '@/components/inputs/InputName';
 import InputNumber from '@/components/inputs/InputNumber';
 import PageContainer from '@/components/create-page/PageContainer';
 import ContentContainerWithTitle from '@/components/create-page/ContentContainerWithTitle';
+import fetcher from '@/utils/fetcher';
 
 const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const { invite } = router.query;
+  const { data: inviteMemberData } = useSWR<IUser>(`/api/user/nickname/${invite}`, fetcher);
   const [roomName, onChangeRoomName] = useInput('');
   const [roomNameError, setRoomNameError] = useState(false);
   const [difficulty, onChangeDifficulty] = useInput(0);
@@ -32,22 +35,25 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
   }, [router]);
 
   const onClickMake = useCallback(() => {
-    axios.post(invite ? `/api/game/room?invitedUserId=${invite}` : '/api/game/room', {
-      title: roomName,
-      password: isPrivate ? password : null,
-      maxParticipantNum: numOfSpectator,
-      winPoint: winScore,
-      ballSpeed,
-    }, {
-      headers: {
-        withCredentials: 'true',
-      },
-    }).then(() => {
-      router.push('/play');
-    }).catch(() => {
-      toast.error('방만들기에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
-    });
-  }, [ballSpeed, invite, isPrivate, numOfSpectator, password, roomName, router, winScore]);
+    if (inviteMemberData) {
+      axios.post(invite ? `/api/game/room?invitedUserId=${inviteMemberData.userId}` : '/api/game/room', {
+        title: roomName,
+        password: isPrivate ? password : null,
+        maxParticipantNum: numOfSpectator,
+        winPoint: winScore,
+        ballSpeed,
+      }, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        router.push('/play');
+      }).catch(() => {
+        toast.error('방만들기에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
+      });
+    }
+  }, [ballSpeed, invite, inviteMemberData, isPrivate, numOfSpectator,
+    password, roomName, router, winScore]);
 
   useEffect(() => {
     if (difficulty === 0) { setBallSpeed('slow'); }
