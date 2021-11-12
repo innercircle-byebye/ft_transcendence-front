@@ -34,10 +34,8 @@ const HistoryItem: VFC<IProps> = ({ historyData, textColor = 'text-sky-700' }) =
     }
   }, [historyData.playerOneScore, historyData.playerTwoScore, isPlayerOne]);
 
-  console.log(`${historyData.playerOneNickname} ${historyData.playerTwoNickname}`);
-
   return (
-    <div className={`${textColor} bg-amber-50 text-xl rounded-md px-5 py-2 grid grid-cols-3 justify-items-center`}>
+    <div className={`${textColor} bg-amber-50 text-xl rounded-md px-5 py-2 grid grid-cols-3 justify-items-center m-3`}>
       <span>{dayjs(historyData.endAt).format('YYYY/MM/DD h:mm A')}</span>
       <span>{isPlayerOne ? historyData.playerTwoNickname : historyData.playerOneNickname}</span>
       <span>{result}</span>
