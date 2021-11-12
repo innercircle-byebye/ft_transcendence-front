@@ -7,12 +7,12 @@ import { toast, ToastContainer } from 'react-toastify';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import useInput from '@/hooks/useInput';
 import SwitchPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
-import Navbar from '@/components/navigation-bar/Navbar';
 import { IGameRoom } from '@/typings/db';
 import InputName from '@/components/inputs/InputName';
 import InputNumber from '@/components/inputs/InputNumber';
 import PageContainer from '@/components/create-page/PageContainer';
 import ContentContainerWithTitle from '@/components/create-page/ContentContainerWithTitle';
+import MainLayout from '@/layouts/MainLayout';
 
 const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
@@ -121,14 +121,7 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
 };
 
 CreateRoom.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-initial">
-        <Navbar />
-      </div>
-      {page}
-    </div>
-  );
+  return <MainLayout>{page}</MainLayout>;
 };
 
 interface IProps {

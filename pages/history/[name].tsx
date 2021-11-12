@@ -2,7 +2,6 @@ import React, { ReactElement, useState } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import Navbar from '@/components/navigation-bar/Navbar';
 import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import PageContainer from '@/components/page-with-profilecard/PageContainer';
 import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
@@ -13,6 +12,7 @@ import useInput from '@/hooks/useInput';
 import HistoryList from '@/components/history-page/HistoryList';
 import fetcher from '@/utils/fetcher';
 import { IUser } from '@/typings/db';
+import MainLayout from '@/layouts/MainLayout';
 
 const History = () => {
   const router = useRouter();
@@ -48,14 +48,7 @@ const History = () => {
 };
 
 History.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-initial">
-        <Navbar />
-      </div>
-      {page}
-    </div>
-  );
+  return <MainLayout>{page}</MainLayout>;
 };
 
 export default History;
