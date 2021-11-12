@@ -21,8 +21,10 @@ const Home = ({
     <PageContainer maxWidth="xl">
       <ContentContainer>
         <ContentLeft>
-          <ProfileCard userData={userInitialData} />
-          <AnnouncementList />
+          <div className="space-y-10">
+            <ProfileCard userData={userInitialData} />
+            <AnnouncementList />
+          </div>
         </ContentLeft>
         <ContentRight>
           <div className="flex space-x-5 w-4/5">
