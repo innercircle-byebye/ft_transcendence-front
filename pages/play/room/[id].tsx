@@ -3,12 +3,13 @@ import {
   useCallback, useEffect, useState,
 } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import useSWR from 'swr';
 import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
 import {
-  IGameChat, IGameRoomData, IGameUpdateData, IParticipant,
+  IGameChat, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant,
 } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 import useInput from '@/hooks/useInput';
@@ -18,6 +19,7 @@ import setParticipantListData from '@/utils/setParticipantListData';
 import GameResultModal from '@/components/play-room-page/GameResult';
 import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
 import GameOptionModal from '@/components/play-room-page/GameOptionModal';
+import fetcher from '@/utils/fetcher';
 
 const Room = ({
   userInitialData,
@@ -186,7 +188,12 @@ const Room = ({
     router.push('/play');
   }, [router]);
 
-  // game option modal button event handler
+  // game option
+  const { data: gameRoomData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
+
+  const [ballSpeed, setBallSpeed] = useState<string>('medium');
+  console.log(ballSpeed);
+
   const onClickGameOptionApplyButton = useCallback(() => {
     setIsShowGameOptionModal(false);
   }, []);
@@ -202,7 +209,6 @@ const Room = ({
   const onKeyUp = useCallback(
     (e) => {
       e.preventDefault();
-      // console.log('keyUP event', e);
       // 방향키 위쪽
       if (e.keyCode === 38) {
         console.log('key up 위');
@@ -220,9 +226,6 @@ const Room = ({
 
   const onKeyDown = useCallback(
     (e) => {
-      // e.preventDefault();
-      // e.stopPropagation();
-      // console.log('keydown event', e);
       // 방향키 위쪽
       if (e.keyCode === 38) {
         console.log('key down 위');
@@ -240,8 +243,6 @@ const Room = ({
   const onKeyPressHandler = useCallback(
     (e) => {
       if (e.key === 'Enter') {
-        // console.log('enter game chat', e.target.value);
-        // console.log('enter game chat', gameChat);
         if (gameChat && gameChat.trim()) {
           socket?.emit('gameChat', { content: gameChat });
           setGameChat('');
@@ -261,10 +262,8 @@ const Room = ({
   // chat event 받아오기
   useEffect(() => {
     socket?.on('gameChat', (data: IGameChat) => {
-      console.log('gameChat data', data);
       // gameChatList 추가
-      gameChatListData.push(data);
-      setGameChatListData(gameChatListData);
+      setGameChatListData([...gameChatListData, data]);
     });
   }, [gameChatListData, socket]);
 
@@ -277,7 +276,6 @@ const Room = ({
           isReady2P={isReady2P}
           onClickReady1P={onClickReady1P}
           onClickReady2P={onClickReady2P}
-          // gameRoomData={gameRoomData}
           name1p={name1P}
           name2p={name2P}
           role={myRole}
@@ -289,7 +287,7 @@ const Room = ({
       <div className="w-1/4 bg-amber-100">
         {/* 제목이 수평 기준으로 center 정렬이 되는데, 수직기준으로 center 정렬이 안됩니다... 어찌하는 거지?! */}
         <div className="bg-gray-400 h-1/12 flex text-center justify-center items-center">
-          <div>{`# ${roomNumber} 방제목 api 로 받아서 사용하시오`}</div>
+          <div>{`# ${roomNumber} ${gameRoomData?.title}`}</div>
         </div>
         <div className="bg-red-300 h-1/4">
           {/* player Info */}
@@ -366,6 +364,8 @@ const Room = ({
         <GameOptionModal
           onClickGameOptionApplyButton={onClickGameOptionApplyButton}
           onClickGameOptionCancleButton={onClickGameOptionCancleButton}
+          gameRoomData={gameRoomData}
+          setBallSpeed={setBallSpeed}
         />
       )}
     </div>
