@@ -134,6 +134,14 @@ export interface IGameChat {
   index : number;
 }
 
+export interface IGameOptionPatch {
+  title: string;
+  password: string;
+  maxParticipantNum: number;
+  winPoint: number;
+  ballSpeed: string;
+}
+
 export interface IParticipant {
   key: number;
   role: string;
