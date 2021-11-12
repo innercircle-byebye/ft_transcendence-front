@@ -5,6 +5,10 @@ import ProfileCard from '@/components/main-page/ProfileCard';
 import AnnouncementList from '@/components/main-page/AnnouncementList';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import JoinedChannelList from '@/components/main-page/JoinedChannelList';
+import PageContainer from '@/components/page-with-profilecard/PageContainer';
+import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
+import ContentRight from '@/components/page-with-profilecard/ContentRight';
+import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
 
 const Home = ({
   userInitialData,
@@ -14,18 +18,20 @@ const Home = ({
   }
 
   return (
-    <div className="flex px-12 py-5 space-x-5">
-      {/* 프로필카드와 공지사항 */}
-      <div className="flex-none w-1/5 space-y-5">
-        <ProfileCard userData={userInitialData} />
-        <AnnouncementList />
-      </div>
-      {/* 빠른시작2개, 친구목록과 채널목록 */}
-      <div className="flex space-x-5 w-4/5">
-        <OnlineFriendList />
-        <JoinedChannelList />
-      </div>
-    </div>
+    <PageContainer maxWidth="xl">
+      <ContentContainer>
+        <ContentLeft>
+          <ProfileCard userData={userInitialData} />
+          <AnnouncementList />
+        </ContentLeft>
+        <ContentRight>
+          <div className="flex space-x-5 w-4/5">
+            <OnlineFriendList />
+            <JoinedChannelList />
+          </div>
+        </ContentRight>
+      </ContentContainer>
+    </PageContainer>
   );
 };
 
