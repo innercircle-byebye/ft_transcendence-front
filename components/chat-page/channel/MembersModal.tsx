@@ -38,7 +38,7 @@ const MembersModal: VFC = () => {
   );
   const {
     data: blockMemberData, revalidate: revalidateBlockMemberData,
-  } = useSWR<IChannelMember[]>(
+  } = useSWR<IUser[]>(
     '/api/block/list', fetcher,
   );
 
