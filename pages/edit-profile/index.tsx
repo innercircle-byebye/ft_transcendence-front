@@ -5,6 +5,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
+// import QRCOde from 'qrcode.react';
 import Navbar from '@/components/navigation-bar/Navbar';
 import InputImage from '@/components/inputs/InputImage';
 import useInput from '@/hooks/useInput';
@@ -13,6 +14,7 @@ import InputEmail from '@/components/inputs/InputEmail';
 import Switch from '@/components/edit-profile-page/Switch';
 import PageContainer from '@/components/edit-profile-page/PageContainer';
 import ContentContainer from '@/components/edit-profile-page/ContentContainer';
+import TwoFactorAuthentication from '@/components/edit-profile-page/TwoFactorAuthentication';
 
 const EditProfile = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -106,9 +108,12 @@ const EditProfile = ({ userInitialData }
             setEmailError={setEmailError}
             onClickResetEmail={onClickResetEmail}
           />
-          <Switch title="상태공개 / 비공개" isLeft={isStatusPublic} onClickSwitch={onClickSwitchState} />
-          <Switch title="기록공개 / 비공개" isLeft={isHistoryPublic} onClickSwitch={onClickSwitchHistory} />
-          <div className="w-72 flex items-center justify-evenly">
+          <div className="flex">
+            <Switch title="상태공개 / 비공개" isLeft={isStatusPublic} onClickSwitch={onClickSwitchState} />
+            <Switch title="기록공개 / 비공개" isLeft={isHistoryPublic} onClickSwitch={onClickSwitchHistory} />
+          </div>
+          <TwoFactorAuthentication />
+          <div className="w-72 flex items-center justify-evenly pt-2">
             <button
               className="bg-white text-sky-600 border-sky-600 border font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="button"

@@ -20,6 +20,7 @@ export interface IUser {
   createdAt: string;
   lastModifiedAt: string;
   deletedAt: string | null;
+  isTwoFactorAuthEnabled?: boolean;
   rankInfo: IRankInfo;
 }
 
