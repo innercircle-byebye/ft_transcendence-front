@@ -93,6 +93,7 @@ const CreateProfile = ({
   return (
     <PageContainer>
       <ContentContainer>
+        <div className="text-6xl text-gray-700">Create Profile</div>
         <form
           className="flex flex-col items-center"
           onSubmit={onSubmitCreateProfile}
