@@ -5,16 +5,20 @@ import React, {
   useCallback, useEffect, useState,
 } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import useSWR from 'swr';
 import InputEmail from '@/components/inputs/InputEmail';
 import InputNickname from '@/components/inputs/InputNickname';
 import useInput from '@/hooks/useInput';
 import InputImage from '@/components/inputs/InputImage';
 import PageContainer from '@/components/create-profile-page/PageContainer';
 import ContentContainer from '@/components/create-profile-page/ContentContainer';
+import fetcher from '@/utils/fetcher';
+import { IUser } from '@/typings/db';
 
 const CreateProfile = ({
   userInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const { data: allUserData } = useSWR<IUser[]>('/api/user/all', fetcher);
   const router = useRouter();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImagePath, setPreviewImagePath] = useState<string>(
@@ -25,6 +29,7 @@ const CreateProfile = ({
   );
   const [email, onChangeEmail, setEmail] = useInput<string>(userInitialData.email);
   const [emailError, setEmailError] = useState(false);
+  const [nicknameError, setNicknameError] = useState(false);
 
   const onClickResetNickname = useCallback(() => {
     setNickname(userInitialData.nickname);
@@ -54,7 +59,7 @@ const CreateProfile = ({
   const onSubmitCreateProfile = useCallback(
     (e) => {
       e.preventDefault();
-      if (nickname && email && !emailError) {
+      if (nickname.trim().length && email.trim().length && !emailError && !nicknameError) {
         const formData = new FormData();
         if (imageFile) {
           formData.append('image', imageFile);
@@ -77,7 +82,7 @@ const CreateProfile = ({
           });
       }
     },
-    [email, emailError, imageFile, nickname, router],
+    [email, emailError, imageFile, nickname, nicknameError, router],
   );
 
   useEffect(() => {
@@ -89,6 +94,17 @@ const CreateProfile = ({
       fileReader.readAsDataURL(imageFile);
     }
   }, [imageFile, previewImagePath]);
+
+  useEffect(() => {
+    if (allUserData) {
+      if (nickname !== userInitialData.nickname
+        && allUserData.find((data) => data.nickname === nickname)) {
+        setNicknameError(true);
+      } else {
+        setNicknameError(false);
+      }
+    }
+  }, [allUserData, nickname, userInitialData.nickname]);
 
   return (
     <PageContainer>
@@ -102,6 +118,7 @@ const CreateProfile = ({
             nickname={nickname}
             onChangeNickname={onChangeNickname}
             onClickResetNickname={onClickResetNickname}
+            nicknameError={nicknameError}
           />
           <InputEmail
             email={email}
