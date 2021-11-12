@@ -17,6 +17,7 @@ import ParticipantList from '@/components/play-room-page/ParticipantList';
 import setParticipantListData from '@/utils/setParticipantListData';
 import GameResultModal from '@/components/play-room-page/GameResult';
 import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
+import GameOptionModal from '@/components/play-room-page/GameOptionModal';
 
 const Room = ({
   userInitialData,
@@ -46,6 +47,8 @@ const Room = ({
   const [isShowGameResultModal, setIsShowGameResultModal] = useState<boolean>(false);
   // game room exit modal
   const [isShowExitRoomModal, setIsShowExitRoomModal] = useState<boolean>(false);
+  // game option modal
+  const [isShowGameOptionModal, setIsShowGameOptionModal] = useState<boolean>(false);
 
   useEffect(() => {
     // initSetting -> gameRoomData
@@ -125,6 +128,11 @@ const Room = ({
     }
   }, [myRole, socket]);
 
+  // 게임 옵션 button event handler
+  const onClickOption = useCallback(() => {
+    setIsShowGameOptionModal(true);
+  }, []);
+
   // Ready event
   const onClickReady1P = useCallback(() => {
     if (isReady1P) {
@@ -177,6 +185,15 @@ const Room = ({
     setIsShowExitRoomModal(false);
     router.push('/play');
   }, [router]);
+
+  // game option modal button event handler
+  const onClickGameOptionApplyButton = useCallback(() => {
+    setIsShowGameOptionModal(false);
+  }, []);
+
+  const onClickGameOptionCancleButton = useCallback(() => {
+    setIsShowGameOptionModal(false);
+  }, []);
 
   const onClickNoExitRoomButton = useCallback(() => {
     setIsShowExitRoomModal(false);
@@ -287,6 +304,7 @@ const Room = ({
             isPlaying={isPlaying}
             onClickExit={onClickExit}
             onClickMove={onClickMove}
+            onClickOption={onClickOption}
           />
         </div>
         <div className="bg-sky-300 h-7/12">
@@ -342,6 +360,12 @@ const Room = ({
           onClickNo={onClickNoExitRoomButton}
           yesButtonColor="bg-red-300"
           noButtonColor="bg-green-300"
+        />
+      )}
+      {isShowGameOptionModal && (
+        <GameOptionModal
+          onClickGameOptionApplyButton={onClickGameOptionApplyButton}
+          onClickGameOptionCancleButton={onClickGameOptionCancleButton}
         />
       )}
     </div>
