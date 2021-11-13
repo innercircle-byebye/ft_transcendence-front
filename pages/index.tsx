@@ -30,7 +30,7 @@ const Home = ({
           </div>
         </ContentLeft>
         <ContentRight>
-          <div className="flex pb-5 space-x-5 w-5/5">
+          <div className="flex pb-5 space-x-5 w-full">
             <div className="flex w-2/5">
               <PlayableCard />
             </div>
@@ -38,7 +38,7 @@ const Home = ({
               <ObservableCard />
             </div>
           </div>
-          <div className="flex space-x-5 w-5/5">
+          <div className="flex space-x-5 w-full">
             <OnlineFriendList />
             <JoinedChannelList />
           </div>
