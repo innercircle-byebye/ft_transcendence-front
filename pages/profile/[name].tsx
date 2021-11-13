@@ -5,7 +5,6 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { ToastContainer } from 'react-toastify';
 import fetcher from '@/utils/fetcher';
 import { IUser } from '@/typings/db';
-import Navbar from '@/components/navigation-bar/Navbar';
 import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import RankItem from '@/components/profile-page/RankItem';
 import WinScore from '@/components/profile-page/WinScore';
@@ -14,6 +13,7 @@ import PageContainer from '@/components/page-with-profilecard/PageContainer';
 import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
 import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
 import ContentRight from '@/components/page-with-profilecard/ContentRight';
+import MainLayout from '@/layouts/MainLayout';
 
 const Profile = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -50,14 +50,7 @@ const Profile = ({ userInitialData }
 };
 
 Profile.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-initial">
-        <Navbar />
-      </div>
-      {page}
-    </div>
-  );
+  return <MainLayout>{page}</MainLayout>;
 };
 
 export const getServerSideProps: GetServerSideProps = async () => ({
