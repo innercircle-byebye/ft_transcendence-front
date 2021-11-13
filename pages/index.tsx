@@ -10,6 +10,8 @@ import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
 import ContentRight from '@/components/page-with-profilecard/ContentRight';
 import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
 import Navbar from '@/components/navigation-bar/Navbar';
+import PlayableCard from '@/components/main-page/PlayableCard';
+import ObservableCard from '@/components/main-page/ObservableCard';
 
 const Home = ({
   userInitialData,
@@ -28,7 +30,15 @@ const Home = ({
           </div>
         </ContentLeft>
         <ContentRight>
-          <div className="flex space-x-5 w-4/5">
+          <div className="flex pb-5 space-x-5 w-5/5">
+            <div className="flex w-2/5">
+              <PlayableCard />
+            </div>
+            <div className="flex w-3/5">
+              <ObservableCard />
+            </div>
+          </div>
+          <div className="flex space-x-5 w-5/5">
             <OnlineFriendList />
             <JoinedChannelList />
           </div>
