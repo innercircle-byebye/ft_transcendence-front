@@ -13,16 +13,16 @@ interface IProps {
 const EachDM: VFC<IProps> = ({ member }) => {
   const router = useRouter();
   const dMUserName = router.query.name;
-  const date = localStorage.getItem(`dm-${dMUserName}`) || '0';
+  const date = localStorage.getItem(`dm-${member.nickname}`) || '0';
   const { data: count, mutate: mutateCount } = useSWR<number>(
-    member ? `/api/dm/${member.userId}/unreads?after=${date}` : null, fetcher,
+    `/api/dm/${member.userId}/unreads?after=${date}`, fetcher,
   );
 
   useEffect(() => {
     if (dMUserName === member.nickname) {
-      mutateCount(0);
+      mutateCount(0, false);
     }
-  }, [dMUserName, member.nickname, mutateCount]);
+  }, [count, dMUserName, member.nickname, mutateCount]);
 
   return (
     <Link
