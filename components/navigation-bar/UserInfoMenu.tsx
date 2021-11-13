@@ -8,9 +8,12 @@ import { MenuIcon } from '@heroicons/react/solid';
 import useSWR from 'swr';
 import { IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
+import useSocket from '@/hooks/useSocket';
 
 const UserInfoMenu: VFC = () => {
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
+  // const { socket: mainSocket } = useSocket('main');
+  const { disconnect } = useSocket('main');
 
   const onClickLogout = useCallback((e) => {
     e.preventDefault();
@@ -18,12 +21,13 @@ const UserInfoMenu: VFC = () => {
       .get('/auth/logout')
       .then(() => {
         router.push('/login');
+        disconnect();
       })
       .catch((error) => {
         console.dir(error);
         toast.error(error.response?.data, { position: 'bottom-center' });
       });
-  }, []);
+  }, [disconnect]);
 
   if (!userData) {
     return <div>로딩중...</div>;
