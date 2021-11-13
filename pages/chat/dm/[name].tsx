@@ -18,7 +18,7 @@ import DMButtons from '@/components/chat-page/dm/DMButtons';
 
 const DM = () => {
   const router = useRouter();
-  const DMUserName = router.query.id;
+  const DMUserName = router.query.name;
   const { data: dmUserData } = useSWR<IUser>(`/api/user/nickname/${DMUserName}`, fetcher);
   const [chat, onChangeChat, setChat] = useInput('');
   const [showEmoji, setShowEmoji] = useState(false);
