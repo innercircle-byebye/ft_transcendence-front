@@ -9,7 +9,7 @@ import ChatTwoButtonModal from '../common/ChatTwoButtonModal';
 
 const DMMemberModal: VFC = () => {
   const router = useRouter();
-  const dmUserNickname = router.query.id;
+  const dmUserNickname = router.query.name;
   const { data: dmUserData } = useSWR<IUser>(`/api/user/nickname/${dmUserNickname}`, fetcher);
   const {
     data: blockMemberData, revalidate: revalidateBlockMemberData,
