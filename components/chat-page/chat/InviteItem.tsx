@@ -28,10 +28,10 @@ const InviteItem: FC<Props> = ({ invitationData }) => {
     });
   }, [invitationData.content, invitationData.nickname, router]);
 
+  console.log(invitationData.content);
   const onClickJoinChannel = useCallback(() => {
     // 비밀번호 처리 필요
     axios.post(`/api/channel/${invitationData?.content}/member`, {
-      role: 'player2',
     }, {
       headers: {
         withCredentials: 'true',
@@ -40,7 +40,7 @@ const InviteItem: FC<Props> = ({ invitationData }) => {
       router.push(`/chat/channel/${invitationData?.content}`);
     }).catch(() => {
       console.log('error');
-      toast.error(`${invitationData.nickname}이 보낸 게임방 초대에 입장할 수 없습니다.`, { position: 'bottom-right', theme: 'colored' });
+      toast.error(`${invitationData.nickname}님이 보낸 게임방 초대에 입장할 수 없습니다.`, { position: 'bottom-right', theme: 'colored' });
     });
   }, [invitationData.content, invitationData.nickname, router]);
 
