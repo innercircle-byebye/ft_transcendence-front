@@ -21,7 +21,7 @@ const EachChannel: VFC<IProps> = ({ channel, onClickExitChannel }) => {
 
   useEffect(() => {
     if (channelName === channel.name) {
-      mutateCount(0);
+      mutateCount(0, false);
     }
   }, [channel.createdAt, channel.name, channelName, count, date, mutateCount]);
 
