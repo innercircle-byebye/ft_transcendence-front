@@ -1,5 +1,5 @@
-import React, {
-  ReactElement, useEffect, useRef,
+import {
+  ReactElement, useEffect, useRef, useState,
 } from 'react';
 import { ToastContainer } from 'react-toastify';
 import { useRouter } from 'next/router';
@@ -11,7 +11,6 @@ import ContentContainer from '@/components/page-with-profilecard/ContentContaine
 import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
 import ContentRight from '@/components/page-with-profilecard/ContentRight';
 import HistorySelect from '@/components/history-page/HistorySelect';
-import useInput from '@/hooks/useInput';
 import HistoryList from '@/components/history-page/HistoryList';
 import fetcher from '@/utils/fetcher';
 import { IUser, IGameResult } from '@/typings/db';
@@ -22,10 +21,10 @@ const History = () => {
   const { name } = router.query;
   const scrollbarRef = useRef<Scrollbars>(null);
   const { data: historyUserData } = useSWR<IUser>(name ? `/api/user/nickname/${name}` : null, fetcher);
+  const [selectQuery, setSelectQuery] = useState('');
   const { data: historyData, setSize } = useSWRInfinite<IGameResult[]>(
-    (index) => (historyUserData ? `/api/game/${historyUserData.userId}/results?perPage=${13}&page=${index + 1}` : null), fetcher,
+    (index) => (historyUserData ? `/api/game/${historyUserData.userId}/results?perPage=${13}&page=${index + 1}${selectQuery}` : null), fetcher,
   );
-  const [nickname, onChangeNickname] = useInput('');
   const isEmpty = historyData?.length === 0;
   const isReachingEnd = isEmpty || false
     || (historyData && historyData[historyData.length - 1]?.length < 13) || false;
@@ -54,7 +53,10 @@ const History = () => {
               <h1 className="text-4xl leading-10">History</h1>
             </div>
             <div className="p-5 space-y-5 rounded-md bg-gray-200 flex-1 flex flex-col">
-              <HistorySelect nickname={nickname} onChangeNickname={onChangeNickname} />
+              <HistorySelect
+                setSelectQuery={setSelectQuery}
+                historyUserId={historyUserData.userId}
+              />
               <HistoryList
                 historyData={historyData ? historyData?.flat() : []}
                 setSize={setSize}
