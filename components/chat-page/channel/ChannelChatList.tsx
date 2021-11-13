@@ -3,9 +3,9 @@ import React, {
 } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import useSWR from 'swr';
-import { IChannelChat, IChannelMember } from '@/typings/db';
-import ChatItem from './ChatItem';
+import { IChannelChat, IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
+import ChatItem from '@/components/chat-page/chat/ChatItem';
 
 interface IProps {
   chatSections: { [key: string]: (IChannelChat)[] };
@@ -13,10 +13,10 @@ interface IProps {
   isReachingEnd: boolean;
 }
 
-const ChatList = forwardRef<Scrollbars, IProps>((
+const ChannelChatList = forwardRef<Scrollbars, IProps>((
   { chatSections, setSize, isReachingEnd }, scrollRef,
 ) => {
-  const { data: blockMemberData } = useSWR<IChannelMember[]>('/api/block/list', fetcher);
+  const { data: blockMemberData } = useSWR<IUser[]>('/api/block/list', fetcher);
 
   const onScroll = useCallback(
     (values) => {
@@ -66,6 +66,6 @@ const ChatList = forwardRef<Scrollbars, IProps>((
   );
 });
 
-ChatList.displayName = 'ChatList';
+ChannelChatList.displayName = 'ChannelChatList';
 
-export default ChatList;
+export default ChannelChatList;
