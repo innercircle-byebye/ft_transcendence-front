@@ -6,7 +6,6 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
 import useSWR from 'swr';
-import Navbar from '@/components/navigation-bar/Navbar';
 import InputImage from '@/components/inputs/InputImage';
 import useInput from '@/hooks/useInput';
 import InputNickname from '@/components/inputs/InputNickname';
@@ -14,6 +13,7 @@ import InputEmail from '@/components/inputs/InputEmail';
 import Switch from '@/components/edit-profile-page/Switch';
 import PageContainer from '@/components/edit-profile-page/PageContainer';
 import ContentContainer from '@/components/edit-profile-page/ContentContainer';
+import MainLayout from '@/layouts/MainLayout';
 import { IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 import TwoFactorAuthentication from '@/components/edit-profile-page/TwoFactorAuthentication';
@@ -156,14 +156,7 @@ const EditProfile = ({ userInitialData }
 };
 
 EditProfile.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-initial">
-        <Navbar />
-      </div>
-      {page}
-    </div>
-  );
+  return <MainLayout>{page}</MainLayout>;
 };
 
 export const getServerSideProps: GetServerSideProps = async () => ({

@@ -5,8 +5,8 @@ import fetcher from '@/utils/fetcher';
 import { IUser } from '@/typings/db';
 import SearchProfileCard from '@/components/searches-page/SearchProfileCard';
 import PageContainer from '@/components/searches-page/PageContainer';
-import Navbar from '@/components/navigation-bar/Navbar';
 import ContentContainer from '@/components/searches-page/ContentContainer';
+import MainLayout from '@/layouts/MainLayout';
 
 const Searches = () => {
   const router = useRouter();
@@ -41,14 +41,7 @@ const Searches = () => {
 };
 
 Searches.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-initial">
-        <Navbar />
-      </div>
-      {page}
-    </div>
-  );
+  return <MainLayout>{page}</MainLayout>;
 };
 
 export default Searches;
