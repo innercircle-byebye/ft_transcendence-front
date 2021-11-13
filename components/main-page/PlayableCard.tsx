@@ -52,7 +52,7 @@ const PlayableCard = () => {
             <div className="flex flex-col mx-10 items-center">
               <div className="relative bg-blue-300 w-10 h-10 rounded-full shadow-lg">
                 <Image
-                  src={playerOne?.imagePath ? playerOne.imagePath : '/image/rank/bronze.jpg'}
+                  src={playerOne?.imagePath ? playerOne.imagePath : '/image/profile_default.png'}
                   alt="previewImage"
                   objectFit="cover"
                   layout="fill"
@@ -74,7 +74,11 @@ const PlayableCard = () => {
           </button>
         </div>
         <div className="flex flex-col w-3/12">
-          <button type="button" onClick={onClickQuickPlay} className="rounded-xl bg-red-300 text-center flex flex-wrap space-y-2 text-4xl">
+          <button
+            type="button"
+            onClick={onClickQuickPlay}
+            className="rounded-xl bg-red-300 hover:bg-red-400 text-center flex flex-wrap space-y-2 text-4xl text-black text-opacity-80"
+          >
             빠른시작하기
           </button>
         </div>

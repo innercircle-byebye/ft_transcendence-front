@@ -76,7 +76,7 @@ const ObservableCard = () => {
             <div className="flex flex-col mx-auto  items-center">
               <div className="relative bg-blue-300 w-10 h-10 rounded-full shadow-lg">
                 <Image
-                  src={playerTwo?.imagePath ? playerTwo.imagePath : '/image/rank/bronze.jpg'}
+                  src={playerTwo?.imagePath ? playerTwo.imagePath : '/image/profile_default.png'}
                   alt="previewImage"
                   objectFit="cover"
                   layout="fill"
@@ -98,7 +98,14 @@ const ObservableCard = () => {
           </button>
         </div>
         <div className="flex flex-col w-1/5">
-          <button type="button" onClick={onClickQuickObserve} className="rounded-xl bg-yellow-300 text-center flex flex-wrap space-y-2 text-4xl">빠른관전하기</button>
+          <button
+            type="button"
+            onClick={onClickQuickObserve}
+            className="rounded-xl bg-yellow-300 hover:bg-yellow-400 text-center flex flex-wrap space-y-2 text-4xl text-black text-opacity-80"
+          >
+            빠른관전하기
+
+          </button>
         </div>
       </div>
     </div>
