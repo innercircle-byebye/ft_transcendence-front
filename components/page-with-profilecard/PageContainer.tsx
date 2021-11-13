@@ -11,7 +11,9 @@ const pageContainerMaxWidths = {
 };
 
 const PageContainer: FC<IProps> = ({ maxWidth, children }) => (
-  <div className={`mx-auto h-full ${pageContainerMaxWidths[maxWidth]}`}>
+  <div
+    className={`mx-auto h-full ${pageContainerMaxWidths[maxWidth]} lg:w-10/12`}
+  >
     {children}
   </div>
 );
