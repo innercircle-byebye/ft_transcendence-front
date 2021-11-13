@@ -7,9 +7,9 @@ import PageContainer from '@/components/page-with-profilecard/PageContainer';
 import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
 import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
 import ContentRight from '@/components/page-with-profilecard/ContentRight';
+import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 
 import RankBoard from '@/components/rank-page/RankBoard';
-import ProfileCard from '@/components/rank-page/ProfileCard';
 
 import type { IUser } from '@/typings/db';
 
@@ -21,10 +21,9 @@ const Rank = ({ userInitialData }: { userInitialData: IUser }) => (
         {userInitialData && (
           <>
             <ProfileCard
-              nickname={userInitialData.nickname}
-              imagePath={userInitialData.imagePath}
+              profileUserData={userInitialData}
             />
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-4">
               <Link href="/">
                 <a className="px-2 py-1 rounded-md text-lg bg-amber-300 text-gray-700">
                   내 Rank 보기
