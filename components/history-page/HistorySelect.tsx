@@ -6,7 +6,7 @@ interface IProps {
 }
 
 const HistorySelect: VFC<IProps> = ({ nickname, onChangeNickname }) => (
-  <div className="flex space-x-3 items-end">
+  <div className="flex space-x-3 items-end px-5">
     <label htmlFor="nickname" className="flex flex-col">
       <span className="text-xl">VS</span>
       <input type="text" id="nickname" placeholder="nickname" value={nickname} onChange={onChangeNickname} className="w-32 text-xl px-2 py-1 rounded-md outline-none" />

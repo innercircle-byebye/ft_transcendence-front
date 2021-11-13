@@ -1,22 +1,44 @@
-import React, { VFC } from 'react';
-import useSWR from 'swr';
+import React, { forwardRef, MutableRefObject, useCallback } from 'react';
+import Scrollbars from 'react-custom-scrollbars-2';
 import { IGameResult } from '@/typings/db';
 import HistoryItem from '@/components/profile-page/HistoryItem';
 
 interface IProps {
-  userId: number;
-  perPage: number;
-  page: number;
+  historyData: IGameResult[];
+  setSize: (f: (size: number) => number) => Promise<IGameResult[][] | undefined>;
+  isReachingEnd: boolean;
 }
 
-const HistoryList: VFC<IProps> = ({ userId, perPage, page }) => {
-  const { data: historyData } = useSWR<IGameResult[]>(`/api/game/${userId}/results?perPage=${perPage}&page=${page}`);
+const HistoryList = forwardRef<Scrollbars, IProps>((
+  { historyData, setSize, isReachingEnd }, scrollRef,
+) => {
+  const onScroll = useCallback(
+    (values) => {
+      // console.log(values);
+      if (values.top === 1 && !isReachingEnd) {
+        setSize((prevSize) => prevSize + 1).then(() => {
+          const current = (scrollRef as MutableRefObject<Scrollbars>)?.current;
+          if (current) {
+            // console.log(current.getScrollHeight());
+            // console.log(values.scrollHeight);
+            console.log(current.getScrollHeight() - values.scrollHeight);
+            current.scrollTop(current.getScrollHeight() - values.scrollHeight);
+          }
+        });
+      }
+    },
+    [isReachingEnd, scrollRef, setSize],
+  );
 
   return (
-    <div className="space-y-3">
-      {historyData?.map((data) => (<HistoryItem key={data.gameResultId.toString() + data.startAt} historyData={data} textColor="text-indigo-700" />))}
+    <div className="flex-1 flex-col h-full">
+      <Scrollbars autoHide ref={scrollRef} onScrollFrame={onScroll}>
+        {historyData.map((data) => (<HistoryItem key={data.gameResultId.toString() + data.startAt} historyData={data} textColor="text-indigo-700" />))}
+      </Scrollbars>
     </div>
   );
-};
+});
+
+HistoryList.displayName = 'HistoryList';
 
 export default HistoryList;
