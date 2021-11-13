@@ -9,12 +9,12 @@ import PasswordModal from '@/components/chat-page/PasswordModal';
 import RoomList from '@/components/play-page/RoomList';
 import { IGameRoom } from '@/typings/db';
 import Pagination from '@/components/page-with-profilecard/Pagination';
-import Navbar from '@/components/navigation-bar/Navbar';
 import fetcher from '@/utils/fetcher';
 import PageContainer from '@/components/page-with-profilecard/PageContainer';
 import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
 import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
 import ContentRight from '@/components/page-with-profilecard/ContentRight';
+import MainLayout from '@/layouts/MainLayout';
 
 const Play = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -103,14 +103,7 @@ export const getServerSideProps: GetServerSideProps = async () => ({
 });
 
 Play.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-initial">
-        <Navbar />
-      </div>
-      {page}
-    </div>
-  );
+  return <MainLayout>{page}</MainLayout>;
 };
 
 export default Play;

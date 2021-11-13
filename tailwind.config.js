@@ -6,6 +6,15 @@ module.exports = {
   theme: {
     extend: {
       opacity: ['group-hover'],
+      padding: {
+        '1/2': '50%',
+      },
+      height: {
+        '1/12': '8.333333%',
+        '7/12': '58.333333%',
+        '11/12': '91.666667%',
+        '1/9': '11.111112%',
+      },
     },
     colors: {
       sky: colors.sky,
