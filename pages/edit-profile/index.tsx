@@ -5,7 +5,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { toast, ToastContainer } from 'react-toastify';
-// import QRCOde from 'qrcode.react';
+import useSWR from 'swr';
 import Navbar from '@/components/navigation-bar/Navbar';
 import InputImage from '@/components/inputs/InputImage';
 import useInput from '@/hooks/useInput';
@@ -14,10 +14,13 @@ import InputEmail from '@/components/inputs/InputEmail';
 import Switch from '@/components/edit-profile-page/Switch';
 import PageContainer from '@/components/edit-profile-page/PageContainer';
 import ContentContainer from '@/components/edit-profile-page/ContentContainer';
+import { IUser } from '@/typings/db';
+import fetcher from '@/utils/fetcher';
 import TwoFactorAuthentication from '@/components/edit-profile-page/TwoFactorAuthentication';
 
 const EditProfile = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const { data: allUserData } = useSWR<IUser[]>('/api/user/all', fetcher);
   const router = useRouter();
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImagePath, setPreviewImagePath] = useState<string>(userInitialData.imagePath);
@@ -26,6 +29,7 @@ const EditProfile = ({ userInitialData }
   const [emailError, setEmailError] = useState(false);
   const [isStatusPublic, setIsStatePublic] = useState(userInitialData.isStatusPublic);
   const [isHistoryPublic, setIsHistoryPublic] = useState(userInitialData.isHistoryPublic);
+  const [nicknameError, setNicknameError] = useState(false);
 
   const onClickResetNickname = useCallback(() => {
     setNickname(userInitialData.nickname);
@@ -61,25 +65,29 @@ const EditProfile = ({ userInitialData }
 
   const onSubmitEditProfile = useCallback((e) => {
     e.preventDefault();
-    const formData = new FormData();
-    if (imageFile) {
-      formData.append('imagePath', imageFile);
+    if (nickname.trim().length && email.trim().length && !emailError && !nicknameError) {
+      const formData = new FormData();
+      if (imageFile) {
+        formData.append('imagePath', imageFile);
+      }
+      if (nickname !== userInitialData.nickname) formData.append('nickname', nickname);
+      if (email !== userInitialData.email) formData.append('email', email);
+      if (isStatusPublic !== userInitialData.isStatusPublic) formData.append('isStatusPublic', isStatusPublic.toString());
+      if (isHistoryPublic !== userInitialData.isHistoryPublic) formData.append('isStatusPublic', isStatusPublic.toString());
+      axios.patch('/api/user/edit', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        router.push('/');
+      }).catch(() => {
+        toast.error('프로필 수정에 실패했습니다.', { position: 'bottom-center', theme: 'colored' });
+      });
     }
-    if (nickname !== userInitialData.nickname) formData.append('nickname', nickname);
-    if (email !== userInitialData.email) formData.append('email', email);
-    if (isStatusPublic !== userInitialData.isStatusPublic) formData.append('isStatusPublic', isStatusPublic.toString());
-    if (isHistoryPublic !== userInitialData.isHistoryPublic) formData.append('isStatusPublic', isStatusPublic.toString());
-    axios.patch('/api/user/edit', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-        withCredentials: 'true',
-      },
-    }).then(() => {
-      router.push('/');
-    }).catch(() => {
-      toast.error('프로필 수정에 실패했습니다.', { position: 'bottom-center', theme: 'colored' });
-    });
-  }, [email, imageFile, isHistoryPublic, isStatusPublic, nickname, router, userInitialData]);
+  }, [email, emailError, imageFile, isHistoryPublic, isStatusPublic, nickname,
+    nicknameError, router, userInitialData.email, userInitialData.isHistoryPublic,
+    userInitialData.isStatusPublic, userInitialData.nickname]);
 
   useEffect(() => {
     if (imageFile) {
@@ -91,6 +99,17 @@ const EditProfile = ({ userInitialData }
     }
   }, [imageFile, previewImagePath, userInitialData.imagePath]);
 
+  useEffect(() => {
+    if (allUserData) {
+      if (nickname !== userInitialData.nickname
+        && allUserData.find((data) => data.nickname === nickname)) {
+        setNicknameError(true);
+      } else {
+        setNicknameError(false);
+      }
+    }
+  }, [allUserData, nickname, userInitialData.nickname]);
+
   return (
     <PageContainer>
       <ContentContainer onClickReset={onClickReset}>
@@ -100,6 +119,7 @@ const EditProfile = ({ userInitialData }
             nickname={nickname}
             onChangeNickname={onChangeNickname}
             onClickResetNickname={onClickResetNickname}
+            nicknameError={nicknameError}
           />
           <InputEmail
             email={email}
