@@ -63,10 +63,10 @@ export interface IDMChat {
   dmId: number;
   sender: IUser;
   receiver: IUser;
-  type: string;
   content: string;
   createdAt: Date;
   lastModifiedAt: Date;
+  type: string;
 }
 
 export interface IChatItem {
@@ -75,6 +75,7 @@ export interface IChatItem {
   imagePath: string;
   content: string;
   createdAt: Date;
+  type?: string;
 }
 
 export interface IInviteItem {
@@ -147,7 +148,7 @@ export interface IGameRoom {
   gameRoomStatus: string;
 }
 
-export interface IGameResultWinRate{
+export interface IGameResultWinRate {
   totalPlayCount: number;
   winCount: number;
   loseCount: number;
@@ -155,17 +156,17 @@ export interface IGameResultWinRate{
 }
 
 export interface IGameResult {
-    gameResultId: number;
-    gameRoomId: number;
-    playerOneId: number;
-    playerTwoId: number;
-    playerOneScore: number;
-    playerTwoScore: number;
-    winPoint: number;
-    ballSpeed:string;
-    startAt: Date;
-    endAt: Date;
-    lastModifiedAt: Date | null;
-    playerOneNickname: string;
-    playerTwoNickname: string;
+  gameResultId: number;
+  gameRoomId: number;
+  playerOneId: number;
+  playerTwoId: number;
+  playerOneScore: number;
+  playerTwoScore: number;
+  winPoint: number;
+  ballSpeed: string;
+  startAt: Date;
+  endAt: Date;
+  lastModifiedAt: Date | null;
+  playerOneNickname: string;
+  playerTwoNickname: string;
 }

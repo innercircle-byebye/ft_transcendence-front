@@ -4,6 +4,7 @@ import React, {
 import { Scrollbars } from 'react-custom-scrollbars-2';
 import { IDMChat } from '@/typings/db';
 import ChatItem from '@/components/chat-page/chat/ChatItem';
+import InviteItem from '../chat/InviteItem';
 
 interface IProps {
   chatSections: { [key: string]: (IDMChat)[] };
@@ -38,18 +39,36 @@ const DMChatList = forwardRef<Scrollbars, IProps>((
                 {date}
               </button>
             </div>
-            {channelChatDatas.map((chat) => (
-              <ChatItem
-                key={chat.dmId.toString() + chat.createdAt}
-                chatData={{
-                  userId: chat.sender.userId,
-                  nickname: chat.sender.nickname,
-                  imagePath: chat.sender.imagePath,
-                  content: chat.content,
-                  createdAt: chat.createdAt,
-                }}
-              />
-            ))}
+            {channelChatDatas.map((chat) => {
+              if (chat.type !== 'plain') {
+                return (
+                  <InviteItem
+                    key={chat.dmId.toString() + chat.createdAt}
+                    invitationData={{
+                      userId: chat.sender.userId,
+                      nickname: chat.sender.nickname,
+                      imagePath: chat.sender.imagePath,
+                      content: chat.content,
+                      createdAt: chat.createdAt,
+                      type: chat.type,
+                    }}
+                  />
+                );
+              }
+              return (
+                <ChatItem
+                  key={chat.dmId.toString() + chat.createdAt}
+                  chatData={{
+                    userId: chat.sender.userId,
+                    nickname: chat.sender.nickname,
+                    imagePath: chat.sender.imagePath,
+                    content: chat.content,
+                    createdAt: chat.createdAt,
+                    type: chat.type,
+                  }}
+                />
+              );
+            })}
           </div>
         ))}
       </Scrollbars>
