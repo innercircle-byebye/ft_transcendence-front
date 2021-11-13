@@ -1,13 +1,17 @@
 import axios from 'axios';
 import Link from 'next/link';
 import router from 'next/router';
-import React, { useCallback } from 'react';
+import React, { useCallback, VFC } from 'react';
 import { toast } from 'react-toastify';
 import { Menu } from '@headlessui/react';
 import { MenuIcon } from '@heroicons/react/solid';
+import useSWR from 'swr';
+import { IUser } from '@/typings/db';
+import fetcher from '@/utils/fetcher';
 import useSocket from '@/hooks/useSocket';
 
-const UserInfoMenu = () => {
+const UserInfoMenu: VFC = () => {
+  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
   // const { socket: mainSocket } = useSocket('main');
   const { disconnect } = useSocket('main');
 
@@ -25,6 +29,10 @@ const UserInfoMenu = () => {
       });
   }, [disconnect]);
 
+  if (!userData) {
+    return <div>로딩중...</div>;
+  }
+
   return (
     <div className="relative text-white z-20">
       <Menu>
@@ -35,7 +43,7 @@ const UserInfoMenu = () => {
           <Menu.Item>
             {({ active }) => (
               <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
-                <Link href="/">
+                <Link href={`/profile/${userData.nickname}`}>
                   <a className="px-3">Profile</a>
                 </Link>
               </div>
@@ -44,7 +52,7 @@ const UserInfoMenu = () => {
           <Menu.Item>
             {({ active }) => (
               <div className={`${active && 'bg-blue-500 text-white'} py-1`}>
-                <Link href="/">
+                <Link href={`/history/${userData.nickname}`}>
                   <a className="px-3">History</a>
                 </Link>
               </div>
