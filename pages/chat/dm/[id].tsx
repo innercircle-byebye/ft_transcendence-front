@@ -5,6 +5,7 @@ import React, {
 import useSWR, { useSWRInfinite } from 'swr';
 import axios from 'axios';
 import Scrollbars from 'react-custom-scrollbars-2';
+import { ToastContainer } from 'react-toastify';
 import ChatLayout from '@/layouts/ChatLayout';
 import useSocket from '@/hooks/useSocket';
 import { IDMChat, IUser } from '@/typings/db';
@@ -13,6 +14,7 @@ import useInput from '@/hooks/useInput';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
 import DMChatList from '@/components/chat-page/dm/DMChatList';
 import makeSection from '@/utils/makeSection';
+import DMButtons from '@/components/chat-page/dm/DMButtons';
 
 const DM = () => {
   const router = useRouter();
@@ -113,7 +115,7 @@ const DM = () => {
 
   return (
     <div
-      className="h-full flex flex-col"
+      className="relative h-full flex flex-col"
       role="button"
       tabIndex={0}
       onClick={onCloseEmoji}
@@ -144,6 +146,8 @@ const DM = () => {
           }
         />
       </div>
+      <DMButtons />
+      <ToastContainer />
     </div>
   );
 };
