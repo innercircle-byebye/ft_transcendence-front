@@ -20,6 +20,7 @@ export interface IUser {
   createdAt: string;
   lastModifiedAt: string;
   deletedAt: string | null;
+  isTwoFactorAuthEnabled?: boolean;
   rankInfo: IRankInfo;
 }
 
@@ -116,6 +117,15 @@ export interface ISimpleUser {
   userId: number;
   nickname: string;
   imagePath: string;
+}
+
+export interface IRank {
+  totalPlayCount: number;
+  winCount: number;
+  loseCount: number;
+  winRate: string;
+  experience: number;
+  user: ISimpleUser;
 }
 
 export interface IGameMember {

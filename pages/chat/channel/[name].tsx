@@ -17,8 +17,8 @@ import {
 import useSocket from '@/hooks/useSocket';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
 import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
-import ChatList from '@/components/chat-page/chat/ChatList';
 import makeSection from '@/utils/makeSection';
+import ChannelChatList from '@/components/chat-page/channel/ChannelChatList';
 
 const Channel = ({
   userInitialData,
@@ -202,7 +202,7 @@ const Channel = ({
         <div className="font-semibold text-2xl">
           {`# ${channelData?.name}`}
         </div>
-        <ChatList
+        <ChannelChatList
           chatSections={chatSections}
           ref={scrollbarRef}
           setSize={setSize}

@@ -1,58 +1,67 @@
 import { useRouter } from 'next/router';
 import React, {
-  ReactElement, useCallback, useEffect, useState,
+  ReactElement, useCallback, useEffect, useRef, useState,
 } from 'react';
-import useSWR from 'swr';
+import useSWR, { useSWRInfinite } from 'swr';
 import axios from 'axios';
+import Scrollbars from 'react-custom-scrollbars-2';
+import { ToastContainer } from 'react-toastify';
 import ChatLayout from '@/layouts/ChatLayout';
 import useSocket from '@/hooks/useSocket';
 import { IDMChat, IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 import useInput from '@/hooks/useInput';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
-import ChatItem from '@/components/chat-page/chat/ChatItem';
-import InviteItem from '@/components/chat-page/chat/InviteItem';
+import DMChatList from '@/components/chat-page/dm/DMChatList';
+import makeSection from '@/utils/makeSection';
+import DMButtons from '@/components/chat-page/dm/DMButtons';
 
 const DM = () => {
   const router = useRouter();
-  const DMUserName = router.query.id;
+  const DMUserName = router.query.name;
+  const { data: dmUserData } = useSWR<IUser>(`/api/user/nickname/${DMUserName}`, fetcher);
   const [chat, onChangeChat, setChat] = useInput('');
   const [showEmoji, setShowEmoji] = useState(false);
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
   const { socket: mainSocket } = useSocket('main');
-  const { data: chatDatas, mutate: mutateChat } = useSWR<IDMChat[]>(
-    `/api/dm/${DMUserName}/chats`,
-    fetcher,
+  const { data: chatDatas, mutate: mutateChat, setSize } = useSWRInfinite<IDMChat[]>(
+    (index) => (dmUserData ? `/api/dm/${dmUserData.userId}/chats?perPage=20&page=${index + 1}` : null), fetcher,
   );
   const { data: allUserData } = useSWR<IUser[]>('/api/user/all', fetcher);
+  const scrollbarRef = useRef<Scrollbars>(null);
+  const isEmpty = chatDatas?.length === 0;
+  const isReachingEnd = isEmpty || false
+    || (chatDatas && chatDatas[chatDatas.length - 1]?.length < 20) || false;
+  const chatSections = makeSection(chatDatas ? chatDatas.flat().reverse() : []);
 
   const onCloseEmoji = useCallback(() => {
     setShowEmoji(false);
   }, []);
-
+  console.log(router.query);
   const onSubmitChat = useCallback(
     (e) => {
       e.preventDefault();
-      if (chat?.trim() && chatDatas && userData) {
+      if (chat?.trim() && chatDatas && userData && dmUserData && chatDatas) {
         const savedChat = chat;
         mutateChat((prevChatData) => {
-          prevChatData?.unshift({
-            dmId: (chatDatas[chatDatas.length - 1]?.dmId || 0) + 1,
+          prevChatData?.[0].unshift({
+            dmId: (chatDatas[0][0]?.dmId || 0) + 1,
             sender: userData,
-            type: chatDatas[chatDatas.length - 1].type,
-            receiver: chatDatas[chatDatas.length - 1]?.sender,
+            type: chatDatas[0][0]?.type,
+            receiver: chatDatas[0][0]?.sender,
             content: savedChat,
-            createdAt: chatDatas[chatDatas.length - 1]?.createdAt,
-            lastModifiedAt: chatDatas[chatDatas.length - 1]?.lastModifiedAt,
+            createdAt: chatDatas[0][0]?.createdAt,
+            lastModifiedAt: chatDatas[0][0]?.lastModifiedAt,
           });
           return prevChatData;
         }, false).then(() => {
           // 읽지 않은 메시지 처리하기 추가
           setChat('');
+          scrollbarRef.current?.scrollToBottom();
         });
         axios
           .post(
-            `/api/dm/${DMUserName}/chats`,
+            `/api/dm/${dmUserData.userId}/chats`,
             {
               content: savedChat,
             },
@@ -65,16 +74,26 @@ const DM = () => {
           .catch(console.error);
       }
     },
-    [DMUserName, chat, chatDatas, mutateChat, setChat, userData],
+    [chat, chatDatas, dmUserData, mutateChat, setChat, userData],
   );
 
   const onMessage = useCallback(
     (data: IDMChat) => {
-      if (data.content.startsWith('uploads\\') || data.content.startsWith('uploads/') || data.sender.userId !== userData?.userId) {
+      if (data.content && data.sender.userId !== userData?.userId) {
         mutateChat((chatData) => {
-          chatData?.push(data);
+          chatData?.[0].unshift(data);
           return chatData;
-        }, false);
+        }, false).then(() => {
+          if (scrollbarRef.current) {
+            if (scrollbarRef.current.getScrollHeight()
+              < scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
+            ) {
+              setTimeout(() => {
+                scrollbarRef.current?.scrollToBottom();
+              }, 50);
+            }
+          }
+        });
       }
     },
     [userData?.userId, mutateChat],
@@ -87,9 +106,17 @@ const DM = () => {
     };
   }, [mainSocket, onMessage]);
 
+  useEffect(() => {
+    if (chatDatas?.length === 1) {
+      setTimeout(() => {
+        scrollbarRef.current?.scrollToBottom();
+      }, 500);
+    }
+  }, [chatDatas]);
+
   return (
     <div
-      className="h-full flex flex-col"
+      className="relative h-full flex flex-col"
       role="button"
       tabIndex={0}
       onClick={onCloseEmoji}
@@ -100,39 +127,12 @@ const DM = () => {
           {/* {`# ${channelData?.name}`} */}
           {DMUserName}
         </div>
-        <div className="flex-1">
-          {
-            chatDatas?.slice(0).reverse().map((chatData) => {
-              if (chatData.type !== 'plain') {
-                return (
-                  <InviteItem
-                    key={chatData.dmId}
-                    invitationData={{
-                      createdAt: chatData.createdAt,
-                      userId: chatData.sender.userId,
-                      nickname: chatData.sender.nickname,
-                      type: chatData.type,
-                      imagePath: chatData.sender.imagePath,
-                      targetInfo: chatData.content,
-                    }}
-                  />
-                );
-              }
-              return (
-                <ChatItem
-                  key={chatData.dmId}
-                  chatData={{
-                    createdAt: chatData.createdAt,
-                    userId: chatData.sender.userId,
-                    nickname: chatData.sender.nickname,
-                    imagePath: chatData.sender.imagePath,
-                    content: chatData.content,
-                  }}
-                />
-              );
-            })
-          }
-        </div>
+        <DMChatList
+          chatSections={chatSections}
+          ref={scrollbarRef}
+          setSize={setSize}
+          isReachingEnd={isReachingEnd}
+        />
         <ChatBox
           chat={chat}
           onChangeChat={onChangeChat}
@@ -147,6 +147,8 @@ const DM = () => {
           }
         />
       </div>
+      <DMButtons />
+      <ToastContainer />
     </div>
   );
 };
