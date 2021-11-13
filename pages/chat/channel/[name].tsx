@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, {
+import {
   ReactElement, useCallback, useEffect, useRef, useState,
 } from 'react';
 import useSWR, { useSWRInfinite } from 'swr';
@@ -193,7 +193,6 @@ const Channel = ({
 
   useEffect(() => {
     localStorage.setItem(`${channelName}`, new Date().getTime().toString());
-    console.log('set time');
   }, [channelName]);
 
   return (
