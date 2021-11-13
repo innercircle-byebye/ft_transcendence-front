@@ -15,6 +15,7 @@ import ContentContainer from '@/components/page-with-profilecard/ContentContaine
 import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
 import ContentRight from '@/components/page-with-profilecard/ContentRight';
 import MainLayout from '@/layouts/MainLayout';
+import FriendListCard from '@/components/profile-page/FriendListCard';
 
 const Profile = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -41,6 +42,7 @@ const Profile = ({ userInitialData }
               <RankItem rankInfo={profileUserData.rankInfo} />
               <WinScore userId={profileUserData.userId} />
             </div>
+            <FriendListCard />
             <HistoryList userId={profileUserData.userId} />
           </div>
         </ContentRight>
