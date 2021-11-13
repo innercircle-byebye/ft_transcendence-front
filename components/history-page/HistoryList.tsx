@@ -14,14 +14,10 @@ const HistoryList = forwardRef<Scrollbars, IProps>((
 ) => {
   const onScroll = useCallback(
     (values) => {
-      // console.log(values);
       if (values.top === 1 && !isReachingEnd) {
         setSize((prevSize) => prevSize + 1).then(() => {
           const current = (scrollRef as MutableRefObject<Scrollbars>)?.current;
           if (current) {
-            // console.log(current.getScrollHeight());
-            // console.log(values.scrollHeight);
-            console.log(current.getScrollHeight() - values.scrollHeight);
             current.scrollTop(current.getScrollHeight() - values.scrollHeight);
           }
         });
@@ -29,6 +25,10 @@ const HistoryList = forwardRef<Scrollbars, IProps>((
     },
     [isReachingEnd, scrollRef, setSize],
   );
+
+  if (!historyData.length) {
+    return <div>없습니다.</div>;
+  }
 
   return (
     <div className="flex-1 flex-col h-full">
