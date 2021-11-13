@@ -21,7 +21,7 @@ const DMMemberModal: VFC = () => {
 
   const onClickInviteGame = useCallback(() => {
     if (dmUserData) {
-      router.push(`/play/create-room?invite=${dmUserData.userId}`);
+      router.push(`/play/create-room?invite=${dmUserData.nickname}`);
     }
   }, [dmUserData, router]);
 
