@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, {
+import {
   ReactElement, useCallback, useEffect, useRef, useState,
 } from 'react';
 import useSWR, { useSWRInfinite } from 'swr';
@@ -18,8 +18,8 @@ import DMButtons from '@/components/chat-page/dm/DMButtons';
 
 const DM = () => {
   const router = useRouter();
-  const DMUserName = router.query.name;
-  const { data: dmUserData } = useSWR<IUser>(`/api/user/nickname/${DMUserName}`, fetcher);
+  const dMUserName = router.query.name;
+  const { data: dmUserData } = useSWR<IUser>(`/api/user/nickname/${dMUserName}`, fetcher);
   const [chat, onChangeChat, setChat] = useInput('');
   const [showEmoji, setShowEmoji] = useState(false);
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
@@ -54,7 +54,7 @@ const DM = () => {
           });
           return prevChatData;
         }, false).then(() => {
-          // 읽지 않은 메시지 처리하기 추가
+          localStorage.setItem(`dm-${dMUserName}`, new Date().getTime().toString());
           setChat('');
           scrollbarRef.current?.scrollToBottom();
         });
@@ -73,7 +73,7 @@ const DM = () => {
           .catch(console.error);
       }
     },
-    [chat, chatDatas, dmUserData, mutateChat, setChat, userData],
+    [dMUserName, chat, chatDatas, dmUserData, mutateChat, setChat, userData],
   );
 
   const onMessage = useCallback(
@@ -113,6 +113,10 @@ const DM = () => {
     }
   }, [chatDatas]);
 
+  useEffect(() => {
+    localStorage.setItem(`dm-${dMUserName}`, new Date().getTime().toString());
+  }, [dMUserName]);
+
   return (
     <div
       className="relative h-full flex flex-col"
@@ -124,7 +128,7 @@ const DM = () => {
       <div className="h-full flex flex-col">
         <div className="font-semibold text-2xl pl-6">
           {/* {`# ${channelData?.name}`} */}
-          {DMUserName}
+          {dMUserName}
         </div>
         <DMChatList
           chatSections={chatSections}
