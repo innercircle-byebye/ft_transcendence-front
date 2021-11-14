@@ -11,7 +11,7 @@ import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
 import {
-  IGameChat, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant, IUser,
+  IGameChat, IGameOptionPatch, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant, IUser,
 } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 import useInput from '@/hooks/useInput';
@@ -267,15 +267,22 @@ const Room: VFC<IProps> = ({
   }, [numOfParticipant, setNumOfParticipant]);
 
   const onClickGameOptionApplyButton = useCallback(() => {
-    // console.log('room ps', roomPassword);
+    // console.log('room ps', isShowPasswordInputBox ? roomPassword : null);
+    const newPatchData: IGameOptionPatch = {
+      title,
+      maxParticipantNum: numOfParticipant,
+      winPoint: winScore,
+      ballSpeed,
+      password: undefined,
+    };
+    if (!isShowPasswordInputBox) {
+      newPatchData.password = null;
+    } else if (roomPassword) {
+      newPatchData.password = roomPassword;
+    }
+
     axios.patch(`/api/game/room/${roomNumber}`,
-      {
-        title,
-        password: roomPassword,
-        maxParticipantNum: numOfParticipant,
-        winPoint: winScore,
-        ballSpeed,
-      },
+      newPatchData,
       // gameOptionPatchData,
       {
         headers: {
@@ -289,7 +296,9 @@ const Room: VFC<IProps> = ({
         console.log('patch fail', err);
         toast.error('옵션 설정 실패했다', { position: 'bottom-right', theme: 'colored' });
       });
-  }, [ballSpeed, numOfParticipant, roomNumber, roomPassword, title, winScore]);
+  }, [
+    ballSpeed, isShowPasswordInputBox, numOfParticipant, roomNumber, roomPassword, title, winScore,
+  ]);
 
   const onClickGameOptionCancleButton = useCallback(() => {
     // TODO: reset 기능이 필요합니다.
