@@ -13,7 +13,7 @@ interface IProps {
   onChangeWinScore: (e: ChangeEvent<HTMLInputElement>) => void;
   numOfParticipant: number;
   onChangeNumOfParticipant: (e: ChangeEvent<HTMLInputElement>) => void;
-  onChangeShowPasswordInputBox: () => void;
+  onClickShowPasswordInputBox: () => void;
   isShowPasswordInputBox: boolean;
   roomPassword: string;
   onChangeRoomPassword: (e: ChangeEvent<HTMLInputElement>) => void
@@ -30,14 +30,14 @@ const GameOptionModal: VFC<IProps> = ({
   onChangeWinScore,
   numOfParticipant,
   onChangeNumOfParticipant,
-  onChangeShowPasswordInputBox,
+  onClickShowPasswordInputBox,
   isShowPasswordInputBox,
   roomPassword,
   onChangeRoomPassword,
   onClickGameOptionApplyButton,
   onClickGameOptionCancleButton,
 }) => (
-  <div className="absolute top-1/4 left-1/3 bg-white rounded-md p-5 space-y-5">
+  <div className="absolute top-1/4 left-1/3 w-1/3 bg-white rounded-md p-5 space-y-5">
     {/* title */}
     <div className="font-medium text-lg text-center">Chang Game Room Option</div>
     {/* room name */}
@@ -76,8 +76,8 @@ const GameOptionModal: VFC<IProps> = ({
       {/* 이곳에 switch box 를 추가해주세요 */}
       <button
         type="button"
-        className="bg-blue-200"
-        onChange={onChangeShowPasswordInputBox}
+        className="bg-blue-200 rounded-md px-2"
+        onClick={onClickShowPasswordInputBox}
       >
         switch
       </button>

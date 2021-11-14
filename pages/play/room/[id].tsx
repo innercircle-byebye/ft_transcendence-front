@@ -237,7 +237,7 @@ const Room: VFC<IProps> = ({
   // ] = useInput(gameRoomData?.maxParticipantNum);
   ] = useInput<number>(roomData.maxParticipantNum);
 
-  const onChangeShowPasswordInputBox = useCallback(
+  const onClickShowPasswordInputBox = useCallback(
     () => {
       if (isShowPasswordInputBox) {
         setIsShowPasswordInputBox(false);
@@ -477,7 +477,7 @@ const Room: VFC<IProps> = ({
           onChangeWinScore={onChangeWinScore}
           numOfParticipant={numOfParticipant}
           onChangeNumOfParticipant={onChangeNumOfParticipant}
-          onChangeShowPasswordInputBox={onChangeShowPasswordInputBox}
+          onClickShowPasswordInputBox={onClickShowPasswordInputBox}
           isShowPasswordInputBox={isShowPasswordInputBox}
           roomPassword={roomPassword}
           onChangeRoomPassword={onChangeRoomPassword}
