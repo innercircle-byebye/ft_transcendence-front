@@ -37,7 +37,7 @@ const SearchUserNicknameInputBox: VFC = () => {
       decorator(match) {
         const arr: string[] | null = match.match(/@\[(.+?)]\((\d+?)\)/);
         if (arr) {
-          router.push(`/profile?name=${arr[1]}`);
+          router.push(`/profile/${arr[1]}`);
           textareaRef.current?.blur();
           return (arr[1]);
         }
