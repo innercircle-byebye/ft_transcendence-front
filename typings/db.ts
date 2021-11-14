@@ -136,7 +136,7 @@ export interface IGameChat {
 
 export interface IGameOptionPatch {
   title: string;
-  password: string | undefined;
+  password: string | undefined | null;
   maxParticipantNum: number;
   winPoint: number;
   ballSpeed: string;
