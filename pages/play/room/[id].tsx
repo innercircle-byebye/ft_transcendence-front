@@ -2,9 +2,10 @@ import { useRouter } from 'next/router';
 import {
   useCallback, useEffect, useState, VFC,
 } from 'react';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+import useSWR from 'swr';
 import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
@@ -20,6 +21,7 @@ import setParticipantListData from '@/utils/setParticipantListData';
 import GameResultModal from '@/components/play-room-page/GameResult';
 import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
 import GameOptionModal from '@/components/play-room-page/GameOptionModal';
+import fetcher from '@/utils/fetcher';
 
 interface IProps {
   userInitialData: IUser;
@@ -28,7 +30,11 @@ interface IProps {
 const Room: VFC<IProps> = ({
   userInitialData,
   roomData,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+}: {
+  userInitialData: IUser,
+  roomData: IGameRoom,
+}) => {
+// }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const roomNumber = router.query.id;
   const [isChatting, setIsChatting] = useState(true);
@@ -61,8 +67,8 @@ const Room: VFC<IProps> = ({
     // initSetting -> gameRoomData
     socket?.on('gameRoomData', (data: IGameRoomData) => {
       console.log('gameRoomData', data);
-      setName1P(data.participants.player1.nickname);
-      setName2P(data.participants.player2.nickname);
+      setName1P(data.participants.player1?.nickname);
+      setName2P(data.participants.player2?.nickname);
       setMyRole(data.role);
       if (data.isPlaying) {
         setIsPlaying(true);
@@ -194,6 +200,7 @@ const Room: VFC<IProps> = ({
   }, [router]);
 
   // game option
+  const { data: resetData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
   // const { data: gameRoomData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
   const [ballSpeed, setBallSpeed] = useState<string>('medium');
   // console.log(ballSpeed);
@@ -205,7 +212,7 @@ const Room: VFC<IProps> = ({
     ballSpeed,
   });
   // const [title, onChangeTitle] = useInput(gameRoomData?.title);
-  const [title, onChangeTitle] = useInput<string>(roomData.title);
+  const [title, onChangeTitle, setTitle] = useInput<string>(roomData.title);
   // public | private state
   const [
     isShowPasswordInputBox, setIsShowPasswordInputBox,
@@ -266,16 +273,29 @@ const Room: VFC<IProps> = ({
           withCredentials: 'true',
         },
       })
+      .then(() => {
+        setIsShowGameOptionModal(false);
+      })
       .catch((err) => {
         console.log('patch fail', err);
         toast.error('옵션 설정 실패했다', { position: 'bottom-right', theme: 'colored' });
       });
-    setIsShowGameOptionModal(false);
   }, [ballSpeed, gameOptionPatchData, numOfParticipant, roomNumber, roomPassword, title, winScore]);
 
   const onClickGameOptionCancleButton = useCallback(() => {
+    // TODO: reset 기능이 필요합니다.
+    // reset 기능을 만들기 위해선 현재 방의 정보
+    // ball speed, win score, max participants, title, password
+    // 를 받아오는 기능이 필요합니다.
+    // 하지만 현재 게임방 조회를 통해서 위와 같은 정보를 전부 알 수가 없네요...
+    // 그래서 reset 은 불가능합니다.
+    // ball speed, winPoint 가 없습니다... ㅠ
+    if (resetData) {
+      setTitle(resetData.title);
+      setNumOfParticipant(resetData.maxParticipantNum);
+    }
     setIsShowGameOptionModal(false);
-  }, []);
+  }, [resetData, setNumOfParticipant, setTitle]);
 
   const onClickNoExitRoomButton = useCallback(() => {
     setIsShowExitRoomModal(false);
