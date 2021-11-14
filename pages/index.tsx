@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 // import MainLayout from '@/layouts/MainLayout';
+import { ToastContainer } from 'react-toastify';
 import ProfileCard from '@/components/main-page/ProfileCard';
 import AnnouncementList from '@/components/main-page/AnnouncementList';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
@@ -44,6 +45,7 @@ const Home = ({
           </div>
         </ContentRight>
       </ContentContainer>
+      <ToastContainer />
     </PageContainer>
   );
 };
