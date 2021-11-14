@@ -5,16 +5,17 @@ import React, {
 import useSWR, { useSWRInfinite } from 'swr';
 import axios from 'axios';
 import Scrollbars from 'react-custom-scrollbars-2';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import ChatLayout from '@/layouts/ChatLayout';
 import useSocket from '@/hooks/useSocket';
-import { IDMChat, IUser } from '@/typings/db';
+import { IChannel, IDMChat, IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 import useInput from '@/hooks/useInput';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
 import DMChatList from '@/components/chat-page/dm/DMChatList';
 import makeSection from '@/utils/makeSection';
 import DMButtons from '@/components/chat-page/dm/DMButtons';
+import PasswordModal from '@/components/chat-page/PasswordModal';
 
 const DM = () => {
   const router = useRouter();
@@ -33,6 +34,8 @@ const DM = () => {
   const isReachingEnd = isEmpty || false
     || (chatDatas && chatDatas[chatDatas.length - 1]?.length < 20) || false;
   const chatSections = makeSection(chatDatas ? chatDatas.flat().reverse() : []);
+  const [privateChannelToJoin, setPrivateChannelToJoin] = useState<IChannel | null>(null);
+  const [password, onChangePassword, setPassword] = useInput('');
 
   const onCloseEmoji = useCallback(() => {
     setShowEmoji(false);
@@ -98,6 +101,31 @@ const DM = () => {
     },
     [userData?.userId, mutateChat],
   );
+  const onSubmitPassword = useCallback((e) => {
+    e.preventDefault();
+    if (privateChannelToJoin) {
+      axios.post(`/api/channel/${privateChannelToJoin.name}/member`, {
+        password,
+      }, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(async () => {
+        const channelName = privateChannelToJoin.name;
+        setPrivateChannelToJoin(null);
+        await router.push(`/chat/channel/${channelName}`);
+      }).catch((error) => {
+        setPassword('');
+        console.dir(error);
+        toast.error('틀린 비밀번호 입니다.', { position: 'bottom-right', theme: 'colored' });
+      });
+    }
+  }, [password, privateChannelToJoin, router, setPassword]);
+
+  const onClosePasswordModal = useCallback((e) => {
+    e.preventDefault();
+    setPrivateChannelToJoin(null);
+  }, [setPrivateChannelToJoin]);
 
   useEffect(() => {
     mainSocket?.on('dm', onMessage);
@@ -123,29 +151,43 @@ const DM = () => {
       onKeyDown={onCloseEmoji}
     >
       <div className="h-full flex flex-col">
-        <div className="font-semibold text-2xl pl-6">
-          {/* {`# ${channelData?.name}`} */}
-          {DMUserName}
-        </div>
-        <DMChatList
-          chatSections={chatSections}
-          ref={scrollbarRef}
-          setSize={setSize}
-          isReachingEnd={isReachingEnd}
-        />
-        <ChatBox
-          chat={chat}
-          onChangeChat={onChangeChat}
-          setChat={setChat}
-          onSubmitChat={onSubmitChat}
-          showEmoji={showEmoji}
-          setShowEmoji={setShowEmoji}
-          mentionData={
-            allUserData?.map((data) => ({
-              userId: data.userId, nickname: data.nickname, imagePath: data.imagePath,
-            }))
-          }
-        />
+        {privateChannelToJoin ? (
+          <PasswordModal
+            name={privateChannelToJoin.name}
+            password={password}
+            onChangePassword={onChangePassword}
+            onSubmitPassword={onSubmitPassword}
+            onCloseModal={onClosePasswordModal}
+          />
+        )
+          : (
+            <>
+              <div className="font-semibold text-2xl pl-6">
+                {/* {`# ${channelData?.name}`} */}
+                {DMUserName}
+              </div>
+              <DMChatList
+                chatSections={chatSections}
+                ref={scrollbarRef}
+                setSize={setSize}
+                isReachingEnd={isReachingEnd}
+                setPrivateChannelToJoin={setPrivateChannelToJoin}
+              />
+              <ChatBox
+                chat={chat}
+                onChangeChat={onChangeChat}
+                setChat={setChat}
+                onSubmitChat={onSubmitChat}
+                showEmoji={showEmoji}
+                setShowEmoji={setShowEmoji}
+                mentionData={
+                  allUserData?.map((data) => ({
+                    userId: data.userId, nickname: data.nickname, imagePath: data.imagePath,
+                  }))
+                }
+              />
+            </>
+          )}
       </div>
       <DMButtons />
       <ToastContainer />

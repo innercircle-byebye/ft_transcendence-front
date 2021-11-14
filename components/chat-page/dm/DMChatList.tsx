@@ -1,8 +1,9 @@
 import React, {
-  forwardRef, MutableRefObject, useCallback,
+  Dispatch,
+  forwardRef, MutableRefObject, SetStateAction, useCallback,
 } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-import { IDMChat } from '@/typings/db';
+import { IChannel, IDMChat } from '@/typings/db';
 import ChatItem from '@/components/chat-page/chat/ChatItem';
 import InviteItem from '../chat/InviteItem';
 
@@ -10,10 +11,13 @@ interface IProps {
   chatSections: { [key: string]: (IDMChat)[] };
   setSize: (f: (size: number) => number) => Promise<IDMChat[][] | undefined>;
   isReachingEnd: boolean;
+  setPrivateChannelToJoin: Dispatch<SetStateAction<IChannel | null>>;
 }
 
 const DMChatList = forwardRef<Scrollbars, IProps>((
-  { chatSections, setSize, isReachingEnd }, scrollRef,
+  {
+    chatSections, setSize, isReachingEnd, setPrivateChannelToJoin,
+  }, scrollRef,
 ) => {
   const onScroll = useCallback(
     (values) => {
@@ -52,6 +56,7 @@ const DMChatList = forwardRef<Scrollbars, IProps>((
                       createdAt: chat.createdAt,
                       type: chat.type,
                     }}
+                    setPrivateChannelToJoin={setPrivateChannelToJoin}
                   />
                 );
               }
