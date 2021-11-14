@@ -34,13 +34,10 @@ const Room: VFC<IProps> = ({
   userInitialData: IUser,
   roomData: IGameRoom,
 }) => {
-// }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
   const roomNumber = router.query.id;
   const [isChatting, setIsChatting] = useState(true);
   const { socket, disconnect } = useSocket('game');
-  // const [initData, setInitData] = useState<IGameScreenData | null>(null);
-  // const [gameRoomData, setGameRoomData] = useState<IGameRoomData>();
   const [updateData, setUpdateData] = useState<IGameUpdateData[] | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [gameChat, onChangeGameChat, setGameChat] = useInput('');
@@ -49,8 +46,6 @@ const Room: VFC<IProps> = ({
   const [name2P, setName2P] = useState<string>('');
   const [isReady1P, setIsReady1P] = useState(false);
   const [isReady2P, setIsReady2P] = useState(false);
-  // const [info1P, setInfo1P] = useState<IUser>();
-  // const [info2P, setInfo2P] = useState<IUser>();
   // my role
   const [myRole, setMyRole] = useState<string>('');
   // participant data
@@ -95,6 +90,10 @@ const Room: VFC<IProps> = ({
       userId: userInitialData.userId,
     });
     return () => {
+      socket?.emit('leaveGameRoom', {
+        gameRoomId: router.query.id,
+        userId: userInitialData.userId,
+      });
       disconnect();
     };
   }, [disconnect, router.query.id, socket, userInitialData.userId]);
@@ -103,7 +102,6 @@ const Room: VFC<IProps> = ({
   useEffect(() => {
     // data update
     socket?.on('update', (data) => setUpdateData(data));
-    // console.log('updateData', updateData);
   });
 
   // not playing
