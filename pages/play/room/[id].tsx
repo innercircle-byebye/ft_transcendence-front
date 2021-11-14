@@ -136,9 +136,13 @@ const Room: VFC<IProps> = ({
       setIsShowExitRoomModal(true);
     } else {
       console.log('그냥 나갈 수 있음');
+      socket?.emit('leaveGameRoom', {
+        gameRoomId: router.query.id,
+        userId: userInitialData.userId,
+      });
       router.push('/play');
     }
-  }, [isPlaying, myRole, router]);
+  }, [isPlaying, myRole, router, socket, userInitialData.userId]);
 
   // 관전하기 참여하기 button event handler
   const onClickMove = useCallback(() => {
