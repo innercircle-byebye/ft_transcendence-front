@@ -1,4 +1,6 @@
-import React, { forwardRef, MutableRefObject, useCallback } from 'react';
+import React, {
+  forwardRef, MutableRefObject, useCallback,
+} from 'react';
 import Scrollbars from 'react-custom-scrollbars-2';
 import { IGameResult } from '@/typings/db';
 import HistoryItem from '@/components/profile-page/HistoryItem';
@@ -7,10 +9,13 @@ interface IProps {
   historyData: IGameResult[];
   setSize: (f: (size: number) => number) => Promise<IGameResult[][] | undefined>;
   isReachingEnd: boolean;
+  nicknameNotExist: boolean;
 }
 
 const HistoryList = forwardRef<Scrollbars, IProps>((
-  { historyData, setSize, isReachingEnd }, scrollRef,
+  {
+    historyData, setSize, isReachingEnd, nicknameNotExist,
+  }, scrollRef,
 ) => {
   const onScroll = useCallback(
     (values) => {
@@ -27,7 +32,10 @@ const HistoryList = forwardRef<Scrollbars, IProps>((
   );
 
   if (!historyData.length) {
-    return <div>데이터가 없습니다.</div>;
+    return <div className="flex-1 flex-col h-full">데이터가 없습니다.</div>;
+  }
+  if (nicknameNotExist) {
+    return <div className="flex-1 flex-col h-full">존재하지 않는 유저입니다.</div>;
   }
 
   return (

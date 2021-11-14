@@ -28,6 +28,7 @@ const History = () => {
   const isEmpty = historyData?.length === 0;
   const isReachingEnd = isEmpty || false
     || (historyData && historyData[historyData.length - 1]?.length < 13) || false;
+  const [nicknameNotExist, setNicknameNotExist] = useState(false);
 
   useEffect(() => {
     if (historyData?.length === 1) {
@@ -55,13 +56,14 @@ const History = () => {
             <div className="p-5 space-y-5 rounded-md bg-gray-200 flex-1 flex flex-col">
               <HistorySelect
                 setSelectQuery={setSelectQuery}
-                historyUserId={historyUserData.userId}
+                setNicknameNotExist={setNicknameNotExist}
               />
               <HistoryList
                 historyData={historyData ? historyData?.flat() : []}
                 setSize={setSize}
                 isReachingEnd={isReachingEnd}
                 ref={scrollbarRef}
+                nicknameNotExist={nicknameNotExist}
               />
             </div>
           </div>

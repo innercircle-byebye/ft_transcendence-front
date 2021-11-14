@@ -8,7 +8,7 @@ import fetcher from '@/utils/fetcher';
 
 interface IProps {
   setSelectQuery: Dispatch<SetStateAction<string>>;
-  historyUserId: number;
+  setNicknameNotExist: Dispatch<SetStateAction<boolean>>;
 }
 
 interface IQuery {
@@ -17,7 +17,7 @@ interface IQuery {
   date?: string | null;
 }
 
-const HistorySelect: VFC<IProps> = ({ setSelectQuery }) => {
+const HistorySelect: VFC<IProps> = ({ setSelectQuery, setNicknameNotExist }) => {
   const { data: allUserData } = useSWR<IUser[]>('/api/user/all', fetcher);
   const [nickname, onChangeNickname] = useInput<string>('');
   const [ballSpeed, setBallSpeed] = useState<string>('');
@@ -29,6 +29,13 @@ const HistorySelect: VFC<IProps> = ({ setSelectQuery }) => {
     if (nicknameUserData
       && allUserData?.find((data) => data.nickname === nickname) && nickname.trim().length) {
       query.vsUserId = nicknameUserData.userId;
+    } else {
+      setNicknameNotExist(true);
+    }
+    if (!nickname.trim().length || allUserData?.find((data) => data.nickname === nickname)) {
+      setNicknameNotExist(false);
+    } else {
+      setNicknameNotExist(true);
     }
     if (ballSpeed.trim().length) {
       query.ballSpeed = ballSpeed;
@@ -37,7 +44,8 @@ const HistorySelect: VFC<IProps> = ({ setSelectQuery }) => {
       query.date = date;
     }
     setSelectQuery(`&${Object.entries(query).map((e) => e.join('=')).join('&')}`);
-  }, [nicknameUserData, allUserData, nickname, ballSpeed, date, setSelectQuery]);
+  }, [nicknameUserData, allUserData, nickname, ballSpeed, date,
+    setSelectQuery, setNicknameNotExist]);
 
   const onChangeBallSpeed = useCallback((e) => {
     setBallSpeed(e.target.value);
