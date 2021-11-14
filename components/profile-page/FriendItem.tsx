@@ -100,10 +100,10 @@ const FriendItem: VFC<IProps> = ({ friendData, listType }) => {
 
   return (
     <div className="bg-amber-50 text-md rounded-md px-5 py-2 grid grid-cols-6 justify-items-center">
-      <span className="col-span-1 justify-self-start">
+      <span className="col-span-2 justify-self-start">
         {`${friendData.nickname} [${friendData.status}]`}
       </span>
-      <span className="col-span-2" />
+      <span className="col-span-1" />
       <span className="col-span-1">
         {listType === 'friendList' ? (
           <button

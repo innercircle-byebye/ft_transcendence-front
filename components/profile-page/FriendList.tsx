@@ -1,5 +1,6 @@
 import React, { useEffect, useState, VFC } from 'react';
 import useSWR from 'swr';
+import Scrollbars from 'react-custom-scrollbars-2';
 import { IUser } from '@/typings/db';
 import FriendItem from './FriendItem';
 import fetcher from '@/utils/fetcher';
@@ -21,12 +22,16 @@ const FriendList: VFC = () => {
     }
   }, [friendData]);
   return (
-    <div className="space-y-3">
-      {dataTest?.map((data) => (
-        <>
-          <FriendItem friendData={data} listType="friendList" />
-        </>
-      ))}
+    <div className="space-y-3 h-48">
+      <Scrollbars autoHeight>
+        {dataTest?.map((data) => (
+          <>
+            <div className="py-1">
+              <FriendItem friendData={data} listType="friendList" />
+            </div>
+          </>
+        ))}
+      </Scrollbars>
     </div>
   );
 };
