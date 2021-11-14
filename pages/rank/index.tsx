@@ -42,17 +42,7 @@ const Rank = ({ userInitialData }: { userInitialData: IUser }) => {
       <ContentContainer>
         <ContentLeft>
           {userInitialData && (
-            <>
-              <ProfileCard profileUserData={userInitialData} />
-              <div className="flex justify-center mt-4">
-                <button
-                  type="button"
-                  className="px-2 py-1 rounded-md text-lg bg-amber-300 text-gray-700"
-                >
-                  내 Rank 보기
-                </button>
-              </div>
-            </>
+            <ProfileCard profileUserData={userInitialData} />
           )}
         </ContentLeft>
         <ContentRight>
