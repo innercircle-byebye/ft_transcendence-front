@@ -93,12 +93,16 @@ const InviteItem: FC<Props> = ({
               {invitationData.type === 'channel_invite'
                 ? (
                   <button type="button" onClick={onClickJoinChannel}>
-                    [채널 입장하기]
+                    [
+                    {invitedChannelInfo?.isPrivate ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M18 10v-4c0-3.313-2.687-6-6-6s-6 2.687-6 6v4h-3v14h18v-14h-3zm-10 0v-4c0-2.206 1.794-4 4-4s4 1.794 4 4v4h-8z" /></svg> : ''}
+                    채널 입장하기]
                   </button>
                 )
                 : (
                   <button type="button" onClick={onClickJoinGame}>
-                    [게임 입장하기]
+                    [
+                    {invitedChannelInfo?.isPrivate ? <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M18 10v-4c0-3.313-2.687-6-6-6s-6 2.687-6 6v4h-3v14h18v-14h-3zm-10 0v-4c0-2.206 1.794-4 4-4s4 1.794 4 4v4h-8z" /></svg> : ''}
+                    게임 입장하기]
                   </button>
                 )}
             </>
