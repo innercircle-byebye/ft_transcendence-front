@@ -1,4 +1,6 @@
-import React, { useCallback, VFC } from 'react';
+import React, {
+  Dispatch, SetStateAction, useCallback, VFC,
+} from 'react';
 import useSWR from 'swr';
 import Scrollbars from 'react-custom-scrollbars-2';
 import axios from 'axios';
@@ -9,9 +11,11 @@ import fetcher from '@/utils/fetcher';
 
 interface IProps {
   show: boolean;
+  setGameRoomId: Dispatch<SetStateAction<number | null>>;
+  onClickParticipate: () => void;
 }
 
-const FriendNewList: VFC<IProps> = ({ show }) => {
+const FriendNewList: VFC<IProps> = ({ show, setGameRoomId, onClickParticipate }) => {
   const { data: friendNewData, revalidate: revalidateFriendNewData } = useSWR<IUser[]>('/api/friend/new', fetcher);
   const { revalidate: revalidateFriendList } = useSWR<IUser[]>('/api/friend/list', fetcher);
 
@@ -38,7 +42,13 @@ const FriendNewList: VFC<IProps> = ({ show }) => {
       <Scrollbars autoHeight>
         {friendNewData?.map((data) => (
           <div key={data.userId + data.nickname} className="py-1">
-            <FriendItem friendData={data} listType="friendNewList" onClickAcceptFriend={onClickAcceptFriend} />
+            <FriendItem
+              friendData={data}
+              listType="friendNewList"
+              onClickAcceptFriend={onClickAcceptFriend}
+              setGameRoomId={setGameRoomId}
+              onClickParticipate={onClickParticipate}
+            />
           </div>
         ))}
       </Scrollbars>
