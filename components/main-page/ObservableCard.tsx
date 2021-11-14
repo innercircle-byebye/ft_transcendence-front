@@ -52,11 +52,8 @@ const ObservableCard = () => {
   return (
     <div className="rounded-xl bg-yellow-500 p-5 w-full">
       <div className="flex space-x-3">
-
         <div className="flex flex-col w-5/6 space-y-3">
-
           <div className="flex justify-evenly rounded-xl items-center bg-yellow-100 w-full px-2 py-5">
-
             <div className="flex flex-col mx-auto items-center">
               <div className="relative w-14 h-14 rounded-full">
                 <Image
@@ -87,7 +84,6 @@ const ObservableCard = () => {
               <span>{`승률 ${playerTwoWinRate?.winRate}%`}</span>
             </div>
           </div>
-
           <button type="button" onClick={onClickRefresh} className="self-center flex flex-grow space-x-1">
             <span>refresh</span>
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -95,7 +91,6 @@ const ObservableCard = () => {
             </svg>
           </button>
         </div>
-
         <div className="flex flex-col w-1/6">
           <button
             type="button"
