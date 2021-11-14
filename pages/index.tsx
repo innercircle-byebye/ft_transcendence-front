@@ -32,10 +32,10 @@ const Home = ({
         </ContentLeft>
         <ContentRight>
           <div className="flex pb-5 space-x-5 w-full">
-            <div className="flex w-2/5">
+            <div className="flex w-5/12">
               <PlayableCard />
             </div>
-            <div className="flex w-3/5">
+            <div className="flex w-7/12">
               <ObservableCard />
             </div>
           </div>
