@@ -25,7 +25,7 @@ const Rank = ({ userInitialData }: { userInitialData: IUser }) => {
   );
 
   const isReachingEnd = rankData ? rankData.length === 0
-    || rankData[rankData.length - 1].length < ITEM_COUNT_PER_PAGE : false;
+    || rankData[rankData.length - 1]?.length < ITEM_COUNT_PER_PAGE : false;
 
   useEffect(() => {
     if (rankData?.length === 1) {
