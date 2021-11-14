@@ -37,7 +37,7 @@ const GameOptionModal: VFC<IProps> = ({
   onClickGameOptionApplyButton,
   onClickGameOptionCancleButton,
 }) => (
-  <div className="absolute top-1/4 left-1/3 w-1/3 bg-white rounded-md p-5 space-y-5">
+  <div className="absolute top-1/4 left-1/3 w-1/3 bg-amber-100 rounded-md p-5 space-y-5">
     {/* title */}
     <div className="font-medium text-lg text-center">Chang Game Room Option</div>
     {/* room name */}
