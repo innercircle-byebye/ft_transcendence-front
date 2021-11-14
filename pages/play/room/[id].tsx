@@ -196,12 +196,12 @@ const Room: VFC<IProps> = ({
   // game option
   // const { data: gameRoomData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
   const [ballSpeed, setBallSpeed] = useState<string>('medium');
-  console.log(ballSpeed);
+  // console.log(ballSpeed);
   const [gameOptionPatchData, setGameOptionPatchData] = useState<IGameOptionPatch>({
     title: roomData.title,
     password: '',
     maxParticipantNum: roomData.maxParticipantNum,
-    winPoint: 1,
+    winPoint: 2,
     ballSpeed,
   });
   // const [title, onChangeTitle] = useInput(gameRoomData?.title);
@@ -213,7 +213,7 @@ const Room: VFC<IProps> = ({
   ] = useState<boolean>(roomData.isPrivate);
   const [roomPassword, onChangeRoomPassword] = useInput('');
   const [difficulty, onChangeDifficulty] = useInput(0);
-  const [winScore, onChangeWinScore, setWinScore] = useInput(1);
+  const [winScore, onChangeWinScore, setWinScore] = useInput(2);
   const [
     numOfParticipant,
     onChangeNumOfParticipant,
@@ -251,20 +251,6 @@ const Room: VFC<IProps> = ({
   }, [numOfParticipant, setNumOfParticipant]);
 
   const onClickGameOptionApplyButton = useCallback(() => {
-    // const newData: IGameOptionPatch = {
-    //   title,
-    //   password: roomPassword,
-    //   maxParticipantNum: numOfParticipant,
-    //   winPoint: winScore,
-    //   ballSpeed,
-    // };
-    // const newData: IGameOptionPatch = makeGameOptionPatchData(
-    //   gameRoomData?.title,
-    //   password: pw,
-    //   maxParticipantNum: maxParticipantNum,
-    //   winPoint: winPoing,
-    //   ballSpeed,
-    // );
     setGameOptionPatchData({
       title,
       password: roomPassword,
@@ -281,8 +267,8 @@ const Room: VFC<IProps> = ({
         },
       })
       .catch((err) => {
-        console.log(err);
-        toast.error('방장권한부여가 실패되었습니다.', { position: 'bottom-right', theme: 'colored' });
+        console.log('patch fail', err);
+        toast.error('옵션 설정 실패했다', { position: 'bottom-right', theme: 'colored' });
       });
     setIsShowGameOptionModal(false);
   }, [ballSpeed, gameOptionPatchData, numOfParticipant, roomNumber, roomPassword, title, winScore]);
@@ -376,7 +362,8 @@ const Room: VFC<IProps> = ({
       <div className="w-1/4 bg-amber-100">
         {/* 제목이 수평 기준으로 center 정렬이 되는데, 수직기준으로 center 정렬이 안됩니다... 어찌하는 거지?! */}
         <div className="bg-gray-400 h-1/12 flex text-center justify-center items-center">
-          <div>{`# ${roomNumber} ${roomData.title}`}</div>
+          {/* <div>{`# ${roomNumber} ${roomData.title}`}</div> */}
+          <div>{`# ${roomNumber} ${title}`}</div>
         </div>
         <div className="bg-red-300 h-1/4">
           {/* player Info */}

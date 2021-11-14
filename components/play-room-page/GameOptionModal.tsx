@@ -63,7 +63,7 @@ const GameOptionModal: VFC<IProps> = ({
     </div>
     {/* 승리점수 */}
     <div className="flex justify-between">
-      <InputNumber type="승리점수(1 ~ 10)" value={winScore} onChangeValue={onChangeWinScore} min={1} max={10} />
+      <InputNumber type="승리점수(2 ~ 10)" value={winScore} onChangeValue={onChangeWinScore} min={2} max={10} />
     </div>
     {/* 최대인원 */}
     <div className="flex justify-between">
