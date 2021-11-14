@@ -11,7 +11,7 @@ import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
 import {
-  IGameChat, IGameOptionPatch, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant, IUser,
+  IGameChat, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant, IUser,
 } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 import useInput from '@/hooks/useInput';
@@ -211,16 +211,15 @@ const Room: VFC<IProps> = ({
 
   // game option
   const { data: resetData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
-  // const { data: gameRoomData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
   const [ballSpeed, setBallSpeed] = useState<string>('medium');
   // console.log(ballSpeed);
-  const [gameOptionPatchData, setGameOptionPatchData] = useState<IGameOptionPatch>({
-    title: roomData.title,
-    password: '',
-    maxParticipantNum: roomData.maxParticipantNum,
-    winPoint: 2,
-    ballSpeed,
-  });
+  // const [gameOptionPatchData, setGameOptionPatchData] = useState<IGameOptionPatch>({
+  //   title: roomData.title,
+  //   password: '',
+  //   maxParticipantNum: roomData.maxParticipantNum,
+  //   winPoint: 2,
+  //   ballSpeed,
+  // });
   // const [title, onChangeTitle] = useInput(gameRoomData?.title);
   const [title, onChangeTitle, setTitle] = useInput<string>(roomData.title);
   // public | private state
@@ -268,16 +267,16 @@ const Room: VFC<IProps> = ({
   }, [numOfParticipant, setNumOfParticipant]);
 
   const onClickGameOptionApplyButton = useCallback(() => {
-    setGameOptionPatchData({
-      title,
-      password: roomPassword,
-      maxParticipantNum: numOfParticipant,
-      winPoint: winScore,
-      ballSpeed,
-    });
-    console.log('new patch data', gameOptionPatchData);
+    // console.log('room ps', roomPassword);
     axios.patch(`/api/game/room/${roomNumber}`,
-      gameOptionPatchData,
+      {
+        title,
+        password: roomPassword,
+        maxParticipantNum: numOfParticipant,
+        winPoint: winScore,
+        ballSpeed,
+      },
+      // gameOptionPatchData,
       {
         headers: {
           withCredentials: 'true',
@@ -290,7 +289,7 @@ const Room: VFC<IProps> = ({
         console.log('patch fail', err);
         toast.error('옵션 설정 실패했다', { position: 'bottom-right', theme: 'colored' });
       });
-  }, [ballSpeed, gameOptionPatchData, numOfParticipant, roomNumber, roomPassword, title, winScore]);
+  }, [ballSpeed, numOfParticipant, roomNumber, roomPassword, title, winScore]);
 
   const onClickGameOptionCancleButton = useCallback(() => {
     // TODO: reset 기능이 필요합니다.
@@ -303,9 +302,11 @@ const Room: VFC<IProps> = ({
     if (resetData) {
       setTitle(resetData.title);
       setNumOfParticipant(resetData.maxParticipantNum);
+      setBallSpeed(resetData.gameResults[resetData.gameResults.length - 1].ballSpeed);
+      setWinScore(resetData.gameResults[resetData.gameResults.length - 1].winPoint);
     }
     setIsShowGameOptionModal(false);
-  }, [resetData, setNumOfParticipant, setTitle]);
+  }, [resetData, setNumOfParticipant, setTitle, setWinScore]);
 
   const onClickNoExitRoomButton = useCallback(() => {
     setIsShowExitRoomModal(false);
