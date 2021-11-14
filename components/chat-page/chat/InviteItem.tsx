@@ -7,7 +7,7 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import { IChannel, IChatItem } from '@/typings/db';
+import { IChannel, IChatItem, IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
 const InviteItem: FC<Props> = ({ invitationData, setPrivateChannelToJoin }) => {
   const router = useRouter();
   const { data: invitedChannelInfo } = useSWR<IChannel>(`/api/channel/${invitationData.content}`, fetcher);
-
+  const { data: myInfo } = useSWR<IUser>('/api/user/me');
   const onClickJoinGame = useCallback(() => {
     // 비밀번호 처리 필요
     axios.post(`/api/game/room/${Number(invitationData?.content)}/join`, {
@@ -56,6 +56,7 @@ const InviteItem: FC<Props> = ({ invitationData, setPrivateChannelToJoin }) => {
   }, [invitationData?.content, invitationData.nickname, invitedChannelInfo,
     router, setPrivateChannelToJoin]);
 
+  console.log(myInfo?.nickname);
   return (
     <div className="flex flex-row w-full">
       <div className="relative bg-blue-300 w-10 h-10 mr-2">
@@ -77,18 +78,21 @@ const InviteItem: FC<Props> = ({ invitationData, setPrivateChannelToJoin }) => {
           {invitationData.type === 'channel_invite' ? `채널 '${invitationData.content}' ` : '게임으'}
           로 초대합니다.
           {' '}
-          {invitationData.type === 'channel_invite'
-            ? (
-              <button type="button" onClick={onClickJoinChannel}>
-                [채널 입장하기]
-              </button>
-            )
-            : (
-              <button type="button" onClick={onClickJoinGame}>
-                [게임 입장하기]
-              </button>
-            )}
-
+          {myInfo?.nickname !== invitationData.nickname ? (
+            <>
+              {invitationData.type === 'channel_invite'
+                ? (
+                  <button type="button" onClick={onClickJoinChannel}>
+                    [채널 입장하기]
+                  </button>
+                )
+                : (
+                  <button type="button" onClick={onClickJoinGame}>
+                    [게임 입장하기]
+                  </button>
+                )}
+            </>
+          ) : null}
         </span>
       </div>
     </div>
