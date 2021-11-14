@@ -126,6 +126,7 @@ const DM = () => {
     }
     if (privateGameToJoin) {
       axios.post(`/api/game/room/${Number(privateGameToJoin?.gameRoomId)}/join`, {
+        password,
         role: 'player2',
       }, {
         headers: {
