@@ -17,7 +17,7 @@ const ProfileCard: VFC<IProps> = ({ profileUserData }) => {
   const { nickname, imagePath } = profileUserData;
   const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
   const { data: winData } = useSWR<IGameResultWinRate>(
-    pathname === '/play' ? `/api/game/${profileUserData.userId}/win_rate` : null, fetcher,
+    pathname === '/play' || pathname === '/' ? `/api/game/${profileUserData.userId}/win_rate` : null, fetcher,
   );
 
   return (
@@ -31,7 +31,7 @@ const ProfileCard: VFC<IProps> = ({ profileUserData }) => {
         <h2 className="text-5xl">{nickname}</h2>
       </div>
       {
-        pathname === '/play'
+        (pathname === '/play' || pathname === '/')
         && (
           <div className="mt-5 text-xl py-2 text-center flex flex-col bg-gray-400 mx-16 rounded-md">
             <p>

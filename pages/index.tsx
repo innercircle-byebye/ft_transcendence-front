@@ -2,7 +2,6 @@ import React, { ReactElement } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 // import MainLayout from '@/layouts/MainLayout';
 import { ToastContainer } from 'react-toastify';
-import ProfileCard from '@/components/main-page/ProfileCard';
 import AnnouncementList from '@/components/main-page/AnnouncementList';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import JoinedChannelList from '@/components/main-page/JoinedChannelList';
@@ -13,6 +12,7 @@ import ContentContainer from '@/components/page-with-profilecard/ContentContaine
 import Navbar from '@/components/navigation-bar/Navbar';
 import PlayableCard from '@/components/main-page/PlayableCard';
 import ObservableCard from '@/components/main-page/ObservableCard';
+import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 
 const Home = ({
   userInitialData,
@@ -21,12 +21,14 @@ const Home = ({
     return <div>로딩중...</div>;
   }
 
+  console.log(userInitialData);
+
   return (
     <PageContainer maxWidth="xl">
       <ContentContainer>
         <ContentLeft>
-          <div className="space-y-10">
-            <ProfileCard userData={userInitialData} />
+          <div className="space-y-5">
+            <ProfileCard profileUserData={userInitialData} />
             <AnnouncementList />
           </div>
         </ContentLeft>
