@@ -3,7 +3,7 @@ import React, {
   forwardRef, MutableRefObject, SetStateAction, useCallback,
 } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-import { IChannel, IDMChat } from '@/typings/db';
+import { IChannel, IDMChat, IGameRoom } from '@/typings/db';
 import ChatItem from '@/components/chat-page/chat/ChatItem';
 import InviteItem from '../chat/InviteItem';
 
@@ -12,11 +12,12 @@ interface IProps {
   setSize: (f: (size: number) => number) => Promise<IDMChat[][] | undefined>;
   isReachingEnd: boolean;
   setPrivateChannelToJoin: Dispatch<SetStateAction<IChannel | null>>;
+  setPrivateGameToJoin: Dispatch<SetStateAction<IGameRoom | null>>;
 }
 
 const DMChatList = forwardRef<Scrollbars, IProps>((
   {
-    chatSections, setSize, isReachingEnd, setPrivateChannelToJoin,
+    chatSections, setSize, isReachingEnd, setPrivateChannelToJoin, setPrivateGameToJoin,
   }, scrollRef,
 ) => {
   const onScroll = useCallback(
@@ -57,6 +58,7 @@ const DMChatList = forwardRef<Scrollbars, IProps>((
                       type: chat.type,
                     }}
                     setPrivateChannelToJoin={setPrivateChannelToJoin}
+                    setPrivateGameToJoin={setPrivateGameToJoin}
                   />
                 );
               }

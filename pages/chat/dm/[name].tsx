@@ -8,7 +8,9 @@ import Scrollbars from 'react-custom-scrollbars-2';
 import { toast, ToastContainer } from 'react-toastify';
 import ChatLayout from '@/layouts/ChatLayout';
 import useSocket from '@/hooks/useSocket';
-import { IChannel, IDMChat, IUser } from '@/typings/db';
+import {
+  IChannel, IDMChat, IGameRoom, IUser,
+} from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 import useInput from '@/hooks/useInput';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
@@ -35,6 +37,8 @@ const DM = () => {
     || (chatDatas && chatDatas[chatDatas.length - 1]?.length < 20) || false;
   const chatSections = makeSection(chatDatas ? chatDatas.flat().reverse() : []);
   const [privateChannelToJoin, setPrivateChannelToJoin] = useState<IChannel | null>(null);
+  const [privateGameToJoin, setPrivateGameToJoin] = useState<IGameRoom | null>(null);
+
   const [password, onChangePassword, setPassword] = useInput('');
 
   const onCloseEmoji = useCallback(() => {
@@ -120,7 +124,24 @@ const DM = () => {
         toast.error('틀린 비밀번호 입니다.', { position: 'bottom-right', theme: 'colored' });
       });
     }
-  }, [password, privateChannelToJoin, router, setPassword]);
+    if (privateGameToJoin) {
+      axios.post(`/api/game/room/${Number(privateGameToJoin?.gameRoomId)}/join`, {
+        role: 'player2',
+      }, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(async () => {
+        const { gameRoomId } = privateGameToJoin;
+        setPrivateChannelToJoin(null);
+        await router.push(`/play/room/${gameRoomId}`);
+      }).catch((error) => {
+        setPassword('');
+        console.dir(error);
+        toast.error('틀린 비밀번호 입니다.', { position: 'bottom-right', theme: 'colored' });
+      });
+    }
+  }, [password, privateChannelToJoin, privateGameToJoin, router, setPassword]);
 
   const onClosePasswordModal = useCallback((e) => {
     e.preventDefault();
@@ -176,6 +197,7 @@ const DM = () => {
                 setSize={setSize}
                 isReachingEnd={isReachingEnd}
                 setPrivateChannelToJoin={setPrivateChannelToJoin}
+                setPrivateGameToJoin={setPrivateGameToJoin}
               />
               <ChatBox
                 chat={chat}

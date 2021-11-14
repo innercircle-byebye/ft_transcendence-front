@@ -7,35 +7,47 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
-import { IChannel, IChatItem, IUser } from '@/typings/db';
+import {
+  IChannel, IChatItem, IGameRoom, IUser,
+} from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 
 interface Props {
   invitationData: IChatItem;
   setPrivateChannelToJoin: Dispatch<SetStateAction<IChannel | null>>;
+  setPrivateGameToJoin: Dispatch<SetStateAction<IGameRoom | null>>;
 }
 
-const InviteItem: FC<Props> = ({ invitationData, setPrivateChannelToJoin }) => {
+const InviteItem: FC<Props> = ({
+  invitationData,
+  setPrivateChannelToJoin, setPrivateGameToJoin,
+}) => {
   const router = useRouter();
   const { data: invitedChannelInfo } = useSWR<IChannel>(`/api/channel/${invitationData.content}`, fetcher);
+  const { data: invitedGameInfo } = useSWR<IGameRoom>(`/api/game/${Number(invitationData.content)}`, fetcher);
+
   const { data: myInfo } = useSWR<IUser>('/api/user/me');
   const onClickJoinGame = useCallback(() => {
-    // 비밀번호 처리 필요
-    axios.post(`/api/game/room/${Number(invitationData?.content)}/join`, {
-      role: 'player2',
-    }, {
-      headers: {
-        withCredentials: 'true',
-      },
-    }).then(() => {
-      router.push(`/play/room/${invitationData.content}`);
-    }).catch(() => {
-      console.log('error');
-      toast.error(`${invitationData.nickname}이 보낸 게임방 초대에 입장할 수 없습니다.`, { position: 'bottom-right', theme: 'colored' });
-    });
-  }, [invitationData.content, invitationData.nickname, router]);
+    if (invitedGameInfo?.isPrivate) {
+      setPrivateGameToJoin(invitedGameInfo);
+    } else {
+      // 비밀번호 처리 필요
+      axios.post(`/api/game/room/${Number(invitationData?.content)}/join`, {
+        role: 'player2',
+      }, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        router.push(`/play/room/${invitationData.content}`);
+      }).catch(() => {
+        console.log('error');
+        toast.error(`${invitationData.nickname}이 보낸 게임방 초대에 입장할 수 없습니다.`, { position: 'bottom-right', theme: 'colored' });
+      });
+    }
+  }, [invitationData.content, invitationData.nickname, invitedGameInfo,
+    router, setPrivateGameToJoin]);
 
-  console.log(invitationData.content);
   const onClickJoinChannel = useCallback(() => {
     if (invitedChannelInfo?.isPrivate) {
       setPrivateChannelToJoin(invitedChannelInfo);
@@ -56,7 +68,6 @@ const InviteItem: FC<Props> = ({ invitationData, setPrivateChannelToJoin }) => {
   }, [invitationData?.content, invitationData.nickname, invitedChannelInfo,
     router, setPrivateChannelToJoin]);
 
-  console.log(myInfo?.nickname);
   return (
     <div className="flex flex-row w-full">
       <div className="relative bg-blue-300 w-10 h-10 mr-2">
