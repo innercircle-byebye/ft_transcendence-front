@@ -47,7 +47,7 @@ const PlayableCard = () => {
     <div className="rounded-xl bg-red-500 p-5 w-full">
       <div className="flex space-x-3">
         <div className="flex flex-col w-3/4 space-y-3">
-          <div className="flex justify-evenly rounded-xl items-center bg-red-100 w-full p-2">
+          <div className="flex justify-evenly rounded-xl items-center bg-red-100 w-full px-2 py-5">
             <div className="text-xl">vs</div>
             <div className="flex flex-col items-center">
               <div className="relative w-14 h-14 rounded-full">
