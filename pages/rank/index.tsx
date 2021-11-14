@@ -15,16 +15,17 @@ import fetcher from '@/utils/fetcher';
 import type { IRank, IUser } from '@/typings/db';
 import RankList from '@/components/rank-page/RankList';
 
-const ITEMCOUNT_PER_PAGE = 13;
+const ITEM_COUNT_PER_PAGE = 13;
+
 const Rank = ({ userInitialData }: { userInitialData: IUser }) => {
   const scrollbarRef = useRef<Scrollbars>(null);
   const { data: rankData, setSize } = useSWRInfinite<IRank[]>(
-    (index) => `/api/game/ranking?perPage=${ITEMCOUNT_PER_PAGE}&page=${index + 1}`,
+    (index) => `/api/game/ranking?perPage=${ITEM_COUNT_PER_PAGE}&page=${index + 1}`,
     fetcher,
   );
-  const isEmpty = rankData?.length === 0;
-  const isReachingEnd = (isEmpty || false)
-    || ((rankData && rankData[rankData.length - 1]?.length < ITEMCOUNT_PER_PAGE) || false);
+
+  const isReachingEnd = rankData ? rankData.length === 0
+    || rankData[rankData.length - 1].length < ITEM_COUNT_PER_PAGE : false;
 
   useEffect(() => {
     if (rankData?.length === 1) {
@@ -39,20 +40,21 @@ const Rank = ({ userInitialData }: { userInitialData: IUser }) => {
   return (
     <PageContainer maxWidth="xl">
       <ContentContainer>
-        {/* 사용자 정보 */}
         <ContentLeft>
           {userInitialData && (
             <>
               <ProfileCard profileUserData={userInitialData} />
               <div className="flex justify-center mt-4">
-                <button type="button" className="px-2 py-1 rounded-md text-lg bg-amber-300 text-gray-700">
+                <button
+                  type="button"
+                  className="px-2 py-1 rounded-md text-lg bg-amber-300 text-gray-700"
+                >
                   내 Rank 보기
                 </button>
               </div>
             </>
           )}
         </ContentLeft>
-        {/* 랭크 정보 */}
         <ContentRight>
           <div className="mb-4">
             <h1 className="text-4xl leading-10">Ranks</h1>

@@ -1,9 +1,8 @@
 import React, { forwardRef, useCallback } from 'react';
-import Scrollbars from 'react-custom-scrollbars-2';
 import type { MutableRefObject } from 'react';
-
-import RankItem from './RankItem';
+import Scrollbars from 'react-custom-scrollbars-2';
 import type { IRank } from '@/typings/db';
+import RankItem from './RankItem';
 
 interface IProps {
   rankData: IRank[];

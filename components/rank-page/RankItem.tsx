@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import type { VFC } from 'react';
-import type { IRank, IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
+import type { IRank, IUser } from '@/typings/db';
 
 interface IProps {
   rankNumber: number;
