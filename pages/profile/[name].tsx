@@ -9,11 +9,13 @@ import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import RankItem from '@/components/profile-page/RankItem';
 import WinScore from '@/components/profile-page/WinScore';
 import HistoryList from '@/components/profile-page/HistoryList';
+// import FriendListCard from '@/components/profile-page/FriendListCard';
 import PageContainer from '@/components/page-with-profilecard/PageContainer';
 import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
 import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
 import ContentRight from '@/components/page-with-profilecard/ContentRight';
 import MainLayout from '@/layouts/MainLayout';
+import FriendListCard from '@/components/profile-page/FriendListCard';
 
 const Profile = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -40,6 +42,7 @@ const Profile = ({ userInitialData }
               <RankItem rankInfo={profileUserData.rankInfo} />
               <WinScore userId={profileUserData.userId} />
             </div>
+            <FriendListCard />
             <HistoryList userId={profileUserData.userId} />
           </div>
         </ContentRight>
