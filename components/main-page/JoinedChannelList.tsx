@@ -1,9 +1,10 @@
 import useSWR from 'swr';
 import { IChannel } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
+import JoinedChannelItem from './JoinedChannelItem';
 
 const JoinedChannelList = () => {
-  const { data: channelData } = useSWR<IChannel[]>(
+  const { data: myChannelData } = useSWR<IChannel[]>(
     '/api/channel/me',
     fetcher,
   );
@@ -14,11 +15,11 @@ const JoinedChannelList = () => {
       <div className="text-white font-medium text-xl pt-3 pb-2">참여중인 채널목록</div>
       {/* content list */}
       <div className="flex flex-col space-y-2 mx-4 py-2">
-        {channelData?.map((item: IChannel) => (
-          <button type="button" key={item.channelId} className="bg-amber-50 rounded-md w-full py-1.5 px-4 flex justify-between">
-            <div>{`# ${item.name}`}</div>
-            <div>count</div>
-          </button>
+        {myChannelData?.map((channelData: IChannel) => (
+          <JoinedChannelItem
+            key={channelData.createdAt + channelData.name}
+            channelData={channelData}
+          />
         ))}
       </div>
     </div>
