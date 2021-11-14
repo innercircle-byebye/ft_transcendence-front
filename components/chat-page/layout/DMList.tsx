@@ -59,7 +59,6 @@ const DMList: VFC = () => {
               </a>
             </Link>
           ))}
-        {/* </div> */}
       </div>
     </div>
   );
