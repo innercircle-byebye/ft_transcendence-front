@@ -77,7 +77,7 @@ const Room: VFC<IProps> = ({
       setParticipantListData(setParticipantData, data);
     });
     socket?.emit('joinGameRoom', {
-      roomId: router.query.id,
+      gameRoomId: router.query.id,
       userId: userInitialData.userId,
     });
     return () => {
