@@ -4,14 +4,15 @@ import { IRankInfo } from '@/typings/db';
 
 interface IProps {
   rankInfo: IRankInfo;
+  bgColor?: string;
 }
 
-const RankItem: VFC<IProps> = ({ rankInfo }) => (
-  <div className="bg-gray-300 rounded-md flex flex-col items-center">
+const RankItem: VFC<IProps> = ({ rankInfo, bgColor = 'bg-gray-300' }) => (
+  <div className={`${bgColor} rounded-md flex flex-col items-center w-full`}>
     <div className="relative w-52 h-52">
       <Image alt="rank-image" src={`${rankInfo.imagePath}`} layout="fill" />
     </div>
-    <p className="text-xl">{rankInfo.title}</p>
+    <p className="text-xl">{rankInfo.title.toUpperCase()}</p>
   </div>
 );
 
