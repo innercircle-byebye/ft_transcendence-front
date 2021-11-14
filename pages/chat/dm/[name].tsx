@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, {
+import {
   ReactElement, useCallback, useEffect, useRef, useState,
 } from 'react';
 import useSWR, { useSWRInfinite } from 'swr';
@@ -58,7 +58,7 @@ const DM = () => {
           });
           return prevChatData;
         }, false).then(() => {
-          // 읽지 않은 메시지 처리하기 추가
+          localStorage.setItem(`dm-${DMUserName}`, new Date().getTime().toString());
           setChat('');
           scrollbarRef.current?.scrollToBottom();
         });
@@ -77,7 +77,7 @@ const DM = () => {
           .catch(console.error);
       }
     },
-    [chat, chatDatas, dmUserData, mutateChat, setChat, userData],
+    [DMUserName, chat, chatDatas, dmUserData, mutateChat, setChat, userData],
   );
 
   const onMessage = useCallback(
@@ -141,6 +141,10 @@ const DM = () => {
       }, 500);
     }
   }, [chatDatas]);
+
+  useEffect(() => {
+    localStorage.setItem(`dm-${DMUserName}`, new Date().getTime().toString());
+  }, [DMUserName]);
 
   return (
     <div

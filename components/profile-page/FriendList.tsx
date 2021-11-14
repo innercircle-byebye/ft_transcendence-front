@@ -1,35 +1,53 @@
-import React, { useEffect, useState, VFC } from 'react';
+import {
+  Dispatch, SetStateAction, useCallback, VFC,
+} from 'react';
 import useSWR from 'swr';
 import Scrollbars from 'react-custom-scrollbars-2';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 import { IUser } from '@/typings/db';
-import FriendItem from './FriendItem';
+import FriendItem from '@/components/profile-page/FriendItem';
 import fetcher from '@/utils/fetcher';
 
-// interface IProps {
-//   userId: number;
-//   perPage: number;
-//   page: number;
-// }
+interface IProps {
+  show: boolean;
+  setGameRoomId: Dispatch<SetStateAction<number | null>>;
+  onClickParticipate: () => void;
+}
 
-const FriendList: VFC = () => {
-  const [dataTest, setData] = useState<IUser[] | null>(null);
-  const { data: friendData } = useSWR<IUser[]>('/api/friend/list', fetcher);
+const FriendList: VFC<IProps> = ({ show, setGameRoomId, onClickParticipate }) => {
+  const { data: friendList, revalidate } = useSWR<IUser[]>('/api/friend/list', fetcher);
 
-  useEffect(() => {
-    if (friendData) {
-      console.log(friendData);
-      setData(friendData);
-    }
-  }, [friendData]);
+  const onClickDeleteFriend = useCallback((friendData: IUser) => {
+    axios.delete(`/api/friend/${friendData.userId}`, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      toast.success(`${friendData.nickname}을 친구에서 삭제했습니다.`, { position: 'bottom-right', theme: 'colored' });
+      revalidate();
+    }).catch(() => {
+      toast.error(`${friendData.nickname}의 친구 삭제가 실패했습니다.`, { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [revalidate]);
+
+  if (!show) {
+    return null;
+  }
+
   return (
     <div className="space-y-3 h-48">
       <Scrollbars autoHeight>
-        {dataTest?.map((data) => (
-          <>
-            <div className="py-1">
-              <FriendItem friendData={data} listType="friendList" />
-            </div>
-          </>
+        {friendList?.map((data) => (
+          <div key={data.userId + data.nickname} className="py-1">
+            <FriendItem
+              friendData={data}
+              listType="friendList"
+              onClickDeleteFriend={onClickDeleteFriend}
+              setGameRoomId={setGameRoomId}
+              onClickParticipate={onClickParticipate}
+            />
+          </div>
         ))}
       </Scrollbars>
     </div>

@@ -50,12 +50,12 @@ const ObservableCard = () => {
   }, [observableData]);
 
   return (
-    <div className="rounded-xl bg-yellow-500 text-center flex flex-grow flex-col space-y-2">
-      <div className="flex flex-row mx-4 py-2 space-y-2 space-x-2">
-        <div className="flex flex-col w-4/5">
-          <div className="flex flex-row rounded-xl items-center bg-yellow-100 ">
+    <div className="rounded-xl bg-yellow-500 p-5 w-full">
+      <div className="flex flex-col items-center space-y-3">
+        <div className="flex w-full space-x-3">
+          <div className="flex justify-evenly rounded-xl items-center bg-yellow-100 w-5/6 px-2 py-5">
             <div className="flex flex-col mx-auto items-center">
-              <div className="relative bg-blue-300 w-10 h-10 rounded-full shadow-lg">
+              <div className="relative w-14 h-14 rounded-full">
                 <Image
                   src={playerOne?.imagePath ? playerOne.imagePath : '/image/rank/bronze.jpg'}
                   alt="previewImage"
@@ -64,17 +64,13 @@ const ObservableCard = () => {
                   className="rounded-full"
                 />
               </div>
-              <div className="w-auto flex-grow items-center">
-                <a className="text-lg">{playerOne?.nickname}</a>
-                <br />
-                {playerOne?.rankInfo.title}
-                <br />
-                {`승률 ${playerOneWinRate?.winRate}%`}
-              </div>
+              <span className="text-xl font-semibold">{playerOne?.nickname}</span>
+              <span>{playerOne?.rankInfo.title}</span>
+              <span>{`승률 ${playerOneWinRate?.winRate}%`}</span>
             </div>
-            <div className="mx-6 text-lg">vs</div>
-            <div className="flex flex-col mx-auto  items-center">
-              <div className="relative bg-blue-300 w-10 h-10 rounded-full shadow-lg">
+            <div className="text-xl">vs</div>
+            <div className="flex flex-col mx-auto items-center">
+              <div className="relative w-14 h-14 rounded-full">
                 <Image
                   src={playerTwo?.imagePath ? playerTwo.imagePath : '/image/profile_default.png'}
                   alt="previewImage"
@@ -83,28 +79,25 @@ const ObservableCard = () => {
                   className="rounded-full"
                 />
               </div>
-              <div className="w-auto flex-grow items-center">
-                <a className="text-lg">{playerTwo?.nickname}</a>
-                <br />
-                {playerTwo?.rankInfo.title}
-                <br />
-                {`승률 ${playerTwoWinRate?.winRate}%`}
-              </div>
+              <span className="text-xl font-semibold">{playerTwo?.nickname}</span>
+              <span>{playerTwo?.rankInfo.title}</span>
+              <span>{`승률 ${playerTwoWinRate?.winRate}%`}</span>
             </div>
           </div>
-          <button type="button" onClick={onClickRefresh} className="self-center flex flex-grow space-y-2 text-lg">
-            refresh
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M13.5 2c-5.621 0-10.211 4.443-10.475 10h-3.025l5 6.625 5-6.625h-2.975c.257-3.351 3.06-6 6.475-6 3.584 0 6.5 2.916 6.5 6.5s-2.916 6.5-6.5 6.5c-1.863 0-3.542-.793-4.728-2.053l-2.427 3.216c1.877 1.754 4.389 2.837 7.155 2.837 5.79 0 10.5-4.71 10.5-10.5s-4.71-10.5-10.5-10.5z" /></svg>
-          </button>
-        </div>
-        <div className="flex flex-col w-1/5">
           <button
             type="button"
             onClick={onClickQuickObserve}
-            className="rounded-xl bg-yellow-300 hover:bg-yellow-400 text-center flex flex-wrap space-y-2 text-4xl text-black text-opacity-80"
+            className="rounded-xl bg-yellow-300 hover:bg-yellow-400 text-center space-y-2 text-3xl text-black text-opacity-80 w-1/6"
           >
-            빠른관전하기
-
+            <div className="flex flex-wrap">빠른관전하기</div>
+          </button>
+        </div>
+        <div className="flex flex-col w-1/6">
+          <button type="button" onClick={onClickRefresh} className="self-center flex flex-grow space-x-1">
+            <span>refresh</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+              <path d="M13.5 2c-5.621 0-10.211 4.443-10.475 10h-3.025l5 6.625 5-6.625h-2.975c.257-3.351 3.06-6 6.475-6 3.584 0 6.5 2.916 6.5 6.5s-2.916 6.5-6.5 6.5c-1.863 0-3.542-.793-4.728-2.053l-2.427 3.216c1.877 1.754 4.389 2.837 7.155 2.837 5.79 0 10.5-4.71 10.5-10.5s-4.71-10.5-10.5-10.5z" />
+            </svg>
           </button>
         </div>
       </div>

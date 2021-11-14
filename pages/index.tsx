@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 // import MainLayout from '@/layouts/MainLayout';
+import { ToastContainer } from 'react-toastify';
 import ProfileCard from '@/components/main-page/ProfileCard';
 import AnnouncementList from '@/components/main-page/AnnouncementList';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
@@ -31,10 +32,10 @@ const Home = ({
         </ContentLeft>
         <ContentRight>
           <div className="flex pb-5 space-x-5 w-full">
-            <div className="flex w-2/5">
+            <div className="flex w-5/12">
               <PlayableCard />
             </div>
-            <div className="flex w-3/5">
+            <div className="flex w-7/12">
               <ObservableCard />
             </div>
           </div>
@@ -44,6 +45,7 @@ const Home = ({
           </div>
         </ContentRight>
       </ContentContainer>
+      <ToastContainer />
     </PageContainer>
   );
 };
