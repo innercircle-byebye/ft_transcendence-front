@@ -67,8 +67,16 @@ const Room: VFC<IProps> = ({
     // initSetting -> gameRoomData
     socket?.on('gameRoomData', (data: IGameRoomData) => {
       console.log('gameRoomData', data);
-      setName1P(data.participants.player1?.nickname);
-      setName2P(data.participants.player2?.nickname);
+      if (data.participants.player1) {
+        setName1P(data.participants.player1.nickname);
+      } else {
+        setName1P('');
+      }
+      if (data.participants.player2) {
+        setName2P(data.participants.player2.nickname);
+      } else {
+        setName2P('');
+      }
       setMyRole(data.role);
       if (data.isPlaying) {
         setIsPlaying(true);
