@@ -1,17 +1,21 @@
-import { useCallback, VFC } from 'react';
+import {
+  Dispatch, SetStateAction, useCallback, VFC,
+} from 'react';
 import useSWR from 'swr';
 import Scrollbars from 'react-custom-scrollbars-2';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { IUser } from '@/typings/db';
-import FriendItem from './FriendItem';
+import FriendItem from '@/components/profile-page/FriendItem';
 import fetcher from '@/utils/fetcher';
 
 interface IProps {
   show: boolean;
+  setGameRoomId: Dispatch<SetStateAction<number | null>>;
+  onClickParticipate: () => void;
 }
 
-const FriendList: VFC<IProps> = ({ show }) => {
+const FriendList: VFC<IProps> = ({ show, setGameRoomId, onClickParticipate }) => {
   const { data: friendList, revalidate } = useSWR<IUser[]>('/api/friend/list', fetcher);
 
   const onClickDeleteFriend = useCallback((friendData: IUser) => {
@@ -36,7 +40,13 @@ const FriendList: VFC<IProps> = ({ show }) => {
       <Scrollbars autoHeight>
         {friendList?.map((data) => (
           <div key={data.userId + data.nickname} className="py-1">
-            <FriendItem friendData={data} listType="friendList" onClickDeleteFriend={onClickDeleteFriend} />
+            <FriendItem
+              friendData={data}
+              listType="friendList"
+              onClickDeleteFriend={onClickDeleteFriend}
+              setGameRoomId={setGameRoomId}
+              onClickParticipate={onClickParticipate}
+            />
           </div>
         ))}
       </Scrollbars>
