@@ -20,7 +20,6 @@ const RankList = forwardRef<Scrollbars, IProps>(
             const current = (scrollRef as MutableRefObject<Scrollbars>)
               ?.current;
             if (current) {
-              console.log(current.getScrollHeight() - values.scrollHeight);
               current.scrollTop(
                 current.getScrollHeight() - values.scrollHeight,
               );
