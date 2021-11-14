@@ -154,6 +154,18 @@ export interface IGameMember {
   nickname: string;
 }
 
+export interface IGameResult {
+  playerOneId: number,
+  playerTwoId: number,
+  playerOneScore: number,
+  playerTwoScore: number,
+  winPoint: number,
+  ballSpeed: string,
+  startAt: Date,
+  endAt: Date,
+  lastModifiedAt: Date
+}
+
 export interface IGameRoom {
   gameRoomId: number;
   title: string;
@@ -165,4 +177,5 @@ export interface IGameRoom {
   gameMembers: IGameMember[];
   currentMemberCount: number;
   gameRoomStatus: string;
+  gameResults: IGameResult[];
 }
