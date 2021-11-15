@@ -22,6 +22,22 @@ const AnnouncementList = () => {
     setClickedIndex(null);
   };
 
+  if (!announcementData?.length) {
+    return (
+      <div className="bg-gray-700 flex flex-col py-6 space-y-3 rounded-2xl w-full">
+        <div className="flex flex-row space-x-3 text-white justify-center items-center">
+          <div className="w-6 h-6">
+            <SpeakerphoneIcon />
+          </div>
+          <div className="text-2xl">Announcement</div>
+        </div>
+        <div className="h-full flex justify-center items-center text-white">
+          <span>공지사항이 없습니다.</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gray-700 flex flex-col py-6 space-y-3 rounded-2xl">
       <div className="flex flex-row space-x-3 text-white justify-center items-center">
@@ -41,7 +57,7 @@ const AnnouncementList = () => {
               >
                 <div className="flex w-full">
                   <span className="w-3/4 flex justify-start">{item.title}</span>
-                  <span className="w-1/4">{dayjs(item.lastModifiedAt).format('YYYY-MM-DD')}</span>
+                  <span className="w-1/4">{dayjs(item.createdAt).format('YYYY-MM-DD')}</span>
                 </div>
                 <AnnouncementModal
                   item={item}

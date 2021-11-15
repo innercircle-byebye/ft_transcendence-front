@@ -1,5 +1,6 @@
 import { Fragment, VFC } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
+import dayjs from 'dayjs';
 import { IAnnouncement } from '@/typings/db';
 
 interface IProps {
@@ -29,7 +30,6 @@ const AnnouncementModal: VFC<IProps> = ({ item, isShow, onCloseModal }) => {
           >
             <Dialog.Overlay className="fixed inset-0" />
           </Transition.Child>
-
           {/* This element is to trick the browser into centering the modal contents. */}
           <span
             className="inline-block h-screen align-middle"
@@ -55,9 +55,9 @@ const AnnouncementModal: VFC<IProps> = ({ item, isShow, onCloseModal }) => {
                 {item.title}
               </Dialog.Title>
               <div className="mt-2">
+                <p>{dayjs(item.createdAt).format('YYYY-MM-DD hh:mm A')}</p>
                 <p className="text-sm text-gray-500">{item.content}</p>
               </div>
-
               <div className="mt-4">
                 <button
                   type="button"
