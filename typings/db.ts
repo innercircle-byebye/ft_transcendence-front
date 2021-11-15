@@ -66,6 +66,7 @@ export interface IDMChat {
   content: string;
   createdAt: Date;
   lastModifiedAt: Date;
+  type: string;
 }
 
 export interface IChatItem {
@@ -74,8 +75,17 @@ export interface IChatItem {
   imagePath: string;
   content: string;
   createdAt: Date;
+  type?: string;
 }
 
+export interface IInviteItem {
+  userId: number;
+  nickname: string;
+  imagePath: string;
+  type: string;
+  targetInfo: string;
+  createdAt: Date;
+}
 export interface IChannelUser {
   nickname: string;
   imagePath: string;
