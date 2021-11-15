@@ -57,7 +57,7 @@ const Play = ({ userInitialData }
     e.stopPropagation();
   }, []);
 
-  if (!roomCount) {
+  if (roomCount === undefined) {
     return <div>로딩중</div>;
   }
 
