@@ -120,6 +120,21 @@ export interface ISimpleUser {
   imagePath: string;
 }
 
+export interface IGameScreenData {
+  role: string;
+  WIDTH: number;
+  HEIGHT: number;
+}
+
+export interface IGameUpdateData {
+  type: string;
+  role: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface IRank {
   totalPlayCount: number;
   winCount: number;

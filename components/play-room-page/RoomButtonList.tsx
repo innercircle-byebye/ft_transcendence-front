@@ -1,9 +1,11 @@
-import { useRouter } from 'next/router';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, VFC } from 'react';
 
-const RoomButtonList = () => {
+interface IProps {
+  onClickExit: (e: any) => void;
+}
+
+const RoomButtonList: VFC<IProps> = ({ onClickExit }) => {
   const [Player, setPlayer] = useState('1p');
-  const router = useRouter();
 
   const onClickOption = useCallback(
     () => {
@@ -21,13 +23,6 @@ const RoomButtonList = () => {
       }
     },
     [Player],
-  );
-
-  const onClickExit = useCallback(
-    () => {
-      router.push('/play');
-    },
-    [router],
   );
 
   return (
