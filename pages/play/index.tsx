@@ -44,7 +44,7 @@ const Play = ({ userInitialData }
     setPassword('');
   }, [setPassword]);
 
-  if (!roomCount) {
+  if (roomCount === undefined) {
     return <div>로딩중</div>;
   }
 
