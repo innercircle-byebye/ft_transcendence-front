@@ -162,7 +162,7 @@ export interface IGameChat {
   index : number;
 }
 
-export interface IGameOptionPatch {
+export interface IGameOption {
   title: string;
   password: string | undefined | null;
   maxParticipantNum: number;
