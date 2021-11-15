@@ -23,7 +23,7 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
   const { data: inviteMemberData } = useSWR<IUser>(invite ? `/api/user/nickname/${invite}` : null, fetcher);
   const [roomName, onChangeRoomName] = useInput<string>('');
   const [roomNameError, setRoomNameError] = useState(false);
-  const [difficulty, onChangeDifficulty] = useInput(0);
+  const [difficulty, onChangeDifficulty] = useInput<string>('0');
   const [ballSpeed, setBallSpeed] = useState<string>('slow');
   const [winScore, onChangeWinScore, setWinScore] = useInput<number>(5);
   const [numOfSpectator, onChangeNumOfSpectator, setNumOfSpectator] = useInput<number>(5);
@@ -56,14 +56,18 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
       toast.error('방만들기에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
     });
   }, [
-    ballSpeed, invite, inviteMemberData,
-    isPrivate, numOfSpectator, password, roomName, router, winScore,
+    ballSpeed, invite, inviteMemberData, isPrivate,
+    numOfSpectator, password, roomName, router, winScore,
   ]);
 
   useEffect(() => {
-    if (difficulty === 0) { setBallSpeed('slow'); }
-    if (difficulty === 1) { setBallSpeed('medium'); }
-    if (difficulty === 2) { setBallSpeed('fast'); }
+    if (difficulty === '0') {
+      setBallSpeed('slow');
+    } else if (difficulty === '1') {
+      setBallSpeed('medium');
+    } else if (difficulty === '2') {
+      setBallSpeed('fast');
+    }
   }, [difficulty]);
 
   useEffect(() => {
@@ -99,7 +103,7 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
           <option value="1" label="50%" />
           <option value="2" label="100%" />
         </datalist>
-        <InputNumber type="승리점수(1 ~ 10)" value={winScore} onChangeValue={onChangeWinScore} min={1} max={10} />
+        <InputNumber type="승리점수(2 ~ 10)" value={winScore} onChangeValue={onChangeWinScore} min={2} max={10} />
         <InputNumber type="인원수(2 ~ 8)" value={numOfSpectator} onChangeValue={onChangeNumOfSpectator} min={2} max={8} />
         <SwitchPublicPrivate
           isPrivate={isPrivate}
