@@ -2,6 +2,7 @@ import router from 'next/router';
 import {
   Dispatch, SetStateAction, useCallback, useState, VFC,
 } from 'react';
+import axios from 'axios';
 import { IGameRoom } from '@/typings/db';
 
 interface IProps {
@@ -18,14 +19,32 @@ const EntranceModal: VFC<IProps> = ({ roomInfo, setRoomToEntrance }) => {
   }, [setRoomToEntrance]);
 
   const onClickWatch = useCallback(() => {
-    console.log('관전하기');
-  }, []);
+    axios.post(`/api/game/room/${roomInfo.gameRoomId}/join`, {
+      password: '',
+      role: 'observer',
+    }, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      console.log('post join 요청 성공');
+      router.push(`/play/room/${roomInfo.gameRoomId}`);
+    });
+  }, [roomInfo.gameRoomId]);
 
   const onClickPlay = useCallback(() => {
-    console.log('게임하기');
-    // test 를 위해 추가
-    router.push('/play/room/2');
-  }, []);
+    axios.post(`/api/game/room/${roomInfo.gameRoomId}/join`, {
+      password: '',
+      role: 'player2',
+    }, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      console.log('post join 요청 성공');
+      router.push(`/play/room/${roomInfo.gameRoomId}`);
+    });
+  }, [roomInfo.gameRoomId]);
 
   return (
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
