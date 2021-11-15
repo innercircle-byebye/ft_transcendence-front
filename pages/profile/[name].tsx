@@ -42,7 +42,7 @@ const Profile = ({ userInitialData }
               <RankItem rankInfo={profileUserData.rankInfo} />
               <WinScore userId={profileUserData.userId} />
             </div>
-            <FriendListCard />
+            <FriendListCard show={profileUserData.nickname === nickname} />
             <HistoryList userId={profileUserData.userId} />
           </div>
         </ContentRight>
