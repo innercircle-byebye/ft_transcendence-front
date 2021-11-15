@@ -15,6 +15,7 @@ import ContentContainer from '@/components/page-with-profilecard/ContentContaine
 import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
 import ContentRight from '@/components/page-with-profilecard/ContentRight';
 import MainLayout from '@/layouts/MainLayout';
+import GameRuleModal from '@/components/play-page/GameRuleModal';
 
 const Play = ({ userInitialData }
   : InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -25,6 +26,7 @@ const Play = ({ userInitialData }
   const [roomToEntrance, setRoomToEntrance] = useState<IGameRoom | null>(null);
   const [password, onChangePassword, setPassword] = useInput('');
   const { data: roomCount } = useSWR<number>('/api/game/room/list/count', fetcher);
+  const [showGameRuleModal, setShowGameRuleModal] = useState(false);
 
   const onClickMakeRoom = useCallback(() => {
     router.push('/play/create-room');
@@ -44,6 +46,14 @@ const Play = ({ userInitialData }
     setPassword('');
   }, [setPassword]);
 
+  const onCloseGameRuleModal = useCallback(() => {
+    setShowGameRuleModal(false);
+  }, []);
+
+  const onClickGameRuleButton = useCallback(() => {
+    setShowGameRuleModal(true);
+  }, []);
+
   if (!roomCount) {
     return <div>로딩중</div>;
   }
@@ -62,6 +72,9 @@ const Play = ({ userInitialData }
           </div>
         </ContentLeft>
         <ContentRight bgColor="bg-sky-100">
+          <button type="button" className="w-full flex justify-end p-1 outline-none" onClick={onClickGameRuleButton}>
+            <span className="bg-blue-300 rounded-full px-1">게임규칙보기</span>
+          </button>
           {roomToEntrance && roomToEntrance.isPrivate
             ? (
               <PasswordModal
@@ -93,6 +106,7 @@ const Play = ({ userInitialData }
             )}
         </ContentRight>
       </ContentContainer>
+      <GameRuleModal show={showGameRuleModal} onCloseModal={onCloseGameRuleModal} />
     </PageContainer>
   );
 };
