@@ -1,5 +1,5 @@
-import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import type { VFC } from 'react';
 
 interface IProps {
