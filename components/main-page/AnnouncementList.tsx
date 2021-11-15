@@ -41,7 +41,7 @@ const AnnouncementList = () => {
               >
                 <div className="flex w-full">
                   <span className="w-3/4 flex justify-start">{item.title}</span>
-                  <span className="w-1/4">{dayjs(item.lastModifiedAt).format('YYYY-MM-DD')}</span>
+                  <span className="w-1/4">{dayjs(item.createdAt).format('YYYY-MM-DD')}</span>
                 </div>
                 <AnnouncementModal
                   item={item}
