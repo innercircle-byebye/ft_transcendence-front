@@ -8,7 +8,7 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import useSWR from 'swr';
 import useInput from '@/hooks/useInput';
 import SwitchPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
-import { IGameRoom, IUser } from '@/typings/db';
+import { IGameOption, IGameRoom, IUser } from '@/typings/db';
 import InputName from '@/components/inputs/InputName';
 import InputNumber from '@/components/inputs/InputNumber';
 import PageContainer from '@/components/create-page/PageContainer';
@@ -18,16 +18,17 @@ import MainLayout from '@/layouts/MainLayout';
 
 const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
+  // 해당 부분이 문제인것 같습니다.
   const { invite } = router.query;
-  const { data: inviteMemberData } = useSWR<IUser>(`/api/user/nickname/${invite}`, fetcher);
-  const [roomName, onChangeRoomName] = useInput('');
+  const { data: inviteMemberData } = useSWR<IUser>(invite ? `/api/user/nickname/${invite}` : null, fetcher);
+  const [roomName, onChangeRoomName] = useInput<string>('');
   const [roomNameError, setRoomNameError] = useState(false);
   const [difficulty, onChangeDifficulty] = useInput(0);
-  const [ballSpeed, setBallSpeed] = useState('slow');
-  const [winScore, onChangeWinScore, setWinScore] = useInput(5);
-  const [numOfSpectator, onChangeNumOfSpectator, setNumOfSpectator] = useInput(5);
+  const [ballSpeed, setBallSpeed] = useState<string>('slow');
+  const [winScore, onChangeWinScore, setWinScore] = useInput<number>(5);
+  const [numOfSpectator, onChangeNumOfSpectator, setNumOfSpectator] = useInput<number>(5);
   const [isPrivate, setIsPrivate] = useState(false);
-  const [password, onChangePassword, setPassword] = useInput('');
+  const [password, onChangePassword, setPassword] = useInput<string>('');
   const [passwordError, setPasswordError] = useState(false);
 
   const onClickCancel = useCallback(() => {
@@ -35,25 +36,29 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
   }, [router]);
 
   const onClickMake = useCallback(() => {
-    if (inviteMemberData) {
-      axios.post(invite ? `/api/game/room?invitedUserId=${inviteMemberData.userId}` : '/api/game/room', {
-        title: roomName,
-        password: isPrivate ? password : null,
-        maxParticipantNum: numOfSpectator,
-        winPoint: winScore,
-        ballSpeed,
-      }, {
+    // IGameOption type 를 지정하기 위해서 newPostData 사용
+    const newPostData: IGameOption = {
+      title: roomName,
+      password: isPrivate ? password : null,
+      maxParticipantNum: numOfSpectator,
+      winPoint: winScore,
+      ballSpeed,
+    };
+    axios.post((invite && inviteMemberData) ? `/api/game/room?invitedUserId=${inviteMemberData.userId}` : '/api/game/room',
+      newPostData, {
         headers: {
           withCredentials: 'true',
         },
-      }).then(() => {
-        router.push('/play');
-      }).catch(() => {
-        toast.error('방만들기에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
-      });
-    }
-  }, [ballSpeed, invite, inviteMemberData, isPrivate, numOfSpectator,
-    password, roomName, router, winScore]);
+      }).then((res) => {
+      // 게임방 생성과 동시에 게임방으로 이동
+      router.push(`/play/room/${res.data.gameRoomId}`);
+    }).catch(() => {
+      toast.error('방만들기에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
+    });
+  }, [
+    ballSpeed, invite, inviteMemberData,
+    isPrivate, numOfSpectator, password, roomName, router, winScore,
+  ]);
 
   useEffect(() => {
     if (difficulty === 0) { setBallSpeed('slow'); }

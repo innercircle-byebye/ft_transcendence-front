@@ -11,7 +11,7 @@ import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
 import {
-  IGameChat, IGameOptionPatch, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant, IUser,
+  IGameChat, IGameOption, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant, IUser,
 } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 import useInput from '@/hooks/useInput';
@@ -296,7 +296,7 @@ const Room: VFC<IProps> = ({
 
   const onClickGameOptionApplyButton = useCallback(() => {
     // console.log('room ps', isShowPasswordInputBox ? roomPassword : null);
-    const newPatchData: IGameOptionPatch = {
+    const newPatchData: IGameOption = {
       title,
       maxParticipantNum: numOfParticipant,
       winPoint: winScore,
@@ -329,13 +329,6 @@ const Room: VFC<IProps> = ({
   ]);
 
   const onClickGameOptionCancleButton = useCallback(() => {
-    // TODO: reset 기능이 필요합니다.
-    // reset 기능을 만들기 위해선 현재 방의 정보
-    // ball speed, win score, max participants, title, password
-    // 를 받아오는 기능이 필요합니다.
-    // 하지만 현재 게임방 조회를 통해서 위와 같은 정보를 전부 알 수가 없네요...
-    // 그래서 reset 은 불가능합니다.
-    // ball speed, winPoint 가 없습니다... ㅠ
     if (resetData) {
       setTitle(resetData.title);
       setNumOfParticipant(resetData.maxParticipantNum);
