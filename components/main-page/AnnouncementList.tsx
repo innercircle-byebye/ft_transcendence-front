@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import useSWR from 'swr';
 import { SpeakerphoneIcon } from '@heroicons/react/outline';
+import dayjs from 'dayjs';
 import fetcher from '@/utils/fetcher';
 import { IAnnouncement } from '@/typings/db';
 import AnnouncementModal from './AnnouncementModal';
 
 const AnnouncementList = () => {
-  // api 호출
-  // GET http://localhost:3005/api/admin/announcement
-  const { data: announcementData } = useSWR<IAnnouncement[]>( // api 의 결과값이 array
+  const { data: announcementData } = useSWR<IAnnouncement[]>(
     '/api/admin/announcement',
     fetcher,
   );
@@ -24,29 +23,31 @@ const AnnouncementList = () => {
   };
 
   return (
-    <div className="bg-gray-700 flex flex-col text-center py-6 space-y-6 rounded-2xl">
-      <div className="flex flex-row h-1/5 space-x-6 text-white justify-center items-center">
-        <div className="w-4 h-4">
+    <div className="bg-gray-700 flex flex-col py-6 space-y-3 rounded-2xl">
+      <div className="flex flex-row space-x-3 text-white justify-center items-center">
+        <div className="w-6 h-6">
           <SpeakerphoneIcon />
         </div>
-        <div>Announcement</div>
+        <div className="text-2xl">Announcement</div>
       </div>
-      <div className="flex flex-col space-y-4 mx-4 rounded-lg h-3/4">
-        <div className="overflow-y-auto space-y-3">
+      <div className="flex flex-col mx-4">
+        <div className="h-48 overflow-y-auto space-y-3">
           {announcementData?.map((item: IAnnouncement) => (
-            <div className="bg-sky-200 rounded-md text-xs font-light" key={item.announcementId}>
+            <div className="px-4 py-1 bg-sky-200 rounded-md font-light" key={item.announcementId}>
               <button
                 type="button"
                 className="w-full py-2"
                 onClick={() => onClickMethod(item.announcementId)}
               >
-                <a>{item.title}</a>
+                <div className="flex w-full">
+                  <span className="w-3/4 flex justify-start">{item.title}</span>
+                  <span className="w-1/4">{dayjs(item.lastModifiedAt).format('YYYY-MM-DD')}</span>
+                </div>
                 <AnnouncementModal
                   item={item}
                   isShow={clickedIndex === item.announcementId}
                   onCloseModal={onCloseModal}
                 />
-                {/* <a>{item.lastModifiedAt}</a> */}
               </button>
             </div>
           ))}
