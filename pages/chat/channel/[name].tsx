@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React, {
+import {
   ReactElement, useCallback, useEffect, useRef, useState,
 } from 'react';
 import useSWR, { useSWRInfinite } from 'swr';
@@ -7,6 +7,7 @@ import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { toast, ToastContainer } from 'react-toastify';
 import Scrollbars from 'react-custom-scrollbars-2';
+import dayjs from 'dayjs';
 import ChatLayout from '@/layouts/ChatLayout';
 import useInput from '@/hooks/useInput';
 import fetcher from '@/utils/fetcher';
@@ -14,11 +15,10 @@ import {
   IChannel, IChannelChat, IChannelMember, IUser,
 } from '@/typings/db';
 import useSocket from '@/hooks/useSocket';
-import reissueToken from '@/utils/reissueTokens';
 import ChatBox from '@/components/chat-page/chat/ChatBox';
 import ChannelButtons from '@/components/chat-page/channel/ChannelButtons';
-import ChatList from '@/components/chat-page/chat/ChatList';
 import makeSection from '@/utils/makeSection';
+import ChannelChatList from '@/components/chat-page/channel/ChannelChatList';
 
 const Channel = ({
   userInitialData,
@@ -65,6 +65,11 @@ const Channel = ({
   const onSubmitChat = useCallback(
     (e) => {
       e.preventDefault();
+      const myChannelMemberData = channelMemberData?.find((v) => v.userId === userData?.userId);
+      if (myChannelMemberData?.mutedDate) {
+        toast.error(`${dayjs(myChannelMemberData.mutedDate).format('YYYY-MM-DD h:mm A')}까지 채팅금지입니다.`, { position: 'bottom-right', theme: 'colored' });
+        return;
+      }
       if (chat?.trim() && channelChatData && channelData && userData) {
         const savedChat = chat;
         mutateChat((prevChatData) => {
@@ -83,6 +88,7 @@ const Channel = ({
           });
           return prevChatData;
         }, false).then(() => {
+          localStorage.setItem(`${channelName}`, new Date().getTime().toString());
           setChat('');
           scrollbarRef.current?.scrollToBottom();
         });
@@ -95,7 +101,8 @@ const Channel = ({
         }).catch(console.error);
       }
     },
-    [channelData, chat, channelChatData, mutateChat, setChat, userData],
+    [channelChatData, channelData, channelMemberData, channelName, chat,
+      mutateChat, setChat, userData],
   );
 
   const onMessage = useCallback(
@@ -136,8 +143,9 @@ const Channel = ({
     }
   }, [userData]);
 
-  const onDeleteChannel = useCallback(() => {
+  const onDeleteChannel = useCallback((deleteChannel: string) => {
     router.push('/chat');
+    localStorage.removeItem(deleteChannel);
   }, [router]);
 
   useEffect(() => {
@@ -183,13 +191,17 @@ const Channel = ({
     }
   }, [channelChatData]);
 
+  useEffect(() => {
+    localStorage.setItem(`${channelName}`, new Date().getTime().toString());
+  }, [channelName]);
+
   return (
-    <div className="h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
+    <div className="relative h-full flex flex-col px-6" role="button" tabIndex={0} onClick={onCloseEmoji} onKeyDown={onCloseEmoji}>
       <div className="h-full flex flex-col">
         <div className="font-semibold text-2xl">
           {`# ${channelData?.name}`}
         </div>
-        <ChatList
+        <ChannelChatList
           chatSections={chatSections}
           ref={scrollbarRef}
           setSize={setSize}
@@ -221,29 +233,7 @@ Channel.getLayout = function getLayout(page: ReactElement) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
   const channelName = context.query.name;
-
-  if (
-    !context.req.cookies[refresh_token]
-    || !context.req.cookies[access_token]
-  ) {
-    return reissueToken(
-      context,
-      access_token,
-      refresh_token,
-      '/chat',
-    );
-  }
-
-  const userInitialData: IUser = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
-      withCredentials: true,
-      headers: {
-        Cookie: `Authentication=${context.req.cookies[access_token]}`,
-      },
-    })
-    .then((response) => response.data);
 
   const channelInitialData: IChannel = await axios
     .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}`), {
@@ -284,7 +274,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      userInitialData,
       channelInitialData,
       myChannelInitialData,
       channelMemberInitialData,

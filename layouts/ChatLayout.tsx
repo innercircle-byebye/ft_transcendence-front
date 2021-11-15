@@ -1,27 +1,27 @@
 import React, { FC, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import useSWR from 'swr';
 import useSocket from '@/hooks/useSocket';
 import ChannelList from '@/components/chat-page/layout/ChannelList';
 import DMList from '@/components/chat-page/layout/DMList';
 import Navbar from '@/components/navigation-bar/Navbar';
-import { IUser } from '@/typings/db';
-import fetcher from '@/utils/fetcher';
 
 const ChatLayout: FC = ({ children }) => {
   const router = useRouter();
   const channelName = router.pathname === '/chat/channel/[name]' ? router.query.name : null;
   const { socket } = useSocket('chat');
+  // const mainSocket = useSocket('main').socket;
   // onlineMap 을 위해서 chatLogin event 발생시키기 위한 코드 추가
-  const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
+  // const { data: userData } = useSWR<IUser>('/api/user/me', fetcher);
 
-  useEffect(() => {
-    socket?.emit('chatLogin', userData?.userId);
-  }, [socket, userData]);
+  // // 이 부분을 login 성공했을때로 변경
+  // // 'chatLogin' -> 'login'
+  // useEffect(() => {
+  //   mainSocket?.emit('login', userData?.userId);
+  //   // socket?.emit('chatLogin', userData?.userId);
+  // }, [socket, userData]);
 
   useEffect(() => {
     if (channelName) {
-      // console.log(`joinChannel ${channelName}`);
       socket?.emit('joinChannel', channelName);
     }
     return () => {

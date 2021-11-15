@@ -1,58 +1,56 @@
 import axios from 'axios';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
-import {
-  useCallback, useEffect, useRef, useState,
+import React, {
+  useCallback, useEffect, useState,
 } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import useSWR from 'swr';
+import InputEmail from '@/components/inputs/InputEmail';
+import InputNickname from '@/components/inputs/InputNickname';
 import useInput from '@/hooks/useInput';
-import reissueToken from '@/utils/reissueTokens';
+import InputImage from '@/components/inputs/InputImage';
+import PageContainer from '@/components/create-profile-page/PageContainer';
+import ContentContainer from '@/components/create-profile-page/ContentContainer';
+import fetcher from '@/utils/fetcher';
 import { IUser } from '@/typings/db';
 
 const CreateProfile = ({
-  userData,
+  userInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const { data: allUserData } = useSWR<IUser[]>('/api/user/all', fetcher);
   const router = useRouter();
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewImagePath, setPreviewImagePath] = useState<string>(
-    userData.imagePath,
+    userInitialData.imagePath,
   );
   const [nickname, onChangeNickname, setNickname] = useInput<string>(
-    userData.nickname,
+    userInitialData.nickname,
   );
-  const [email, onChangeEmail, setEmail] = useInput<string>(userData.email);
+  const [email, onChangeEmail, setEmail] = useInput<string>(userInitialData.email);
   const [emailError, setEmailError] = useState(false);
+  const [nicknameError, setNicknameError] = useState(false);
 
-  const onClickUploadImage = useCallback((e) => {
-    e.preventDefault();
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  }, []);
+  const onClickResetNickname = useCallback(() => {
+    setNickname(userInitialData.nickname);
+  }, [setNickname, userInitialData.nickname]);
 
-  const onChangeImage = useCallback((e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-    } else {
-      setImageFile(null);
-    }
-  }, []);
+  const onClickResetEmail = useCallback(() => {
+    setEmail(userInitialData.email);
+  }, [setEmail, userInitialData.email]);
 
   const onClickReset = useCallback(
     (e) => {
       e.preventDefault();
-      setNickname(userData.nickname);
-      setEmail(userData.email);
-      setPreviewImagePath(userData.imagePath);
+      setNickname(userInitialData.nickname);
+      setEmail(userInitialData.email);
+      setPreviewImagePath(userInitialData.imagePath);
       setImageFile(null);
     },
     [
-      userData.email,
-      userData.imagePath,
-      userData.nickname,
+      userInitialData.email,
+      userInitialData.imagePath,
+      userInitialData.nickname,
       setEmail,
       setNickname,
     ],
@@ -61,7 +59,7 @@ const CreateProfile = ({
   const onSubmitCreateProfile = useCallback(
     (e) => {
       e.preventDefault();
-      if (nickname && email && !emailError) {
+      if (nickname.trim().length && email.trim().length && !emailError && !nicknameError) {
         const formData = new FormData();
         if (imageFile) {
           formData.append('image', imageFile);
@@ -84,13 +82,10 @@ const CreateProfile = ({
           });
       }
     },
-    [email, emailError, imageFile, nickname, router],
+    [email, emailError, imageFile, nickname, nicknameError, router],
   );
 
   useEffect(() => {
-    const emailForm = /^[a-zA-Z0-9.!#$%&'*+\\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-    setEmailError(!emailForm.test(email));
-
     if (imageFile) {
       const fileReader = new FileReader();
       fileReader.onloadend = () => {
@@ -98,110 +93,41 @@ const CreateProfile = ({
       };
       fileReader.readAsDataURL(imageFile);
     }
-  }, [email, emailError, imageFile, previewImagePath, userData.imagePath]);
+  }, [imageFile, previewImagePath]);
+
+  useEffect(() => {
+    if (allUserData) {
+      if (nickname !== userInitialData.nickname
+        && allUserData.find((data) => data.nickname === nickname)) {
+        setNicknameError(true);
+      } else {
+        setNicknameError(false);
+      }
+    }
+  }, [allUserData, nickname, userInitialData.nickname]);
 
   return (
-    <div className="w-screen h-screen bg-sky-700 flex justify-center items-center">
-      <div className="absolute top-5 left-5">
-        <Image src="/Logo.png" alt="small-logo" width={100} height={40} />
-      </div>
-      <div
-        className="bg-white shadow-md rounded-full px-8 pt-6 pb-8 mb-4 w-full flex flex-col items-center justify-evenly"
-        style={{ width: '672px', height: '672px' }}
-      >
+    <PageContainer>
+      <ContentContainer>
         <div className="text-6xl text-gray-700">Create Profile</div>
         <form
           className="flex flex-col items-center"
           onSubmit={onSubmitCreateProfile}
         >
-          <div className="relative bg-blue-300 w-56 h-56 mb-4 rounded-full shadow-lg">
-            {previewImagePath ? (
-              <Image
-                src={previewImagePath}
-                alt="previewImage"
-                objectFit="cover"
-                layout="fill"
-                className="rounded-full"
-              />
-            ) : null}
-            <button
-              type="button"
-              onClick={onClickUploadImage}
-              className="w-56 h-56 rounded-full cursor-pointer opacity-20 hover:opacity-80"
-            >
-              Upload Image
-            </button>
-            <input
-              type="file"
-              accept="image/jpg,image/png,image/jpeg,image/gif"
-              className="hidden"
-              ref={fileInputRef}
-              onChange={onChangeImage}
-            />
-          </div>
-          <div className="mb-4 w-64">
-            <label htmlFor="nickname">
-              <div className="block text-gray-700 text-sm font-bold mb-2">
-                Nickname
-              </div>
-              <button
-                className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                type="button"
-                onClick={() => {
-                  setNickname(userData.nickname);
-                }}
-              >
-                Reset
-              </button>
-              <input
-                id="nickname"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="text"
-                placeholder={userData.nickname}
-                value={nickname}
-                onChange={onChangeNickname}
-              />
-            </label>
-            {!nickname && (
-              <p className="text-red-500 text-xs italic">
-                닉네임을 입력해주세요.
-              </p>
-            )}
-          </div>
-          <div className="mb-6 w-64">
-            <label htmlFor="email">
-              <div className="block text-gray-700 text-sm font-bold mb-2">
-                Email
-              </div>
-              <button
-                className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                type="button"
-                onClick={() => {
-                  setEmail(userData.email);
-                }}
-              >
-                Reset
-              </button>
-              <input
-                id="email"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                type="email"
-                placeholder={userData.email}
-                value={email}
-                onChange={onChangeEmail}
-              />
-            </label>
-            {!email && (
-              <p className="text-red-500 text-xs italic">
-                이메일을 입력해주세요.
-              </p>
-            )}
-            {email && emailError && (
-              <p className="text-red-500 text-xs italic">
-                잘못된 이메일 주소입니다.
-              </p>
-            )}
-          </div>
+          <InputImage size={56} previewImagePath={previewImagePath} setImageFile={setImageFile} />
+          <InputNickname
+            nickname={nickname}
+            onChangeNickname={onChangeNickname}
+            onClickResetNickname={onClickResetNickname}
+            nicknameError={nicknameError}
+          />
+          <InputEmail
+            email={email}
+            onChangeEmail={onChangeEmail}
+            emailError={emailError}
+            setEmailError={setEmailError}
+            onClickResetEmail={onClickResetEmail}
+          />
           <div className="w-56 flex items-center justify-evenly">
             <button
               className="bg-white text-sky-600 border-sky-600 border font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
@@ -218,52 +144,14 @@ const CreateProfile = ({
             </button>
           </div>
         </form>
-      </div>
+      </ContentContainer>
       <ToastContainer />
-    </div>
+    </PageContainer>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
-
-  if (
-    !context.req.cookies[refresh_token]
-    || !context.req.cookies[access_token]
-  ) {
-    return reissueToken(
-      context,
-      access_token,
-      refresh_token,
-      '/create-profile',
-    );
-  }
-
-  const userData: IUser = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
-      withCredentials: true,
-      headers: {
-        Cookie: `Authentication=${context.req.cookies[access_token]}`,
-      },
-    })
-    .then((response) => response.data);
-
-  const { status } = userData;
-  if (status !== process.env.STATUS_NOT_REGISTER) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-
-  return {
-    props: {
-      userData,
-    },
-  };
-};
+export const getServerSideProps: GetServerSideProps = async () => ({
+  props: {},
+});
 
 export default CreateProfile;

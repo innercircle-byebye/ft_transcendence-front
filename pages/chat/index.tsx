@@ -9,7 +9,6 @@ import { ToastContainer, toast } from 'react-toastify';
 import ChatLayout from '@/layouts/ChatLayout';
 import SearchChannel from '@/components/chat-page/SearchChannel';
 import SearchDM from '@/components/chat-page/SearchDM';
-import reissueToken from '@/utils/reissueTokens';
 import { IChannel, IUser } from '@/typings/db';
 import PasswordModal from '@/components/chat-page/PasswordModal';
 import useInput from '@/hooks/useInput';
@@ -85,19 +84,6 @@ Chat.getLayout = function getLayout(page: ReactElement) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || '';
-  const refresh_token = process.env.REFRESH_TOKEN || '';
-
-  if (
-    !context.req.cookies[refresh_token]
-    || !context.req.cookies[access_token]
-  ) {
-    return reissueToken(
-      context,
-      access_token,
-      refresh_token,
-      '/chat',
-    );
-  }
 
   const allChannelInitialData: IChannel[] = await axios
     .get(`http://back-nestjs:${process.env.BACK_PORT}/api/channel`, {
