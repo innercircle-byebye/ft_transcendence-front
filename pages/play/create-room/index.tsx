@@ -40,8 +40,8 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
     const newPostData: IGameOption = {
       title: roomName,
       password: isPrivate ? password : null,
-      maxParticipantNum: numOfSpectator,
-      winPoint: winScore,
+      maxParticipantNum: Number(numOfSpectator),
+      winPoint: Number(winScore),
       ballSpeed,
     };
     axios.post((invite && inviteMemberData) ? `/api/game/room?invitedUserId=${inviteMemberData.userId}` : '/api/game/room',
