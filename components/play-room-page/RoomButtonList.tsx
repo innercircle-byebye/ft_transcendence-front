@@ -1,28 +1,21 @@
-import { useCallback, useState, VFC } from 'react';
+import { useCallback, VFC } from 'react';
 
 interface IProps {
+  myRole: string;
+  isPlaying: boolean;
   onClickExit: (e: any) => void;
+  onClickMove: () => void;
 }
 
-const RoomButtonList: VFC<IProps> = ({ onClickExit }) => {
-  const [Player, setPlayer] = useState('1p');
-
+const RoomButtonList: VFC<IProps> = ({
+  myRole, isPlaying,
+  onClickExit, onClickMove,
+}) => {
   const onClickOption = useCallback(
     () => {
-      console.log('show Option Modal', Player);
+      console.log('show Option Modal', myRole);
     },
-    [Player],
-  );
-
-  const onClickMove = useCallback(
-    () => {
-      if (Player === 'observer') {
-        setPlayer('1p');
-      } else {
-        setPlayer('observer');
-      }
-    },
-    [Player],
+    [myRole],
   );
 
   return (
@@ -30,16 +23,17 @@ const RoomButtonList: VFC<IProps> = ({ onClickExit }) => {
       <button
         type="button"
         onClick={onClickOption}
-        className={`w-1/5 rounded-md ${Player === '1p' ? 'bg-amber-500 text-white' : 'bg-gray-400 text-gray-600'}`}
+        className={`w-1/5 rounded-md ${myRole === 'player1' ? 'bg-amber-500 text-white' : 'bg-gray-400 text-gray-600'}`}
       >
-        옵션보기
+        {`${myRole === 'player1' ? '옵션설정' : '옵션보기'}`}
       </button>
       <button
         type="button"
         onClick={onClickMove}
+        disabled={isPlaying}
         className="w-1/5 rounded-md bg-blue-300 text-white"
       >
-        {`${Player === 'observer' ? '참여하기' : '관전하기'}`}
+        {`${myRole === 'observer' ? '참여하기' : '관전하기'}`}
       </button>
       <button
         type="button"

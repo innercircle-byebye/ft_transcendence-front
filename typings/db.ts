@@ -120,10 +120,19 @@ export interface ISimpleUser {
   imagePath: string;
 }
 
-export interface IGameScreenData {
-  role: string;
-  WIDTH: number;
-  HEIGHT: number;
+// initSetting -> gameRoomData
+export interface IGameRoomData{
+  participants: {
+    player1: IUser,
+    player2: IUser,
+    observers: IUser[],
+  };
+  role: string; // 'player1' | 'player2' | 'observer'
+  isPlaying : boolean,
+  player1Ready : boolean,
+  player2Ready : boolean,
+  width : number; // 600
+  height : number; // 400
   // ready 상태 알려주는 거 필요합니다.
 }
 
@@ -142,6 +151,12 @@ export interface IGameChat {
   nickname: string;
   content: string;
   index : number;
+}
+
+export interface IParticipant {
+  key: number;
+  role: string;
+  nickname: string;
 }
 
 export interface IGameMember {
