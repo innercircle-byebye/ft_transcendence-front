@@ -124,6 +124,7 @@ export interface IGameScreenData {
   role: string;
   WIDTH: number;
   HEIGHT: number;
+  // ready 상태 알려주는 거 필요합니다.
 }
 
 export interface IGameUpdateData {
@@ -133,15 +134,14 @@ export interface IGameUpdateData {
   y: number;
   width: number;
   height: number;
+  score: number;
 }
 
-export interface IRank {
-  totalPlayCount: number;
-  winCount: number;
-  loseCount: number;
-  winRate: string;
-  experience: number;
-  user: ISimpleUser;
+export interface IGameChat {
+  type: string;
+  nickname: string;
+  content: string;
+  index : number;
 }
 
 export interface IGameMember {

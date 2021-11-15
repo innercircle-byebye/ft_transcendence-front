@@ -1,68 +1,81 @@
 import {
-  useEffect, useRef, VFC,
+  useEffect, useRef, useState, VFC,
 } from 'react';
 import { IGameUpdateData } from '@/typings/db';
 
 interface IProps {
   updateData: IGameUpdateData[] | null;
-  role: string | null;
-  draw: (context: CanvasRenderingContext2D | null | undefined) => void;
 }
 
-const Canvas: VFC<IProps> = ({ updateData, role, draw }) => {
+const Canvas: VFC<IProps> = ({ updateData }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  // 600 * 400 이 기준 해상도 size
+  const [canvasWidth, setCanvasWidth] = useState<number | undefined>(600);
+  const [canvasHeight, setCanvasHeight] = useState<number | undefined>(400);
+  const [ratioX, setRatioX] = useState<number>(1);
+  const [ratioY, setRatioY] = useState<number>(1);
 
   useEffect(() => {
+    // set canvas size
+    setCanvasHeight(document.getElementById('gameScreen')?.offsetHeight);
+    setCanvasWidth(document.getElementById('gameScreen')?.offsetWidth);
+    // calc ratio
+    if (canvasHeight) {
+      setRatioY(canvasHeight / 400);
+    }
+    if (canvasWidth) {
+      setRatioX(canvasWidth / 600);
+    }
     const canvas = canvasRef.current;
     const context = canvas?.getContext('2d');
-    // context?.fillStyle = 'red';
 
     // clear
     context?.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    // x_pos, y_pos, width, height
     // draw
-    // context?.fillRect(100, 100, 20, 80);
-    draw(context);
-    console.log('updateData 로 그림 그리기', updateData);
-    if (role === 'player1') {
-      console.log('1p');
-      // context?.fillRect(100, 200, 20, 80);
-      if (updateData) {
+    // x_pos, y_pos, width, height
+    if (updateData) {
+      if (updateData[0]) {
+      // draw 1P
         context?.fillRect(
-          updateData[0].x,
-          updateData[0].y,
-          updateData[0].width,
-          updateData[0].height,
+          updateData[0].x * ratioX,
+          updateData[0].y * ratioY,
+          updateData[0].width * ratioX,
+          updateData[0].height * ratioY,
         );
       }
-    }
-    if (role === 'player2') {
-      console.log('2p');
-      // context?.fillRect(0, 0, 20, 80);
-      if (updateData) {
+      if (updateData[1]) {
+      // draw 2P
         context?.fillRect(
-          updateData[1].x,
-          updateData[1].y,
-          updateData[1].width,
-          updateData[1].height,
+          updateData[1].x * ratioX,
+          updateData[1].y * ratioY,
+          updateData[1].width * ratioX,
+          updateData[1].height * ratioY,
         );
       }
-    }
-    if (role === 'ball') {
-      console.log('ball');
-      if (updateData) {
+      if (updateData[2]) {
+      // draw ball;
         context?.fillRect(
-          updateData[2].x,
-          updateData[2].y,
-          updateData[2].width,
-          updateData[2].height,
+          updateData[2].x * ratioX,
+          updateData[2].y * ratioY,
+          updateData[2].width * ratioX,
+          updateData[2].height * ratioY,
         );
       }
+      // canvas 에 글씨 넣기
+      context?.fillText(
+        updateData.toString(),
+        (context.canvas.width / 2) * ratioX,
+        (context.canvas.height / 2) * ratioY,
+      );
     }
-  }, [draw, role, updateData]);
+  }, [canvasHeight, canvasWidth, ratioX, ratioY, updateData]);
 
   return (
-    <canvas ref={canvasRef} width="1400" height="500" />
+    <canvas
+      ref={canvasRef}
+      width={`${canvasWidth}`}
+      height={`${canvasHeight}`}
+    />
   );
 };
 
