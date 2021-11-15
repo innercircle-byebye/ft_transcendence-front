@@ -168,6 +168,7 @@ export interface IGameOption {
   maxParticipantNum: number;
   winPoint: number;
   ballSpeed: string;
+  gameRoomId?: number;
 }
 
 export interface IParticipant {
