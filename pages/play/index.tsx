@@ -62,58 +62,62 @@ const Play = ({ userInitialData }
   }
 
   return (
-    <div role="button" tabIndex={0} onClick={onCloseGameRuleModal} onKeyDown={onCloseGameRuleModal}>
-      <PageContainer maxWidth="xl">
-        <ContentContainer>
-          <ContentLeft>
-            <div className="space-y-5">
-              <ProfileCard profileUserData={userInitialData} />
-              <div className="flex w-full justify-evenly">
-                <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
-                <button type="button" onClick={onClickQuickStart} className="bg-red-500 text-3xl p-5 rounded-md">빠른시작</button>
-              </div>
-              <OnlineFriendList />
-            </div>
-          </ContentLeft>
-          <ContentRight bgColor="bg-sky-100">
-            <div role="button" tabIndex={0} onClick={stopPropagation} onKeyPress={stopPropagation}>
-              <button type="button" className="w-full flex justify-end p-1 outline-none" onClick={onClickGameRuleButton}>
-                <span className="bg-blue-300 rounded-full px-1">게임규칙보기</span>
-              </button>
-            </div>
-            {roomToEntrance && roomToEntrance.isPrivate
-              ? (
-                <PasswordModal
-                  name={`${roomToEntrance.title}`}
-                  password={password}
-                  onChangePassword={onChangePassword}
-                  onSubmitPassword={onSubmitPassword}
-                  onCloseModal={onClosePasswordModal}
-                />
-              )
-              : (
-                <div className="flex flex-col items-center">
-                  <RoomList
-                    page={page}
-                    perPage={perPage}
-                    roomToEntrance={roomToEntrance}
-                    setRoomToEntrance={setRoomToEntrance}
-                  />
-                  <div className="p-5">
-                    <Pagination
-                      page={page}
-                      setPage={setPage}
-                      totalPage={parseInt(`${roomCount / perPage + 1}`, 10)}
-                      paginationRange={paginationRange}
-                      color="sky"
-                    />
-                  </div>
+    <div role="button" tabIndex={0} onClick={stopPropagation} onKeyPress={stopPropagation}>
+      <div role="button" tabIndex={0} onClick={onCloseGameRuleModal} onKeyDown={onCloseGameRuleModal}>
+        <PageContainer maxWidth="xl">
+          <ContentContainer>
+            <ContentLeft>
+              <div className="space-y-5">
+                <ProfileCard profileUserData={userInitialData} />
+                <div className="flex w-full justify-evenly">
+                  <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
+                  <button type="button" onClick={onClickQuickStart} className="bg-red-500 text-3xl p-5 rounded-md">빠른시작</button>
                 </div>
-              )}
-          </ContentRight>
-        </ContentContainer>
-        <GameRuleModal show={showGameRuleModal} onCloseModal={onCloseGameRuleModal} />
-      </PageContainer>
+                <OnlineFriendList />
+              </div>
+            </ContentLeft>
+            <ContentRight bgColor="bg-sky-100">
+              <div role="button" tabIndex={0} onClick={stopPropagation} onKeyPress={stopPropagation}>
+                <button type="button" className="w-full flex justify-end p-1 outline-none" onClick={onClickGameRuleButton}>
+                  <span className="bg-blue-300 rounded-full px-1">게임규칙보기</span>
+                </button>
+              </div>
+              {roomToEntrance && roomToEntrance.isPrivate
+                ? (
+                  <PasswordModal
+                    name={`${roomToEntrance.title}`}
+                    password={password}
+                    onChangePassword={onChangePassword}
+                    onSubmitPassword={onSubmitPassword}
+                    onCloseModal={onClosePasswordModal}
+                  />
+                )
+                : (
+                  <div className="flex flex-col items-center">
+                    <RoomList
+                      page={page}
+                      perPage={perPage}
+                      roomToEntrance={roomToEntrance}
+                      setRoomToEntrance={setRoomToEntrance}
+                    />
+                    <div className="p-5">
+                      <Pagination
+                        page={page}
+                        setPage={setPage}
+                        totalPage={parseInt(`${roomCount / perPage + 1}`, 10)}
+                        paginationRange={paginationRange}
+                        color="sky"
+                      />
+                    </div>
+                  </div>
+                )}
+            </ContentRight>
+          </ContentContainer>
+          <div role="button" tabIndex={0} onClick={stopPropagation} onKeyPress={stopPropagation}>
+            <GameRuleModal show={showGameRuleModal} onCloseModal={onCloseGameRuleModal} />
+          </div>
+        </PageContainer>
+      </div>
     </div>
   );
 };
