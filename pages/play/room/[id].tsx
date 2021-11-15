@@ -1,14 +1,17 @@
 import { useRouter } from 'next/router';
 import {
-  useCallback, useEffect, useState,
+  useCallback, useEffect, useState, VFC,
 } from 'react';
-import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import { GetServerSideProps } from 'next';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import useSWR from 'swr';
 import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
 import {
-  IGameChat, IGameRoomData, IGameUpdateData, IParticipant,
+  IGameChat, IGameOptionPatch, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant, IUser,
 } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 import useInput from '@/hooks/useInput';
@@ -17,16 +20,24 @@ import ParticipantList from '@/components/play-room-page/ParticipantList';
 import setParticipantListData from '@/utils/setParticipantListData';
 import GameResultModal from '@/components/play-room-page/GameResult';
 import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
+import GameOptionModal from '@/components/play-room-page/GameOptionModal';
+import fetcher from '@/utils/fetcher';
 
-const Room = ({
+interface IProps {
+  userInitialData: IUser;
+  roomData: IGameRoom;
+}
+const Room: VFC<IProps> = ({
   userInitialData,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  roomData,
+}: {
+  userInitialData: IUser,
+  roomData: IGameRoom,
+}) => {
   const router = useRouter();
   const roomNumber = router.query.id;
   const [isChatting, setIsChatting] = useState(true);
   const { socket, disconnect } = useSocket('game');
-  // const [initData, setInitData] = useState<IGameScreenData | null>(null);
-  // const [gameRoomData, setGameRoomData] = useState<IGameRoomData>();
   const [updateData, setUpdateData] = useState<IGameUpdateData[] | null>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [gameChat, onChangeGameChat, setGameChat] = useInput('');
@@ -35,8 +46,6 @@ const Room = ({
   const [name2P, setName2P] = useState<string>('');
   const [isReady1P, setIsReady1P] = useState(false);
   const [isReady2P, setIsReady2P] = useState(false);
-  // const [info1P, setInfo1P] = useState<IUser>();
-  // const [info2P, setInfo2P] = useState<IUser>();
   // my role
   const [myRole, setMyRole] = useState<string>('');
   // participant data
@@ -46,13 +55,23 @@ const Room = ({
   const [isShowGameResultModal, setIsShowGameResultModal] = useState<boolean>(false);
   // game room exit modal
   const [isShowExitRoomModal, setIsShowExitRoomModal] = useState<boolean>(false);
+  // game option modal
+  const [isShowGameOptionModal, setIsShowGameOptionModal] = useState<boolean>(false);
 
   useEffect(() => {
     // initSetting -> gameRoomData
     socket?.on('gameRoomData', (data: IGameRoomData) => {
       console.log('gameRoomData', data);
-      setName1P(data.participants.player1.nickname);
-      setName2P(data.participants.player2.nickname);
+      if (data.participants.player1) {
+        setName1P(data.participants.player1.nickname);
+      } else {
+        setName1P('');
+      }
+      if (data.participants.player2) {
+        setName2P(data.participants.player2.nickname);
+      } else {
+        setName2P('');
+      }
       setMyRole(data.role);
       if (data.isPlaying) {
         setIsPlaying(true);
@@ -67,10 +86,14 @@ const Room = ({
       setParticipantListData(setParticipantData, data);
     });
     socket?.emit('joinGameRoom', {
-      roomId: router.query.id,
+      gameRoomId: router.query.id,
       userId: userInitialData.userId,
     });
     return () => {
+      socket?.emit('leaveGameRoom', {
+        gameRoomId: router.query.id,
+        userId: userInitialData.userId,
+      });
       disconnect();
     };
   }, [disconnect, router.query.id, socket, userInitialData.userId]);
@@ -79,7 +102,6 @@ const Room = ({
   useEffect(() => {
     // data update
     socket?.on('update', (data) => setUpdateData(data));
-    // console.log('updateData', updateData);
   });
 
   // not playing
@@ -112,9 +134,13 @@ const Room = ({
       setIsShowExitRoomModal(true);
     } else {
       console.log('그냥 나갈 수 있음');
+      socket?.emit('leaveGameRoom', {
+        gameRoomId: router.query.id,
+        userId: userInitialData.userId,
+      });
       router.push('/play');
     }
-  }, [isPlaying, myRole, router]);
+  }, [isPlaying, myRole, router, socket, userInitialData.userId]);
 
   // 관전하기 참여하기 button event handler
   const onClickMove = useCallback(() => {
@@ -124,6 +150,11 @@ const Room = ({
       socket?.emit('toObserver');
     }
   }, [myRole, socket]);
+
+  // 게임 옵션 button event handler
+  const onClickOption = useCallback(() => {
+    setIsShowGameOptionModal(true);
+  }, []);
 
   // Ready event
   const onClickReady1P = useCallback(() => {
@@ -178,6 +209,114 @@ const Room = ({
     router.push('/play');
   }, [router]);
 
+  // game option
+  const { data: resetData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
+  const [ballSpeed, setBallSpeed] = useState<string>('medium');
+  // console.log(ballSpeed);
+  // const [gameOptionPatchData, setGameOptionPatchData] = useState<IGameOptionPatch>({
+  //   title: roomData.title,
+  //   password: '',
+  //   maxParticipantNum: roomData.maxParticipantNum,
+  //   winPoint: 2,
+  //   ballSpeed,
+  // });
+  // const [title, onChangeTitle] = useInput(gameRoomData?.title);
+  const [title, onChangeTitle, setTitle] = useInput<string>(roomData.title);
+  // public | private state
+  const [
+    isShowPasswordInputBox, setIsShowPasswordInputBox,
+  // ] = useState<boolean | undefined>(gameRoomData?.isPrivate);
+  ] = useState<boolean>(roomData.isPrivate);
+  const [roomPassword, onChangeRoomPassword] = useInput('');
+  const [difficulty, onChangeDifficulty] = useInput(0);
+  const [winScore, onChangeWinScore, setWinScore] = useInput(2);
+  const [
+    numOfParticipant,
+    onChangeNumOfParticipant,
+    setNumOfParticipant,
+  // ] = useInput(gameRoomData?.maxParticipantNum);
+  ] = useInput<number>(roomData.maxParticipantNum);
+
+  const onClickShowPasswordInputBox = useCallback(
+    () => {
+      if (isShowPasswordInputBox) {
+        setIsShowPasswordInputBox(false);
+      } else {
+        setIsShowPasswordInputBox(true);
+      }
+    },
+    [isShowPasswordInputBox],
+  );
+
+  useEffect(() => {
+    if (difficulty === 0) { setBallSpeed('slow'); }
+    if (difficulty === 1) { setBallSpeed('medium'); }
+    if (difficulty === 2) { setBallSpeed('fast'); }
+  }, [difficulty, setBallSpeed]);
+
+  useEffect(() => {
+    if (winScore < 1) setWinScore(1);
+    if (winScore > 10) setWinScore(10);
+  }, [setWinScore, winScore]);
+
+  useEffect(() => {
+    if (numOfParticipant) {
+      if (numOfParticipant < 2) setNumOfParticipant(2);
+      if (numOfParticipant > 8) setNumOfParticipant(8);
+    }
+  }, [numOfParticipant, setNumOfParticipant]);
+
+  const onClickGameOptionApplyButton = useCallback(() => {
+    // console.log('room ps', isShowPasswordInputBox ? roomPassword : null);
+    const newPatchData: IGameOptionPatch = {
+      title,
+      maxParticipantNum: numOfParticipant,
+      winPoint: winScore,
+      ballSpeed,
+      password: undefined,
+    };
+    if (!isShowPasswordInputBox) {
+      newPatchData.password = null;
+    } else if (roomPassword) {
+      newPatchData.password = roomPassword;
+    }
+
+    axios.patch(`/api/game/room/${roomNumber}`,
+      newPatchData,
+      // gameOptionPatchData,
+      {
+        headers: {
+          withCredentials: 'true',
+        },
+      })
+      .then(() => {
+        setIsShowGameOptionModal(false);
+      })
+      .catch((err) => {
+        console.log('patch fail', err);
+        toast.error('옵션 설정 실패했다', { position: 'bottom-right', theme: 'colored' });
+      });
+  }, [
+    ballSpeed, isShowPasswordInputBox, numOfParticipant, roomNumber, roomPassword, title, winScore,
+  ]);
+
+  const onClickGameOptionCancleButton = useCallback(() => {
+    // TODO: reset 기능이 필요합니다.
+    // reset 기능을 만들기 위해선 현재 방의 정보
+    // ball speed, win score, max participants, title, password
+    // 를 받아오는 기능이 필요합니다.
+    // 하지만 현재 게임방 조회를 통해서 위와 같은 정보를 전부 알 수가 없네요...
+    // 그래서 reset 은 불가능합니다.
+    // ball speed, winPoint 가 없습니다... ㅠ
+    if (resetData) {
+      setTitle(resetData.title);
+      setNumOfParticipant(resetData.maxParticipantNum);
+      setBallSpeed(resetData.gameResults[resetData.gameResults.length - 1].ballSpeed);
+      setWinScore(resetData.gameResults[resetData.gameResults.length - 1].winPoint);
+    }
+    setIsShowGameOptionModal(false);
+  }, [resetData, setNumOfParticipant, setTitle, setWinScore]);
+
   const onClickNoExitRoomButton = useCallback(() => {
     setIsShowExitRoomModal(false);
   }, []);
@@ -185,7 +324,6 @@ const Room = ({
   const onKeyUp = useCallback(
     (e) => {
       e.preventDefault();
-      // console.log('keyUP event', e);
       // 방향키 위쪽
       if (e.keyCode === 38) {
         console.log('key up 위');
@@ -203,9 +341,6 @@ const Room = ({
 
   const onKeyDown = useCallback(
     (e) => {
-      // e.preventDefault();
-      // e.stopPropagation();
-      // console.log('keydown event', e);
       // 방향키 위쪽
       if (e.keyCode === 38) {
         console.log('key down 위');
@@ -223,8 +358,6 @@ const Room = ({
   const onKeyPressHandler = useCallback(
     (e) => {
       if (e.key === 'Enter') {
-        // console.log('enter game chat', e.target.value);
-        // console.log('enter game chat', gameChat);
         if (gameChat && gameChat.trim()) {
           socket?.emit('gameChat', { content: gameChat });
           setGameChat('');
@@ -244,10 +377,8 @@ const Room = ({
   // chat event 받아오기
   useEffect(() => {
     socket?.on('gameChat', (data: IGameChat) => {
-      console.log('gameChat data', data);
       // gameChatList 추가
-      gameChatListData.push(data);
-      setGameChatListData(gameChatListData);
+      setGameChatListData([...gameChatListData, data]);
     });
   }, [gameChatListData, socket]);
 
@@ -260,7 +391,6 @@ const Room = ({
           isReady2P={isReady2P}
           onClickReady1P={onClickReady1P}
           onClickReady2P={onClickReady2P}
-          // gameRoomData={gameRoomData}
           name1p={name1P}
           name2p={name2P}
           role={myRole}
@@ -272,7 +402,8 @@ const Room = ({
       <div className="w-1/4 bg-amber-100">
         {/* 제목이 수평 기준으로 center 정렬이 되는데, 수직기준으로 center 정렬이 안됩니다... 어찌하는 거지?! */}
         <div className="bg-gray-400 h-1/12 flex text-center justify-center items-center">
-          <div>{`# ${roomNumber} 방제목 api 로 받아서 사용하시오`}</div>
+          {/* <div>{`# ${roomNumber} ${roomData.title}`}</div> */}
+          <div>{`# ${roomNumber} ${title}`}</div>
         </div>
         <div className="bg-red-300 h-1/4">
           {/* player Info */}
@@ -287,6 +418,7 @@ const Room = ({
             isPlaying={isPlaying}
             onClickExit={onClickExit}
             onClickMove={onClickMove}
+            onClickOption={onClickOption}
           />
         </div>
         <div className="bg-sky-300 h-7/12">
@@ -344,12 +476,45 @@ const Room = ({
           noButtonColor="bg-green-300"
         />
       )}
+      {isShowGameOptionModal && (
+        <GameOptionModal
+          title={title}
+          onChangeTitle={onChangeTitle}
+          difficulty={difficulty}
+          onChangeDifficulty={onChangeDifficulty}
+          winScore={winScore}
+          onChangeWinScore={onChangeWinScore}
+          numOfParticipant={numOfParticipant}
+          onChangeNumOfParticipant={onChangeNumOfParticipant}
+          onClickShowPasswordInputBox={onClickShowPasswordInputBox}
+          isShowPasswordInputBox={isShowPasswordInputBox}
+          roomPassword={roomPassword}
+          onChangeRoomPassword={onChangeRoomPassword}
+          onClickGameOptionApplyButton={onClickGameOptionApplyButton}
+          onClickGameOptionCancleButton={onClickGameOptionCancleButton}
+        />
+      )}
     </div>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async () => ({
-  props: {},
-});
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const access_token = process.env.ACCESS_TOKEN || '';
+
+  const roomData: IGameRoom = await axios
+    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/game/room/${context.query.id}`, {
+      withCredentials: true,
+      headers: {
+        Cookie: `Authentication=${context.req.cookies[access_token]}`,
+      },
+    })
+    .then((response) => response.data);
+
+  return {
+    props: {
+      roomData,
+    },
+  };
+};
 
 export default Room;

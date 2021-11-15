@@ -153,6 +153,14 @@ export interface IGameChat {
   index : number;
 }
 
+export interface IGameOptionPatch {
+  title: string;
+  password: string | undefined | null;
+  maxParticipantNum: number;
+  winPoint: number;
+  ballSpeed: string;
+}
+
 export interface IParticipant {
   key: number;
   role: string;
@@ -163,6 +171,18 @@ export interface IGameMember {
   userId: number;
   status: string;
   nickname: string;
+}
+
+export interface IGameResult {
+  playerOneId: number,
+  playerTwoId: number,
+  playerOneScore: number,
+  playerTwoScore: number,
+  winPoint: number,
+  ballSpeed: string,
+  startAt: Date,
+  endAt: Date,
+  lastModifiedAt: Date
 }
 
 export interface IGameRoom {
@@ -176,6 +196,7 @@ export interface IGameRoom {
   gameMembers: IGameMember[];
   currentMemberCount: number;
   gameRoomStatus: string;
+  gameResults: IGameResult[];
 }
 
 export interface IGameResultWinRate {
