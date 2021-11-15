@@ -120,6 +120,15 @@ export interface ISimpleUser {
   imagePath: string;
 }
 
+export interface IRank {
+  totalPlayCount: number;
+  winCount: number;
+  loseCount: number;
+  winRate: string;
+  experience: number;
+  user: ISimpleUser;
+}
+
 // initSetting -> gameRoomData
 export interface IGameRoomData{
   participants: {
@@ -173,17 +182,17 @@ export interface IGameMember {
   nickname: string;
 }
 
-export interface IGameResult {
-  playerOneId: number,
-  playerTwoId: number,
-  playerOneScore: number,
-  playerTwoScore: number,
-  winPoint: number,
-  ballSpeed: string,
-  startAt: Date,
-  endAt: Date,
-  lastModifiedAt: Date
-}
+// export interface IGameResult {
+//   playerOneId: number,
+//   playerTwoId: number,
+//   playerOneScore: number,
+//   playerTwoScore: number,
+//   winPoint: number,
+//   ballSpeed: string,
+//   startAt: Date,
+//   endAt: Date,
+//   lastModifiedAt: Date
+// }
 
 export interface IGameRoom {
   gameRoomId: number;
