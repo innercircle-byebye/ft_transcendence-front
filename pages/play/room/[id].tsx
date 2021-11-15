@@ -90,13 +90,23 @@ const Room: VFC<IProps> = ({
       userId: userInitialData.userId,
     });
     return () => {
+      // 못보내는거 같음 x 눌렀을때,
+      console.log('jkadslfjkldsajfklasd');
+      socket?.emit('test');
       socket?.emit('leaveGameRoom', {
         gameRoomId: router.query.id,
         userId: userInitialData.userId,
       });
+      axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        console.log('잘 갔나?! 제발 가라...');
+      });
       disconnect();
     };
-  }, [disconnect, router.query.id, socket, userInitialData.userId]);
+  }, [disconnect, roomData.gameRoomId, router.query.id, socket, userInitialData.userId]);
 
   // playing
   useEffect(() => {
@@ -138,9 +148,18 @@ const Room: VFC<IProps> = ({
         gameRoomId: router.query.id,
         userId: userInitialData.userId,
       });
+      socket?.emit('test');
+      console.log('나간다!!!!');
+      axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        console.log('잘 갔나?! 제발 가라...');
+      });
       router.push('/play');
     }
-  }, [isPlaying, myRole, router, socket, userInitialData.userId]);
+  }, [isPlaying, myRole, roomData.gameRoomId, router, socket, userInitialData.userId]);
 
   // 관전하기 참여하기 button event handler
   const onClickMove = useCallback(() => {
@@ -206,8 +225,17 @@ const Room: VFC<IProps> = ({
   // game room exit modal button event handler
   const onClickExitRoomButton = useCallback(() => {
     setIsShowExitRoomModal(false);
+    socket?.emit('test');
+    console.log('나간다!!!!');
+    axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      console.log('잘 갔나?! 제발 가라...');
+    });
     router.push('/play');
-  }, [router]);
+  }, [roomData.gameRoomId, router, socket]);
 
   // game option
   const { data: resetData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
