@@ -89,23 +89,23 @@ const Room: VFC<IProps> = ({
       gameRoomId: router.query.id,
       userId: userInitialData.userId,
     });
-    return () => {
-      // 못보내는거 같음 x 눌렀을때,
-      console.log('jkadslfjkldsajfklasd');
-      socket?.emit('test');
-      socket?.emit('leaveGameRoom', {
-        gameRoomId: router.query.id,
-        userId: userInitialData.userId,
-      });
-      axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
-        headers: {
-          withCredentials: 'true',
-        },
-      }).then(() => {
-        console.log('잘 갔나?! 제발 가라...');
-      });
-      disconnect();
-    };
+    // return () => {
+    //   // // 못보내는거 같음 x 눌렀을때,
+    //   // console.log('jkadslfjkldsajfklasd');
+    //   // socket?.emit('test');
+    //   // socket?.emit('leaveGameRoom', {
+    //   //   gameRoomId: router.query.id,
+    //   //   userId: userInitialData.userId,
+    //   // });
+    //   // axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
+    //   //   headers: {
+    //   //     withCredentials: 'true',
+    //   //   },
+    //   // }).then(() => {
+    //   //   console.log('잘 갔나?! 제발 가라...');
+    //   // });
+    //   disconnect();
+    // };
   }, [disconnect, roomData.gameRoomId, router.query.id, socket, userInitialData.userId]);
 
   // playing
