@@ -4,18 +4,19 @@ interface IProps {
   nickname: string;
   onChangeNickname: (e: ChangeEvent<HTMLInputElement>) => void;
   onClickResetNickname?: () => void;
+  nicknameError: boolean;
 }
 
 const InputNickname: VFC<IProps> = ({
-  nickname, onChangeNickname, onClickResetNickname,
+  nickname, onChangeNickname, onClickResetNickname, nicknameError,
 }) => (
-  <div className="mb-4 w-64">
+  <div className="relative mb-4 w-64">
     <label htmlFor="nickname">
-      <span className="text-gray-700 text-sm font-bold mb-2">
+      <span className="text-gray-700 text-sm font-bold mb-2 mr-1">
         Nickname
       </span>
       <button
-        className="bg-white text-sky-600 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className=" text-sky-600 py-1 px-3 rounded-full focus:outline-none focus:shadow-outline"
         type="button"
         onClick={onClickResetNickname}
       >
@@ -30,10 +31,15 @@ const InputNickname: VFC<IProps> = ({
         onChange={onChangeNickname}
       />
     </label>
-    {!nickname && (
-      <p className="text-red-500 text-xs italic">
-        닉네임을 입력해주세요.
-      </p>
+    {!nickname.trim().length && (
+      <div className="absolute left-5 text-red-500 text-xs italic">
+        닉네임을 입력해주세요
+      </div>
+    )}
+    {nicknameError && (
+      <div className="absolute left-5 text-red-500 text-xs italic">
+        이미 존재하는 닉네임입니다.
+      </div>
     )}
   </div>
 );

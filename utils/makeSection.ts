@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
-import { IChannelChat } from '@/typings/db';
+import { IChannelChat, IDMChat } from '@/typings/db';
 
-const makeSection = (chatList: IChannelChat[]) => {
-  const sections: { [key: string]: (IChannelChat)[] } = {};
+export default function makeSection<T extends IDMChat | IChannelChat>(chatList: T[]) {
+  const sections: { [key: string]: T[] } = {};
 
   chatList.forEach((chat) => {
     const monthDate = dayjs(chat.createdAt).format('YYYY-MM-DD');
@@ -13,6 +13,4 @@ const makeSection = (chatList: IChannelChat[]) => {
     }
   });
   return sections;
-};
-
-export default makeSection;
+}

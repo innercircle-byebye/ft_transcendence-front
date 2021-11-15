@@ -1,10 +1,18 @@
 import React, { ReactElement } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
-import MainLayout from '@/layouts/MainLayout';
-import ProfileCard from '@/components/main-page/ProfileCard';
+import { ToastContainer } from 'react-toastify';
 import AnnouncementList from '@/components/main-page/AnnouncementList';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import JoinedChannelList from '@/components/main-page/JoinedChannelList';
+import PageContainer from '@/components/page-with-profilecard/PageContainer';
+import ContentLeft from '@/components/page-with-profilecard/ContentLeft';
+import ContentRight from '@/components/page-with-profilecard/ContentRight';
+import ContentContainer from '@/components/page-with-profilecard/ContentContainer';
+import PlayableCard from '@/components/main-page/PlayableCard';
+import ObservableCard from '@/components/main-page/ObservableCard';
+import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
+import MainLayout from '@/layouts/MainLayout';
+import RankItem from '@/components/profile-page/RankItem';
 
 const Home = ({
   userInitialData,
@@ -14,18 +22,36 @@ const Home = ({
   }
 
   return (
-    <div className="flex px-12 py-5 space-x-5">
-      {/* 프로필카드와 공지사항 */}
-      <div className="flex-none w-1/5 space-y-5">
-        <ProfileCard userData={userInitialData} />
-        <AnnouncementList />
-      </div>
-      {/* 빠른시작2개, 친구목록과 채널목록 */}
-      <div className="flex space-x-5 w-4/5">
-        <OnlineFriendList />
-        <JoinedChannelList />
-      </div>
-    </div>
+    <PageContainer maxWidth="xl">
+      <ContentContainer>
+        <ContentLeft>
+          <ProfileCard profileUserData={userInitialData} />
+        </ContentLeft>
+        <ContentRight>
+          <div className="flex pb-5 space-x-5 w-full h-1/3">
+            <div className="flex w-5/12">
+              <RankItem rankInfo={userInitialData.rankInfo} bgColor="bg-gray-200" />
+            </div>
+            <div className="flex w-7/12">
+              <AnnouncementList />
+            </div>
+          </div>
+          <div className="flex pb-5 space-x-5 w-full">
+            <div className="flex w-5/12">
+              <PlayableCard />
+            </div>
+            <div className="flex w-7/12">
+              <ObservableCard />
+            </div>
+          </div>
+          <div className="pb-5 grid grid-cols-2 space-x-5 w-full">
+            <OnlineFriendList />
+            <JoinedChannelList />
+          </div>
+        </ContentRight>
+      </ContentContainer>
+      <ToastContainer />
+    </PageContainer>
   );
 };
 
@@ -33,58 +59,10 @@ export const getServerSideProps: GetServerSideProps = async () => ({
   props: {},
 });
 
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//   const access_token = process.env.ACCESS_TOKEN || '';
-//   const refresh_token = process.env.REFRESH_TOKEN || '';
-
-//   if (
-//     !context.req.cookies[refresh_token]
-//     || !context.req.cookies[access_token]
-//   ) {
-//     return reissueToken(context, access_token, refresh_token, '/');
-//   }
-
-//   const userData: IUser = await axios
-//     .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
-//       withCredentials: true,
-//       headers: {
-//         Cookie: `Authentication=${context.req.cookies[access_token]}`,
-//       },
-//     })
-//     .then((response) => response.data);
-
-//   if (userData.status === process.env.STATUS_NOT_REGISTER) {
-//     return {
-//       redirect: {
-//         destination: '/create-profile',
-//         permanent: false,
-//       },
-//     };
-//   }
-
-//   return {
-//     props: {
-//       userData,
-//     },
-//   };
-// };
-
-// ====================================================
-//   userInitialData,
-// }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
-//   <div>
-//     <OnlineFriendList />
-//     <ProfileCard userData={userInitialData} />
-//     <AnnouncementList />
-//   </div>
-// );
-
-// export const getServerSideProps: GetServerSideProps = async () => ({
-//   props: {},
-// });
-
 Home.getLayout = function getLayout(page: ReactElement) {
-  return <MainLayout>{page}</MainLayout>;
+  return (
+    <MainLayout>{page}</MainLayout>
+  );
 };
 
 export default Home;

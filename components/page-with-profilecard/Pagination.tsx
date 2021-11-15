@@ -7,13 +7,14 @@ interface IProps {
   setPage: Dispatch<SetStateAction<number>>;
   totalPage: number;
   paginationRange: number;
+  color: string;
 }
 
 const Pagination: VFC<IProps> = ({
-  page, setPage, totalPage, paginationRange,
+  page, setPage, totalPage, paginationRange, color,
 }) => {
   const [startPage, setStartPage] = useState(1);
-  const [endPage, setEndPage] = useState(totalPage < 5 ? totalPage : 5);
+  const [endPage, setEndPage] = useState(totalPage < paginationRange ? totalPage : paginationRange);
   const [paginationTexts, setPaginationTexts] = useState<string[]>([]);
 
   const onClickPageNum = useCallback((pageNum: string) => {
@@ -32,15 +33,15 @@ const Pagination: VFC<IProps> = ({
     }
   }, [page, setPage, totalPage]);
 
-  const onClickPrevPrev = useCallback(() => {
-    const nextPage = parseInt(`${(page - 6) / paginationRange}`, 10) * paginationRange + 1;
+  const onClickPrevPageSet = useCallback(() => {
+    const nextPage = parseInt(`${(page - paginationRange - 1) / paginationRange}`, 10) * paginationRange + 1;
     if (nextPage < 1) return;
     setStartPage(nextPage);
     setPage(nextPage);
   }, [page, paginationRange, setPage]);
 
-  const onClickNextNext = useCallback(() => {
-    const nextPage = parseInt(`${(page + 4) / paginationRange}`, 10) * paginationRange + 1;
+  const onClickNextPageSet = useCallback(() => {
+    const nextPage = parseInt(`${(page + paginationRange - 1) / paginationRange}`, 10) * paginationRange + 1;
     if (nextPage > totalPage) return;
     setStartPage(nextPage);
     setPage(nextPage);
@@ -70,24 +71,24 @@ const Pagination: VFC<IProps> = ({
 
   return (
     <div className="inline-block rounded-md border border-gray-50 overflow-hidden bg-gray-50">
-      <button type="button" onClick={onClickPrevPrev}>
-        <span className="mx-px px-2 py-1 bg-sky-700 text-white">{'<<'}</span>
+      <button type="button" onClick={onClickPrevPageSet}>
+        <span className={`mx-px px-2 py-1 bg-${color}-700 text-white`}>{'<<'}</span>
       </button>
       <button type="button" onClick={onClickPrevPage}>
-        <span className="mx-px px-2 py-1 bg-sky-700 text-white">{'<'}</span>
+        <span className={`mx-px px-2 py-1 bg-${color}-700 text-white`}>{'<'}</span>
       </button>
       {paginationTexts.map((paginationText) => (
         <button key={paginationText} type="button" onClick={() => onClickPageNum(paginationText)}>
-          <span className={`mx-px px-2 py-1 ${page === +paginationText ? 'bg-sky-200 text-sky-700' : 'bg-sky-700 text-white'}`}>
+          <span className={`mx-px px-2 py-1 ${page === +paginationText ? `bg-sky-200 text-${color}-700` : `bg-${color}-700 text-white`}`}>
             {paginationText}
           </span>
         </button>
       ))}
       <button type="button" onClick={onClickNextPage}>
-        <span className="mx-px px-2 py-1 bg-sky-700 text-white">{'>'}</span>
+        <span className={`mx-px px-2 py-1 bg-${color}-700 text-white`}>{'>'}</span>
       </button>
-      <button type="button" onClick={onClickNextNext}>
-        <span className="mx-px px-2 py-1 bg-sky-700 text-white">{'>>'}</span>
+      <button type="button" onClick={onClickNextPageSet}>
+        <span className={`mx-px px-2 py-1 bg-${color}-700 text-white`}>{'>>'}</span>
       </button>
     </div>
   );

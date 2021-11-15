@@ -1,3 +1,10 @@
+export interface IRankInfo {
+  rankId: number;
+  title: string;
+  imagePath: string;
+  criteriaExperience: number;
+}
+
 export interface IUser {
   userId: number;
   email: string;
@@ -13,6 +20,8 @@ export interface IUser {
   createdAt: string;
   lastModifiedAt: string;
   deletedAt: string | null;
+  isTwoFactorAuthEnabled?: boolean;
+  rankInfo: IRankInfo;
 }
 
 export interface IAnnouncement {
@@ -57,6 +66,7 @@ export interface IDMChat {
   content: string;
   createdAt: Date;
   lastModifiedAt: Date;
+  type: string;
 }
 
 export interface IChatItem {
@@ -65,8 +75,17 @@ export interface IChatItem {
   imagePath: string;
   content: string;
   createdAt: Date;
+  type?: string;
 }
 
+export interface IInviteItem {
+  userId: number;
+  nickname: string;
+  imagePath: string;
+  type: string;
+  targetInfo: string;
+  createdAt: Date;
+}
 export interface IChannelUser {
   nickname: string;
   imagePath: string;
@@ -142,4 +161,27 @@ export interface IGameRoom {
   gameMembers: IGameMember[];
   currentMemberCount: number;
   gameRoomStatus: string;
+}
+
+export interface IGameResultWinRate {
+  totalPlayCount: number;
+  winCount: number;
+  loseCount: number;
+  winRate: string;
+}
+
+export interface IGameResult {
+  gameResultId: number;
+  gameRoomId: number;
+  playerOneId: number;
+  playerTwoId: number;
+  playerOneScore: number;
+  playerTwoScore: number;
+  winPoint: number;
+  ballSpeed: string;
+  startAt: Date;
+  endAt: Date;
+  lastModifiedAt: Date | null;
+  playerOneNickname: string;
+  playerTwoNickname: string;
 }
