@@ -40,7 +40,6 @@ const InviteItem: FC<Props> = ({
       }).then(() => {
         router.push(`/play/room/${invitationData.content}`);
       }).catch(() => {
-        console.log('error');
         toast.error(`${invitationData.nickname}이 보낸 게임방 초대에 입장할 수 없습니다.`, { position: 'bottom-right', theme: 'colored' });
       });
     }
@@ -60,14 +59,11 @@ const InviteItem: FC<Props> = ({
       }).then(() => {
         router.push(`/chat/channel/${invitationData?.content}`);
       }).catch(() => {
-        console.log('error');
         toast.error(`${invitationData.nickname}님이 보낸 게임방 초대에 입장할 수 없습니다.`, { position: 'bottom-right', theme: 'colored' });
       });
     }
   }, [invitationData?.content, invitationData.nickname, invitedChannelInfo,
     router, setPrivateChannelToJoin]);
-
-  console.log(invitationData);
 
   return (
     <div className="flex flex-row w-full">
