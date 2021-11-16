@@ -177,10 +177,6 @@ const Channel = ({
   }, [onDeleteChannel, socket]);
 
   useEffect(() => {
-    revalidate();
-  }, [revalidate]);
-
-  useEffect(() => {
     if (channelChatData?.length === 1) {
       setTimeout(() => {
         scrollbarRef.current?.scrollToBottom();
