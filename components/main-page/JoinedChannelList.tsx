@@ -14,7 +14,7 @@ const JoinedChannelList = () => {
       {/* title */}
       <div className="text-white font-medium text-xl pt-3 pb-2">참여중인 채널목록</div>
       {/* content list */}
-      <div className="flex flex-col space-y-2 mx-4 py-2">
+      <div className="flex flex-col space-y-2 mx-4 py-2 max-h-48 overflow-y-auto">
         {myChannelData?.map((channelData: IChannel) => (
           <JoinedChannelItem
             key={channelData.createdAt + channelData.name}
