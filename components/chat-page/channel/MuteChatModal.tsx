@@ -30,7 +30,7 @@ const MuteChatModal: VFC<IProps> = ({
     if (muteMember) {
       axios.patch(`/api/channel/${channelName}/member`, {
         mutedDate: null,
-        targetUserId: muteMember.userId,
+        targetUserId: Number(muteMember.userId),
       }, {
         headers: {
           withCredentials: 'true',
@@ -49,7 +49,7 @@ const MuteChatModal: VFC<IProps> = ({
     if (muteMember) {
       axios.patch(`/api/channel/${channelName}/member`, {
         mutedDate: new Date(`${muteDay}T${muteTime}:00`),
-        targetUserId: muteMember.userId,
+        targetUserId: Number(muteMember.userId),
       }, {
         headers: {
           withCredentials: 'true',
