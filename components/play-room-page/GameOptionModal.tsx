@@ -5,16 +5,17 @@ import React, {
 import InputNumber from '../inputs/InputNumber';
 
 interface IProps {
-  title: string | undefined;
+  myRole: string;
+  title: string;
   onChangeTitle: (e: ChangeEvent<HTMLInputElement>) => void;
   difficulty: string;
   onChangeDifficulty: (e: ChangeEvent<HTMLInputElement>) => void;
   winScore: number;
   onChangeWinScore: (e: ChangeEvent<HTMLInputElement>) => void;
-  numOfParticipant: number | undefined;
+  numOfParticipant: number;
   onChangeNumOfParticipant: (e: ChangeEvent<HTMLInputElement>) => void;
   onClickShowPasswordInputBox: () => void;
-  isShowPasswordInputBox: boolean | undefined;
+  isShowPasswordInputBox: boolean;
   roomPassword: string;
   onChangeRoomPassword: (e: ChangeEvent<HTMLInputElement>) => void
   onClickGameOptionApplyButton: () => void;
@@ -23,6 +24,7 @@ interface IProps {
 }
 
 const GameOptionModal: VFC<IProps> = ({
+  myRole,
   title,
   onChangeTitle,
   difficulty,
@@ -42,7 +44,9 @@ const GameOptionModal: VFC<IProps> = ({
   console.log('title', title);
   console.log('numOfParticipant', numOfParticipant);
   console.log('isShowPasswordInputBox', isShowPasswordInputBox);
-  if (title && numOfParticipant) {
+  console.log('myrole', myRole);
+  console.log('difficulty', difficulty);
+  if (myRole === 'player1') {
     return (
       <div className="absolute top-1/4 left-1/3 w-1/3 bg-amber-100 rounded-md p-5 space-y-5">
         {/* title */}
@@ -121,16 +125,52 @@ const GameOptionModal: VFC<IProps> = ({
   }
   return (
     <div className="absolute top-1/4 left-1/3 w-1/3 bg-amber-100 rounded-md p-5 space-y-5">
-      <p>로딩 중 다시시도해주세요!</p>
-      <button
-        type="button"
-        className="bg-gray-400 p-2 rounded-md"
-        onClick={onClickGameOptionCancleButton}
-      >
-        CANCLE
-      </button>
+      {/* title */}
+      <div className="font-medium text-lg text-center">Chang Game Room Option</div>
+      {/* room name */}
+      <div className="flex justify-between">
+        <div>room name</div>
+        <div>{title}</div>
+      </div>
+      {/* 난이도 */}
+      <div className="flex justify-between">
+        <div>난이도</div>
+        <div>{difficulty}</div>
+      </div>
+      {/* 승리점수 */}
+      <div className="flex justify-between">
+        <div>승리점수</div>
+        <div>{winScore}</div>
+      </div>
+      {/* 최대인원 */}
+      <div className="flex justify-between">
+        <div>최대인원</div>
+        <div>{numOfParticipant}</div>
+      </div>
+      {/* apply & cancle button */}
+      <div className="flex space-x-5 justify-center">
+        <button
+          type="button"
+          className="bg-gray-400 p-2 rounded-md"
+          onClick={onClickGameOptionCancleButton}
+        >
+          CANCLE
+        </button>
+      </div>
     </div>
   );
 };
+  // return (
+  //   <div className="absolute top-1/4 left-1/3 w-1/3 bg-amber-100 rounded-md p-5 space-y-5">
+  //     <p>로딩 중 다시시도해주세요!</p>
+  //     <button
+  //       type="button"
+  //       className="bg-gray-400 p-2 rounded-md"
+  //       onClick={onClickGameOptionCancleButton}
+  //     >
+  //       CANCLE
+  //     </button>
+  //   </div>
+  // );
 
 export default GameOptionModal;

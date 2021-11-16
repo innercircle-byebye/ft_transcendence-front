@@ -55,13 +55,53 @@ const Room: VFC<IProps> = ({
   const [isShowExitRoomModal, setIsShowExitRoomModal] = useState<boolean>(false);
   // game option modal
   const [isShowGameOptionModal, setIsShowGameOptionModal] = useState<boolean>(false);
+  // public | private state
+  const [
+    isShowPasswordInputBox, setIsShowPasswordInputBox,
+  ] = useState<boolean>(false);
+  // game option
+  const [resetData, setResetData] = useState<IGameRoom>();
+  const [ballSpeed, setBallSpeed] = useState<string>('');
+  const [title, onChangeTitle, setTitle] = useInput<string>('');
+  const [roomPassword, onChangeRoomPassword, setRoomPassword] = useInput<string>('');
+  const [difficulty, onChangeDifficulty, setDifficulty] = useInput<string>('');
+  const [winScore, onChangeWinScore, setWinScore] = useInput<number>(0);
+  const [
+    numOfParticipant,
+    onChangeNumOfParticipant,
+    setNumOfParticipant,
+  ] = useInput(0);
+  // leave event 추가
+  const [isShowInvalidAccessModal, setIsShowInvalidAccessModal] = useState<boolean>(false);
 
-  // 방 터졌을때,
+  // 방 시작할때,
   useEffect(() => {
+    console.log('시작! roomData', roomData);
+    // 방 터진상황
     if (roomData === null) {
       router.push('/play');
     }
-  }, [roomData, router]);
+    // 방 존재
+    setResetData(roomData);
+    // console.log(roomData.gameResults[roomData.gameResults.length - 1].ballSpeed);
+    setBallSpeed(roomData.gameResults[roomData.gameResults.length - 1].ballSpeed);
+    if (ballSpeed === 'slow') {
+      // console.log('in slow');
+      setDifficulty('0');
+    } else if (ballSpeed === 'medium') {
+      // console.log('in medium');
+      setDifficulty('1');
+    } else if (ballSpeed === 'fast') {
+      // console.log('in fast');
+      setDifficulty('2');
+    }
+    setTitle(roomData.title);
+    setWinScore(roomData.gameResults[roomData.gameResults.length - 1].winPoint);
+    setNumOfParticipant(roomData.maxParticipantNum);
+    setIsShowPasswordInputBox(roomData.isPrivate);
+    // console.log('difficulty', difficulty);
+    // console.log('title', title);
+  }, [ballSpeed, roomData, router, setDifficulty, setNumOfParticipant, setTitle, setWinScore]);
 
   useEffect(() => {
     // initSetting -> gameRoomData
@@ -78,6 +118,7 @@ const Room: VFC<IProps> = ({
         setName2P('');
       }
       setMyRole(data.role);
+      console.log('myRole', myRole);
       if (data.isPlaying) {
         setIsPlaying(true);
       }
@@ -90,20 +131,20 @@ const Room: VFC<IProps> = ({
       // set participant data
       setParticipantListData(setParticipantData, data);
     });
+  }, [disconnect, myRole, router.query.id, socket, userInitialData.userId]);
+
+  useEffect(() => {
     socket?.emit('joinGameRoom', {
       gameRoomId: router.query.id,
       userId: userInitialData.userId,
     });
-  }, [disconnect, router.query.id, socket, userInitialData.userId]);
+  }, [router.query.id, socket, userInitialData.userId]);
 
   // playing
   useEffect(() => {
     // data update
     socket?.on('update', (data) => setUpdateData(data));
   });
-
-  // leave event 추가
-  const [isShowInvalidAccessModal, setIsShowInvalidAccessModal] = useState<boolean>(false);
 
   const showInvalidAccess = useCallback(() => {
     setIsShowInvalidAccessModal(true);
@@ -117,6 +158,7 @@ const Room: VFC<IProps> = ({
     setIsShowInvalidAccessModal(false);
     disconnect();
     router.push('/play');
+    console.log('여기인가요?!');
   }, [disconnect, router]);
 
   // not playing
@@ -194,7 +236,6 @@ const Room: VFC<IProps> = ({
       // 기존에 열려있을 수 있는 모든 modal 창 닫기
       setIsShowGameResultModal(false);
       setIsShowExitRoomModal(false);
-
       setIsPlaying(false);
       setIsReady1P(false);
       setIsReady2P(false);
@@ -215,37 +256,19 @@ const Room: VFC<IProps> = ({
     router.push('/play');
   }, [disconnect, router]);
 
-  // public | private state
-  const [
-    isShowPasswordInputBox, setIsShowPasswordInputBox,
-  ] = useState<boolean | undefined>();
-  // game option
-  const [resetData, setResetData] = useState<IGameRoom>();
-  useEffect(() => {
-    axios.get(`/api/game/room/${roomNumber}`, {
-      withCredentials: true,
-    }).then((res) => {
-      setResetData(res.data);
-      console.log('res.data', res.data);
-      setIsShowPasswordInputBox(resetData?.isPrivate);
-    }).catch((err) => {
-      console.log('방 없다.', err);
-      disconnect();
-      router.push('/play');
-    });
-  }, [disconnect, resetData?.isPrivate, roomNumber, router]);
-  const [ballSpeed, setBallSpeed] = useState(
-    resetData?.gameResults[resetData.gameResults.length - 1].ballSpeed,
-  );
-  const [title, onChangeTitle, setTitle] = useInput(resetData?.title);
-  const [roomPassword, onChangeRoomPassword, setRoomPassword] = useInput('');
-  const [difficulty, onChangeDifficulty] = useInput<string>('0');
-  const [winScore, onChangeWinScore, setWinScore] = useInput(2);
-  const [
-    numOfParticipant,
-    onChangeNumOfParticipant,
-    setNumOfParticipant,
-  ] = useInput(resetData?.maxParticipantNum);
+  // useEffect(() => {
+  //   axios.get(`/api/game/room/${roomNumber}`, {
+  //     withCredentials: true,
+  //   }).then((res) => {
+  //     setResetData(res.data);
+  //     console.log('res.data', res.data);
+  //     setIsShowPasswordInputBox(resetData?.isPrivate);
+  //   }).catch((err) => {
+  //     console.log('방 없다.', err);
+  //     disconnect();
+  //     router.push('/play');
+  //   });
+  // }, [disconnect, resetData?.isPrivate, roomNumber, router]);
 
   const onSubmitPassword = useCallback(() => {
     console.log('이것도 됩니까?');
@@ -263,11 +286,11 @@ const Room: VFC<IProps> = ({
     [isShowPasswordInputBox],
   );
 
-  useEffect(() => {
-    if (difficulty === '0') { setBallSpeed('slow'); }
-    if (difficulty === '1') { setBallSpeed('medium'); }
-    if (difficulty === '2') { setBallSpeed('fast'); }
-  }, [difficulty, setBallSpeed]);
+  // useEffect(() => {
+  //   if (difficulty === '0') { setBallSpeed('slow'); }
+  //   if (difficulty === '1') { setBallSpeed('medium'); }
+  //   if (difficulty === '2') { setBallSpeed('fast'); }
+  // }, [difficulty, setBallSpeed]);
 
   useEffect(() => {
     if (winScore < 1) setWinScore(1);
@@ -282,6 +305,9 @@ const Room: VFC<IProps> = ({
   }, [numOfParticipant, setNumOfParticipant]);
 
   const onClickGameOptionApplyButton = useCallback(() => {
+    if (difficulty === '0') { setBallSpeed('slow'); }
+    if (difficulty === '1') { setBallSpeed('medium'); }
+    if (difficulty === '2') { setBallSpeed('fast'); }
     // console.log('room ps', isShowPasswordInputBox ? roomPassword : null);
     if (title && numOfParticipant && ballSpeed) {
       const newPatchData: IGameOption = {
@@ -313,7 +339,8 @@ const Room: VFC<IProps> = ({
         });
     }
   }, [
-    ballSpeed, isShowPasswordInputBox, numOfParticipant, roomNumber, roomPassword, title, winScore,
+    ballSpeed, difficulty, isShowPasswordInputBox,
+    numOfParticipant, roomNumber, roomPassword, title, winScore,
   ]);
 
   const onClickGameOptionCancleButton = useCallback(() => {
@@ -487,7 +514,7 @@ const Room: VFC<IProps> = ({
       )}
       {isShowGameOptionModal && (
         <GameOptionModal
-          // myRole={myRole}
+          myRole={myRole}
           title={title}
           onChangeTitle={onChangeTitle}
           difficulty={difficulty}
