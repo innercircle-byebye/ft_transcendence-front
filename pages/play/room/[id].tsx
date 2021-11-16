@@ -11,7 +11,7 @@ import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
 import useSocket from '@/hooks/useSocket';
 import {
-  IGameChat, IGameOptionPatch, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant, IUser,
+  IGameChat, IGameOption, IGameRoom, IGameRoomData, IGameUpdateData, IParticipant, IUser,
 } from '@/typings/db';
 import ChatInputBox from '@/components/play-room-page/ChatInputBox';
 import useInput from '@/hooks/useInput';
@@ -89,14 +89,7 @@ const Room: VFC<IProps> = ({
       gameRoomId: router.query.id,
       userId: userInitialData.userId,
     });
-    return () => {
-      socket?.emit('leaveGameRoom', {
-        gameRoomId: router.query.id,
-        userId: userInitialData.userId,
-      });
-      disconnect();
-    };
-  }, [disconnect, router.query.id, socket, userInitialData.userId]);
+  }, [disconnect, roomData.gameRoomId, router.query.id, socket, userInitialData.userId]);
 
   // playing
   useEffect(() => {
@@ -138,9 +131,17 @@ const Room: VFC<IProps> = ({
         gameRoomId: router.query.id,
         userId: userInitialData.userId,
       });
+      axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        console.log('잘 갔나?! 제발 가라...');
+      });
+      disconnect();
       router.push('/play');
     }
-  }, [isPlaying, myRole, router, socket, userInitialData.userId]);
+  }, [disconnect, isPlaying, myRole, roomData.gameRoomId, router, socket, userInitialData.userId]);
 
   // 관전하기 참여하기 button event handler
   const onClickMove = useCallback(() => {
@@ -206,26 +207,24 @@ const Room: VFC<IProps> = ({
   // game room exit modal button event handler
   const onClickExitRoomButton = useCallback(() => {
     setIsShowExitRoomModal(false);
+    axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then(() => {
+      console.log('잘 갔나?! 제발 가라...');
+    });
+    disconnect();
     router.push('/play');
-  }, [router]);
+  }, [disconnect, roomData.gameRoomId, router]);
 
   // game option
   const { data: resetData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
   const [ballSpeed, setBallSpeed] = useState<string>('medium');
-  // console.log(ballSpeed);
-  // const [gameOptionPatchData, setGameOptionPatchData] = useState<IGameOptionPatch>({
-  //   title: roomData.title,
-  //   password: '',
-  //   maxParticipantNum: roomData.maxParticipantNum,
-  //   winPoint: 2,
-  //   ballSpeed,
-  // });
-  // const [title, onChangeTitle] = useInput(gameRoomData?.title);
   const [title, onChangeTitle, setTitle] = useInput<string>(roomData.title);
   // public | private state
   const [
     isShowPasswordInputBox, setIsShowPasswordInputBox,
-  // ] = useState<boolean | undefined>(gameRoomData?.isPrivate);
   ] = useState<boolean>(roomData.isPrivate);
   const [roomPassword, onChangeRoomPassword] = useInput('');
   const [difficulty, onChangeDifficulty] = useInput(0);
@@ -268,7 +267,7 @@ const Room: VFC<IProps> = ({
 
   const onClickGameOptionApplyButton = useCallback(() => {
     // console.log('room ps', isShowPasswordInputBox ? roomPassword : null);
-    const newPatchData: IGameOptionPatch = {
+    const newPatchData: IGameOption = {
       title,
       maxParticipantNum: numOfParticipant,
       winPoint: winScore,
@@ -301,13 +300,6 @@ const Room: VFC<IProps> = ({
   ]);
 
   const onClickGameOptionCancleButton = useCallback(() => {
-    // TODO: reset 기능이 필요합니다.
-    // reset 기능을 만들기 위해선 현재 방의 정보
-    // ball speed, win score, max participants, title, password
-    // 를 받아오는 기능이 필요합니다.
-    // 하지만 현재 게임방 조회를 통해서 위와 같은 정보를 전부 알 수가 없네요...
-    // 그래서 reset 은 불가능합니다.
-    // ball speed, winPoint 가 없습니다... ㅠ
     if (resetData) {
       setTitle(resetData.title);
       setNumOfParticipant(resetData.maxParticipantNum);
