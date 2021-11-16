@@ -5,7 +5,6 @@ import {
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import useSWR from 'swr';
 import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
@@ -21,7 +20,6 @@ import setParticipantListData from '@/utils/setParticipantListData';
 import GameResultModal from '@/components/play-room-page/GameResult';
 import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
 import GameOptionModal from '@/components/play-room-page/GameOptionModal';
-import fetcher from '@/utils/fetcher';
 
 interface IProps {
   userInitialData: IUser;
@@ -58,6 +56,14 @@ const Room: VFC<IProps> = ({
   // game option modal
   const [isShowGameOptionModal, setIsShowGameOptionModal] = useState<boolean>(false);
 
+  // 방 터졌을때,
+  useEffect(() => {
+    console.log('제발 체크하러 한번만 와주라');
+    if (roomData === null) {
+      router.push('/play');
+    }
+  }, [roomData, router]);
+
   useEffect(() => {
     // initSetting -> gameRoomData
     socket?.on('gameRoomData', (data: IGameRoomData) => {
@@ -89,7 +95,7 @@ const Room: VFC<IProps> = ({
       gameRoomId: router.query.id,
       userId: userInitialData.userId,
     });
-  }, [disconnect, roomData.gameRoomId, router.query.id, socket, userInitialData.userId]);
+  }, [disconnect, router.query.id, socket, userInitialData.userId]);
 
   // playing
   useEffect(() => {
@@ -110,8 +116,9 @@ const Room: VFC<IProps> = ({
 
   const onClickLeaveButton = useCallback(() => {
     setIsShowInvalidAccessModal(false);
+    disconnect();
     router.push('/play');
-  }, [router]);
+  }, [disconnect, router]);
 
   // not playing
   // on ready unReady
@@ -223,47 +230,41 @@ const Room: VFC<IProps> = ({
   // game room exit modal button event handler
   const onClickExitRoomButton = useCallback(() => {
     setIsShowExitRoomModal(false);
-    // axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
-    //   headers: {
-    //     withCredentials: 'true',
-    //   },
-    // }).then(() => {
-    //   console.log('잘 갔나?! 제발 가라...');
-    // });
     disconnect();
     router.push('/play');
   }, [disconnect, router]);
 
   // game option
-  const { data: resetData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
-  const [ballSpeed, setBallSpeed] = useState<string>(
-    roomData.gameResults[roomData.gameResults.length - 1].ballSpeed,
+  // const { data: resetData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, mykangFetcher);
+  const [resetData, setResetData] = useState<IGameRoom>();
+  useEffect(() => {
+    console.log('왜 안찍음?');
+    axios.get(`/api/game/room/${roomNumber}`, {
+      withCredentials: true,
+    }).then((res) => {
+      setResetData(res.data);
+    }).catch((err) => {
+      console.log('방 없다.', err);
+      disconnect();
+      router.push('/play');
+    });
+  }, [disconnect, roomNumber, router]);
+  const [ballSpeed, setBallSpeed] = useState(
+    resetData?.gameResults[resetData.gameResults.length - 1].ballSpeed,
   );
-  const [title, onChangeTitle, setTitle] = useInput<string>(roomData.title);
+  const [title, onChangeTitle, setTitle] = useInput(resetData?.title);
   // public | private state
   const [
     isShowPasswordInputBox, setIsShowPasswordInputBox,
-  ] = useState<boolean>(roomData.isPrivate);
+  ] = useState(resetData?.isPrivate);
   const [roomPassword, onChangeRoomPassword, setRoomPassword] = useInput('');
-  const [difficulty, onChangeDifficulty, setDifficulty] = useInput<string>('0');
+  const [difficulty, onChangeDifficulty] = useInput<string>('0');
   const [winScore, onChangeWinScore, setWinScore] = useInput(2);
   const [
     numOfParticipant,
     onChangeNumOfParticipant,
     setNumOfParticipant,
-  // ] = useInput(gameRoomData?.maxParticipantNum);
-  ] = useInput<number>(roomData.maxParticipantNum);
-
-  useEffect(() => {
-    if (ballSpeed === 'slow') {
-      setDifficulty('0');
-    } else if (ballSpeed === 'medium') {
-      setDifficulty('1');
-    } else if (ballSpeed === 'fase') {
-      setDifficulty('2');
-    }
-  },
-  [ballSpeed, setDifficulty]);
+  ] = useInput(resetData?.maxParticipantNum);
 
   const onSubmitPassword = useCallback(() => {
     setRoomPassword('');
@@ -300,34 +301,35 @@ const Room: VFC<IProps> = ({
 
   const onClickGameOptionApplyButton = useCallback(() => {
     // console.log('room ps', isShowPasswordInputBox ? roomPassword : null);
-    const newPatchData: IGameOption = {
-      title,
-      maxParticipantNum: numOfParticipant,
-      winPoint: winScore,
-      ballSpeed,
-      password: undefined,
-    };
-    if (!isShowPasswordInputBox) {
-      newPatchData.password = null;
-    } else if (roomPassword) {
-      newPatchData.password = roomPassword;
+    if (title && numOfParticipant && ballSpeed) {
+      const newPatchData: IGameOption = {
+        title,
+        maxParticipantNum: numOfParticipant,
+        winPoint: winScore,
+        ballSpeed,
+        password: undefined,
+      };
+      if (!isShowPasswordInputBox) {
+        newPatchData.password = null;
+      } else if (roomPassword) {
+        newPatchData.password = roomPassword;
+      }
+      axios.patch(`/api/game/room/${roomNumber}`,
+        newPatchData,
+        // gameOptionPatchData,
+        {
+          headers: {
+            withCredentials: 'true',
+          },
+        })
+        .then(() => {
+          setIsShowGameOptionModal(false);
+        })
+        .catch((err) => {
+          console.log('patch fail', err);
+          toast.error('옵션 설정 실패했다', { position: 'bottom-right', theme: 'colored' });
+        });
     }
-
-    axios.patch(`/api/game/room/${roomNumber}`,
-      newPatchData,
-      // gameOptionPatchData,
-      {
-        headers: {
-          withCredentials: 'true',
-        },
-      })
-      .then(() => {
-        setIsShowGameOptionModal(false);
-      })
-      .catch((err) => {
-        console.log('patch fail', err);
-        toast.error('옵션 설정 실패했다', { position: 'bottom-right', theme: 'colored' });
-      });
   }, [
     ballSpeed, isShowPasswordInputBox, numOfParticipant, roomNumber, roomPassword, title, winScore,
   ]);
@@ -533,14 +535,15 @@ const Room: VFC<IProps> = ({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || '';
 
-  const roomData: IGameRoom = await axios
+  const roomData: IGameRoom | null = await axios
     .get(`http://back-nestjs:${process.env.BACK_PORT}/api/game/room/${context.query.id}`, {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
       },
     })
-    .then((response) => response.data);
+    .then((response) => response.data)
+    .catch(() => (null));
 
   return {
     props: {
