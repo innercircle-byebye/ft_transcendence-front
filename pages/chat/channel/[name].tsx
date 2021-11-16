@@ -40,7 +40,7 @@ const Channel = ({
       initialData: channelInitialData,
     },
   );
-  const { data: myChannelData, revalidate } = useSWR<IChannel[]>(
+  const { revalidate } = useSWR<IChannel[]>(
     '/api/channel/me', fetcher, {
       initialData: myChannelInitialData,
     },
@@ -175,13 +175,6 @@ const Channel = ({
       socket?.off('deleteChannel', onDeleteChannel);
     };
   }, [onDeleteChannel, socket]);
-
-  useEffect(() => {
-    if (channelData
-      && (!myChannelData?.map((v) => v.channelId).includes(channelData?.channelId))) {
-      router.push('/chat');
-    }
-  }, [channelData, myChannelData, router]);
 
   useEffect(() => {
     if (channelChatData?.length === 1) {

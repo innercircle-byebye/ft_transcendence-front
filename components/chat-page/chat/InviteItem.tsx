@@ -50,14 +50,13 @@ const InviteItem: FC<Props> = ({
     if (invitedChannelInfo?.isPrivate) {
       setPrivateChannelToJoin(invitedChannelInfo);
     } else {
-      axios.post(`/api/channel/${invitationData?.content}/member`, {
+      axios.post(`/api/channel/${invitationData.content}/member`, {
       }, {
         headers: {
           withCredentials: 'true',
         },
-
-      }).then(() => {
-        router.push(`/chat/channel/${invitationData?.content}`);
+      }).then(async () => {
+        await router.push(`/chat/channel/${invitationData.content}`);
       }).catch(() => {
         toast.error(`${invitationData.nickname}님이 보낸 게임방 초대에 입장할 수 없습니다.`, { position: 'bottom-right', theme: 'colored' });
       });
