@@ -305,39 +305,43 @@ const Room: VFC<IProps> = ({
   }, [numOfParticipant, setNumOfParticipant]);
 
   const onClickGameOptionApplyButton = useCallback(() => {
-    if (difficulty === '0') { setBallSpeed('slow'); }
-    if (difficulty === '1') { setBallSpeed('medium'); }
-    if (difficulty === '2') { setBallSpeed('fast'); }
-    // console.log('room ps', isShowPasswordInputBox ? roomPassword : null);
-    if (title && numOfParticipant && ballSpeed) {
-      const newPatchData: IGameOption = {
-        title,
-        maxParticipantNum: numOfParticipant,
-        winPoint: winScore,
-        ballSpeed,
-        password: undefined,
-      };
-      if (!isShowPasswordInputBox) {
-        newPatchData.password = null;
-      } else if (roomPassword) {
-        newPatchData.password = roomPassword;
-      }
-      axios.patch(`/api/game/room/${roomNumber}`,
-        newPatchData,
-        // gameOptionPatchData,
-        {
-          headers: {
-            withCredentials: 'true',
-          },
-        })
-        .then(() => {
-          setIsShowGameOptionModal(false);
-        })
-        .catch((err) => {
-          console.log('patch fail', err);
-          toast.error('옵션 설정 실패했다', { position: 'bottom-right', theme: 'colored' });
-        });
+    console.log('onclick Game Option Apply');
+    console.log('difficulty', difficulty);
+    console.log('ballSpeed', ballSpeed);
+    if (difficulty === '0') {
+      setBallSpeed('slow');
+    } else if (difficulty === '1') {
+      setBallSpeed('medium');
+    } else if (difficulty === '2') {
+      setBallSpeed('fast');
     }
+    console.log('ball speed', ballSpeed);
+    const newPatchData: IGameOption = {
+      title,
+      maxParticipantNum: numOfParticipant,
+      winPoint: winScore,
+      ballSpeed,
+      password: undefined,
+    };
+    if (!isShowPasswordInputBox) {
+      newPatchData.password = null;
+    } else if (roomPassword) {
+      newPatchData.password = roomPassword;
+    }
+    axios.patch(`/api/game/room/${roomNumber}`,
+      newPatchData,
+      {
+        headers: {
+          withCredentials: 'true',
+        },
+      })
+      .then(() => {
+        setIsShowGameOptionModal(false);
+      })
+      .catch((err) => {
+        console.log('patch fail', err);
+        toast.error('옵션 설정 실패했다', { position: 'bottom-right', theme: 'colored' });
+      });
   }, [
     ballSpeed, difficulty, isShowPasswordInputBox,
     numOfParticipant, roomNumber, roomPassword, title, winScore,
