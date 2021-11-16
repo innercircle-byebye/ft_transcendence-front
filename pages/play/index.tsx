@@ -2,6 +2,8 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import React, { ReactElement, useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
 import useInput from '@/hooks/useInput';
 import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
@@ -36,9 +38,24 @@ const Play = ({ userInitialData }
     console.log('빠른시작');
   }, []);
 
-  const onSubmitPassword = useCallback(() => {
+  const onSubmitPassword = useCallback((e) => {
+    e.preventDefault();
+    if (roomToEntrance) {
+      axios.post(`/api/game/room/${roomToEntrance.gameRoomId}/join`, {
+        password,
+        role: 'observer',
+      }, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        router.push(`/play/room/${roomToEntrance.gameRoomId}`);
+      }).catch(() => {
+        toast.error('비밀번호가 일치하지 않아요!!!!!', { position: 'bottom-right', theme: 'colored' });
+      });
+    }
     setPassword('');
-  }, [setPassword]);
+  }, [password, roomToEntrance, router, setPassword]);
 
   const onClosePasswordModal = useCallback(() => {
     setRoomToEntrance(null);
@@ -111,6 +128,7 @@ const Play = ({ userInitialData }
                     </div>
                   </div>
                 )}
+              <ToastContainer />
             </ContentRight>
           </ContentContainer>
           <div role="button" tabIndex={0} onClick={stopPropagation} onKeyPress={stopPropagation}>
