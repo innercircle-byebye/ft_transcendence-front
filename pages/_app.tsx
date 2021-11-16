@@ -92,12 +92,13 @@ MyApp.getInitialProps = async (context: any) => {
       },
     }).then((response) => {
       userInitialData = response.data;
-    }).catch(() => {
-      ctx.res.writeHead(302, {
-        Location: '/login/2fa-auth',
-      });
-      ctx.res.end();
-      return {};
+    }).catch((error) => {
+      if (error.response.status === 401 && error.response.data.data.message === '2FA 인증이 필요합니다.') {
+        ctx.res.writeHead(302, {
+          Location: '/login/2fa-auth',
+        });
+        ctx.res.end();
+      }
     });
 
   // _app에서 props 추가 (모든 컴포넌트에서 공통적으로 사용할 값 추가)
