@@ -12,7 +12,11 @@ import FriendWaitList from '@/components/profile-page/FriendWaitList';
 import fetcher from '@/utils/fetcher';
 import useInput from '@/hooks/useInput';
 
-const FriendListCard: VFC = () => {
+interface IProps {
+  show: boolean;
+}
+
+const FriendListCard: VFC<IProps> = ({ show }) => {
   const router = useRouter();
   const [clickedItem, setClickedItem] = useState('friendList');
   const [gameRoomId, setGameRoomId] = useState<number | null>(null);
@@ -69,6 +73,10 @@ const FriendListCard: VFC = () => {
     setEnterPrivateGameRoom(false);
     setPassword('');
   }, [setPassword]);
+
+  if (!show) {
+    return null;
+  }
 
   return (
     <div className="w-full">
