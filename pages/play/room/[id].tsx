@@ -239,7 +239,9 @@ const Room: VFC<IProps> = ({
 
   // game option
   const { data: resetData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
-  const [ballSpeed, setBallSpeed] = useState<string>('medium');
+  const [ballSpeed, setBallSpeed] = useState<string>(
+    roomData.gameResults[roomData.gameResults.length - 1].ballSpeed,
+  );
   // console.log(ballSpeed);
   // const [gameOptionPatchData, setGameOptionPatchData] = useState<IGameOptionPatch>({
   //   title: roomData.title,
@@ -255,8 +257,8 @@ const Room: VFC<IProps> = ({
     isShowPasswordInputBox, setIsShowPasswordInputBox,
   // ] = useState<boolean | undefined>(gameRoomData?.isPrivate);
   ] = useState<boolean>(roomData.isPrivate);
-  const [roomPassword, onChangeRoomPassword] = useInput('');
-  const [difficulty, onChangeDifficulty] = useInput(0);
+  const [roomPassword, onChangeRoomPassword, setRoomPassword] = useInput('');
+  const [difficulty, onChangeDifficulty, setDifficulty] = useInput<string>('0');
   const [winScore, onChangeWinScore, setWinScore] = useInput(2);
   const [
     numOfParticipant,
@@ -264,6 +266,21 @@ const Room: VFC<IProps> = ({
     setNumOfParticipant,
   // ] = useInput(gameRoomData?.maxParticipantNum);
   ] = useInput<number>(roomData.maxParticipantNum);
+
+  useEffect(() => {
+    if (ballSpeed === 'slow') {
+      setDifficulty('0');
+    } else if (ballSpeed === 'medium') {
+      setDifficulty('1');
+    } else if (ballSpeed === 'fase') {
+      setDifficulty('2');
+    }
+  },
+  [ballSpeed, setDifficulty]);
+
+  const onSubmitPassword = useCallback(() => {
+    setRoomPassword('');
+  }, [setRoomPassword]);
 
   const onClickShowPasswordInputBox = useCallback(
     () => {
@@ -277,9 +294,9 @@ const Room: VFC<IProps> = ({
   );
 
   useEffect(() => {
-    if (difficulty === 0) { setBallSpeed('slow'); }
-    if (difficulty === 1) { setBallSpeed('medium'); }
-    if (difficulty === 2) { setBallSpeed('fast'); }
+    if (difficulty === '0') { setBallSpeed('slow'); }
+    if (difficulty === '1') { setBallSpeed('medium'); }
+    if (difficulty === '2') { setBallSpeed('fast'); }
   }, [difficulty, setBallSpeed]);
 
   useEffect(() => {
@@ -513,6 +530,7 @@ const Room: VFC<IProps> = ({
           onChangeRoomPassword={onChangeRoomPassword}
           onClickGameOptionApplyButton={onClickGameOptionApplyButton}
           onClickGameOptionCancleButton={onClickGameOptionCancleButton}
+          onSubmitPassword={onSubmitPassword}
         />
       )}
     </div>
