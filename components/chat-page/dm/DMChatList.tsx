@@ -24,6 +24,8 @@ const DMChatList = forwardRef<Scrollbars, IProps>((
     chatSections, setSize, isReachingEnd, setPrivateChannelToJoin, setPrivateGameToJoin,
   }, scrollRef,
 ) => {
+  const { data: allChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
+  const { data: allGameRoom } = useSWR<IGameRoom[]>('/api/game/room/list', fetcher);
   const { data: blockMemberData } = useSWR<IUser[]>('/api/block/list', fetcher);
 
   const onScroll = useCallback(
@@ -54,6 +56,10 @@ const DMChatList = forwardRef<Scrollbars, IProps>((
               if (blockMemberData?.map(
                 (blockMember) => blockMember.userId,
               ).includes(chat.sender.userId)) {
+                return null;
+              }
+              if ((allChannelData && chat.type === 'channel_invite' && !allChannelData.map((v) => v.name).includes(chat.content))
+              || (allGameRoom && chat.type === 'game_invite' && !allGameRoom.map((v) => v.gameRoomId).includes(Number(chat.content)))) {
                 return null;
               }
               if (chat.type !== 'plain') {

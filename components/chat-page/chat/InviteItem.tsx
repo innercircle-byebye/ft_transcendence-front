@@ -26,6 +26,8 @@ const InviteItem: FC<Props> = ({
   const { data: invitedChannelInfo } = useSWR<IChannel>(invitationData.type === 'channel_invite' ? `/api/channel/${invitationData.content}` : null, fetcher);
   const { data: invitedGameInfo } = useSWR<IGameRoom>(invitationData.type === 'game_invite' ? `/api/game/room/${invitationData.content}` : null, fetcher);
   const { data: myInfo } = useSWR<IUser>('/api/user/me');
+  const { revalidate } = useSWR<IChannel[]>('/api/channel/me', fetcher);
+
   const onClickJoinGame = useCallback(() => {
     if (invitedGameInfo?.isPrivate) {
       setPrivateGameToJoin(invitedGameInfo);
@@ -56,13 +58,14 @@ const InviteItem: FC<Props> = ({
           withCredentials: 'true',
         },
       }).then(async () => {
+        revalidate();
         await router.push(`/chat/channel/${invitationData.content}`);
       }).catch(() => {
         toast.error(`${invitationData.nickname}님이 보낸 게임방 초대에 입장할 수 없습니다.`, { position: 'bottom-right', theme: 'colored' });
       });
     }
-  }, [invitationData?.content, invitationData.nickname, invitedChannelInfo,
-    router, setPrivateChannelToJoin]);
+  }, [invitationData.content, invitationData.nickname, invitedChannelInfo,
+    revalidate, router, setPrivateChannelToJoin]);
 
   return (
     <div className="flex flex-row w-full">
