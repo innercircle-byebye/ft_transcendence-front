@@ -6,7 +6,7 @@ import React, {
 import useSWR from 'swr';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import { IChannel, IChannelMember, IUser } from '@/typings/db';
 import SwitchPublicPrivate from '@/components/chat-page/common/SwitchPublicPrivate';
 import useInput from '@/hooks/useInput';
@@ -29,7 +29,7 @@ interface IChannelInfo {
 const ChannelInfoModal: VFC<IProps> = ({
   userData, channelData, channelMemberData, setShowSettingModal,
 }) => {
-  const router = useRouter();
+  // const router = useRouter();
   // const { socket } = useSocket('chat');
   const [channelName, onChangeChannelName, setChannelName] = useInput(channelData.name);
   const [channelNameError, setChannelNameError] = useState(false);
@@ -45,6 +45,12 @@ const ChannelInfoModal: VFC<IProps> = ({
   ))?.user.nickname);
   const [isChannelOwner] = useState(userData.userId === channelData?.ownerId);
   const { data: allChannelData } = useSWR<IChannel[]>('/api/channel', fetcher);
+  const { revalidate: revalidateMyChannel } = useSWR<IChannel>(
+    '/api/channel/me', fetcher,
+  );
+  const { revalidate: revalidateChannel } = useSWR<IChannel>(
+    `/api/channel/${channelData.name}`, fetcher,
+  );
 
   const onClickReset = useCallback(() => {
     setChannelName(channelData.name);
@@ -76,18 +82,17 @@ const ChannelInfoModal: VFC<IProps> = ({
           withCredentials: 'true',
         },
       }).then(() => {
-        router.push(`/chat/channel/${channelName}`);
+        revalidateMyChannel();
+        revalidateChannel();
         setShowSettingModal(false);
         toast.success('채널 옵션이 변경되었습니다.', { position: 'bottom-right', theme: 'colored' });
       }).catch(() => {
         toast.error('채널 옵션변경에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
       });
     }
-  }, [
-    channelName, channelData.name, channelData.maxParticipantNum,
+  }, [channelName, channelData.name, channelData.maxParticipantNum,
     channelData.isPrivate, maxMemberNum, isPrivate, changePassword, password,
-    router, setShowSettingModal,
-  ]);
+    revalidateMyChannel, revalidateChannel, setShowSettingModal]);
 
   useEffect(() => {
     const equalChannel = allChannelData?.find((data) => data.name === channelName);

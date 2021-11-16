@@ -156,9 +156,9 @@ const Channel = ({
   }, [socket, onMessage]);
 
   useEffect(() => {
-    socket?.on('updatedChannelName', onUpdatedChannelName);
+    socket?.on('updateChannelName', onUpdatedChannelName);
     return () => {
-      socket?.off('updatedChannelName', onUpdatedChannelName);
+      socket?.off('updateChannelName', onUpdatedChannelName);
     };
   }, [onUpdatedChannelName, socket]);
 
