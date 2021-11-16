@@ -41,6 +41,7 @@ const CreateChannel = ({
   const { data: allChannelData } = useSWR<IChannel[]>('/api/channel', fetcher, {
     initialData: allChannelInitialData,
   });
+  const { revalidate } = useSWR<IChannel[]>('/api/channel/me', fetcher);
 
   const onClickCancel = useCallback(() => {
     router.back();
@@ -49,16 +50,17 @@ const CreateChannel = ({
   const onClickSave = useCallback(() => {
     axios.post(`/api/channel/${channelName}`, {
       password: password === '' ? null : password,
-      maxParticipantNum: maxMemberNum,
+      maxParticipantNum: Number(maxMemberNum),
       invitedUsers: inviteMembers.map((v) => v.id),
     }, {
       headers: {
         withCredentials: 'true',
       },
     }).then(() => {
-      router.push('/chat');
+      revalidate();
+      router.push(`/chat/channel/${channelName}`);
     });
-  }, [channelName, inviteMembers, maxMemberNum, password, router]);
+  }, [channelName, inviteMembers, maxMemberNum, password, revalidate, router]);
 
   useEffect(() => {
     const equalChannel = allChannelData?.find((data) => data.name === channelName);
