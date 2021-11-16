@@ -89,23 +89,6 @@ const Room: VFC<IProps> = ({
       gameRoomId: router.query.id,
       userId: userInitialData.userId,
     });
-    // return () => {
-    //   // // 못보내는거 같음 x 눌렀을때,
-    //   // console.log('jkadslfjkldsajfklasd');
-    //   // socket?.emit('test');
-    //   // socket?.emit('leaveGameRoom', {
-    //   //   gameRoomId: router.query.id,
-    //   //   userId: userInitialData.userId,
-    //   // });
-    //   // axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
-    //   //   headers: {
-    //   //     withCredentials: 'true',
-    //   //   },
-    //   // }).then(() => {
-    //   //   console.log('잘 갔나?! 제발 가라...');
-    //   // });
-    //   disconnect();
-    // };
   }, [disconnect, roomData.gameRoomId, router.query.id, socket, userInitialData.userId]);
 
   // playing
@@ -113,6 +96,22 @@ const Room: VFC<IProps> = ({
     // data update
     socket?.on('update', (data) => setUpdateData(data));
   });
+
+  // leave event 추가
+  const [isShowInvalidAccessModal, setIsShowInvalidAccessModal] = useState<boolean>(false);
+
+  const showInvalidAccess = useCallback(() => {
+    setIsShowInvalidAccessModal(true);
+  }, []);
+
+  useEffect(() => {
+    socket?.on('leave', showInvalidAccess);
+  });
+
+  const onClickLeaveButton = useCallback(() => {
+    setIsShowInvalidAccessModal(false);
+    router.push('/play');
+  }, [router]);
 
   // not playing
   // on ready unReady
@@ -143,23 +142,22 @@ const Room: VFC<IProps> = ({
       console.log('겜중이고 player');
       setIsShowExitRoomModal(true);
     } else {
-      console.log('그냥 나갈 수 있음');
-      socket?.emit('leaveGameRoom', {
-        gameRoomId: router.query.id,
-        userId: userInitialData.userId,
-      });
-      socket?.emit('test');
-      console.log('나간다!!!!');
-      axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
-        headers: {
-          withCredentials: 'true',
-        },
-      }).then(() => {
-        console.log('잘 갔나?! 제발 가라...');
-      });
+      // console.log('그냥 나갈 수 있음');
+      // socket?.emit('leaveGameRoom', {
+      //   gameRoomId: router.query.id,
+      //   userId: userInitialData.userId,
+      // });
+      // axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
+      //   headers: {
+      //     withCredentials: 'true',
+      //   },
+      // }).then(() => {
+      //   console.log('잘 갔나?! 제발 가라...');
+      // });
+      disconnect();
       router.push('/play');
     }
-  }, [isPlaying, myRole, roomData.gameRoomId, router, socket, userInitialData.userId]);
+  }, [disconnect, isPlaying, myRole, router]);
 
   // 관전하기 참여하기 button event handler
   const onClickMove = useCallback(() => {
@@ -225,37 +223,26 @@ const Room: VFC<IProps> = ({
   // game room exit modal button event handler
   const onClickExitRoomButton = useCallback(() => {
     setIsShowExitRoomModal(false);
-    socket?.emit('test');
-    console.log('나간다!!!!');
-    axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
-      headers: {
-        withCredentials: 'true',
-      },
-    }).then(() => {
-      console.log('잘 갔나?! 제발 가라...');
-    });
+    // axios.delete(`/api/game/room/${roomData.gameRoomId}/leave`, {
+    //   headers: {
+    //     withCredentials: 'true',
+    //   },
+    // }).then(() => {
+    //   console.log('잘 갔나?! 제발 가라...');
+    // });
+    disconnect();
     router.push('/play');
-  }, [roomData.gameRoomId, router, socket]);
+  }, [disconnect, router]);
 
   // game option
   const { data: resetData } = useSWR<IGameRoom>(`/api/game/room/${roomNumber}`, fetcher);
   const [ballSpeed, setBallSpeed] = useState<string>(
     roomData.gameResults[roomData.gameResults.length - 1].ballSpeed,
   );
-  // console.log(ballSpeed);
-  // const [gameOptionPatchData, setGameOptionPatchData] = useState<IGameOptionPatch>({
-  //   title: roomData.title,
-  //   password: '',
-  //   maxParticipantNum: roomData.maxParticipantNum,
-  //   winPoint: 2,
-  //   ballSpeed,
-  // });
-  // const [title, onChangeTitle] = useInput(gameRoomData?.title);
   const [title, onChangeTitle, setTitle] = useInput<string>(roomData.title);
   // public | private state
   const [
     isShowPasswordInputBox, setIsShowPasswordInputBox,
-  // ] = useState<boolean | undefined>(gameRoomData?.isPrivate);
   ] = useState<boolean>(roomData.isPrivate);
   const [roomPassword, onChangeRoomPassword, setRoomPassword] = useInput('');
   const [difficulty, onChangeDifficulty, setDifficulty] = useInput<string>('0');
@@ -531,6 +518,12 @@ const Room: VFC<IProps> = ({
           onClickGameOptionApplyButton={onClickGameOptionApplyButton}
           onClickGameOptionCancleButton={onClickGameOptionCancleButton}
           onSubmitPassword={onSubmitPassword}
+        />
+      )}
+      {isShowInvalidAccessModal && (
+        <GameResultModal
+          gameResult="비정상 접근입니다. 나가주세요."
+          onClickExitButton={onClickLeaveButton}
         />
       )}
     </div>

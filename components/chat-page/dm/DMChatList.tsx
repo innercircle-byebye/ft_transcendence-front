@@ -1,11 +1,15 @@
-import React, {
+import {
   Dispatch,
   forwardRef, MutableRefObject, SetStateAction, useCallback,
 } from 'react';
 import { Scrollbars } from 'react-custom-scrollbars-2';
-import { IChannel, IDMChat, IGameRoom } from '@/typings/db';
+import useSWR from 'swr';
+import {
+  IChannel, IDMChat, IGameRoom, IUser,
+} from '@/typings/db';
 import ChatItem from '@/components/chat-page/chat/ChatItem';
 import InviteItem from '../chat/InviteItem';
+import fetcher from '@/utils/fetcher';
 
 interface IProps {
   chatSections: { [key: string]: (IDMChat)[] };
@@ -20,6 +24,8 @@ const DMChatList = forwardRef<Scrollbars, IProps>((
     chatSections, setSize, isReachingEnd, setPrivateChannelToJoin, setPrivateGameToJoin,
   }, scrollRef,
 ) => {
+  const { data: blockMemberData } = useSWR<IUser[]>('/api/block/list', fetcher);
+
   const onScroll = useCallback(
     (values) => {
       if (values.scrollTop === 0 && !isReachingEnd) {
@@ -45,6 +51,11 @@ const DMChatList = forwardRef<Scrollbars, IProps>((
               </button>
             </div>
             {channelChatDatas.map((chat) => {
+              if (blockMemberData?.map(
+                (blockMember) => blockMember.userId,
+              ).includes(chat.sender.userId)) {
+                return null;
+              }
               if (chat.type !== 'plain') {
                 return (
                   <InviteItem
