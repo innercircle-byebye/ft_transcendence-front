@@ -11,9 +11,12 @@ const ParticipantList: VFC<IProps> = ({ participantData }) => (
     {participantData.map((item) => (
       <div
         key={item.key}
-        className="pl-2"
+        className="pl-2 flex justify-evenly"
       >
         {`${item.role} : ${item.nickname}`}
+        {myrole === 'player1' ? (
+          <button onClick={onClickKick(item.userId)}>강퇴</button>
+        ) : <></>}
       </div>
     ))}
   </div>

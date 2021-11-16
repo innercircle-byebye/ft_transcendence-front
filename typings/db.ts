@@ -175,6 +175,7 @@ export interface IParticipant {
   key: number;
   role: string;
   nickname: string;
+  userId: number;
 }
 
 export interface IGameMember {
