@@ -23,8 +23,8 @@ const InviteItem: FC<Props> = ({
   setPrivateChannelToJoin, setPrivateGameToJoin,
 }) => {
   const router = useRouter();
-  const { data: invitedChannelInfo } = useSWR<IChannel>(`/api/channel/${invitationData.content}`, fetcher);
-  const { data: invitedGameInfo } = useSWR<IGameRoom>(`/api/game/room/${invitationData.content}`, fetcher);
+  const { data: invitedChannelInfo } = useSWR<IChannel>(invitationData.type === 'channel_invite' ? `/api/channel/${invitationData.content}` : null, fetcher);
+  const { data: invitedGameInfo } = useSWR<IGameRoom>(invitationData.type === 'game_invite' ? `/api/game/room/${invitationData.content}` : null, fetcher);
   const { data: myInfo } = useSWR<IUser>('/api/user/me');
   const onClickJoinGame = useCallback(() => {
     if (invitedGameInfo?.isPrivate) {
@@ -66,7 +66,9 @@ const InviteItem: FC<Props> = ({
     }
   }, [invitationData?.content, invitationData.nickname, invitedChannelInfo,
     router, setPrivateChannelToJoin]);
-  console.log(invitedGameInfo);
+
+  console.log(invitationData);
+
   return (
     <div className="flex flex-row w-full">
       <div className="relative bg-blue-300 w-10 h-10 mr-2">
