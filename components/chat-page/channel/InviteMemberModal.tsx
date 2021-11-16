@@ -36,7 +36,7 @@ const InviteMemberModal: VFC<IProps> = ({ memberData, channelData, channelMember
     console.log('invite');
     if (inviteMembers.length > 0) {
       axios.post(`/api/channel/${channelName}/invite`, {
-        invitedUsers: inviteMembers,
+        invitedUsers: inviteMembers.map((v) => v.id),
       }, {
         headers: {
           withCredentials: 'true',
