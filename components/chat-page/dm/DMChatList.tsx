@@ -45,14 +45,14 @@ const DMChatList = forwardRef<Scrollbars, IProps>((
   return (
     <div className="flex-1 w-full">
       <Scrollbars autoHide ref={scrollRef} onScrollFrame={onScroll}>
-        {Object.entries(chatSections).map(([date, channelChatDatas]) => (
+        {Object.entries(chatSections).map(([date, dmChatDatas]) => (
           <div key={date} className="mt-3 border-t-2 border-sky-700">
             <div className="flex justify-center w-full sticky top-3">
               <button type="button" className="relative px-2 -top-3 bg-white z-10 outline-none rounded-full border-2 border-sky-700">
                 {date}
               </button>
             </div>
-            {channelChatDatas.map((chat) => {
+            {dmChatDatas.map((chat) => {
               console.log(chat);
               if (blockMemberData?.map(
                 (blockMember) => blockMember.userId,
