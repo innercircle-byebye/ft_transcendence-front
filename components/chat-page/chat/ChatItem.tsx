@@ -47,7 +47,7 @@ const ChatItem: FC<Props> = ({ chatData }) => {
       </div>
       <div className="flex-1">
         <div className="space-x-2">
-          <Link href={`/profile?name=${chatData.nickname}`}>
+          <Link href={`/profile/${chatData.nickname}`}>
             <a className="font-bold">
               {chatData.nickname}
             </a>
