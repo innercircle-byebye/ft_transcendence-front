@@ -22,8 +22,8 @@ const ProfileCardButtons: VFC<IProps> = ({ profileUser }) => {
   const [blocked, setBlocked] = useState(false);
 
   const onClickInviteGame = useCallback(() => {
-    router.push(`/play/create-room?invite=${profileUser.userId}`);
-  }, [profileUser.userId, router]);
+    router.push(`/play/create-room?invite=${profileUser.nickname}`);
+  }, [profileUser.nickname, router]);
 
   const onClickSendDM = useCallback(() => {
     router.push(`/chat/dm/${profileUser.nickname}`);
