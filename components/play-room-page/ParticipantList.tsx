@@ -3,9 +3,15 @@ import { IParticipant } from '@/typings/db';
 
 interface IProps {
   participantData: IParticipant[];
+  myRole: string;
+  onClickKick: (userId: number) => void;
 }
 
-const ParticipantList: VFC<IProps> = ({ participantData }) => (
+const ParticipantList: VFC<IProps> = ({
+  participantData,
+  myRole,
+  onClickKick,
+}) => (
   <div className="w-full h-full bg-sky-200">
     관전자 목록입니다.
     {participantData.map((item) => (
@@ -14,8 +20,13 @@ const ParticipantList: VFC<IProps> = ({ participantData }) => (
         className="pl-2 flex justify-evenly"
       >
         {`${item.role} : ${item.nickname}`}
-        {myrole === 'player1' ? (
-          <button onClick={onClickKick(item.userId)}>강퇴</button>
+        {myRole === 'player1' ? (
+          <button
+            type="button"
+            onClick={() => onClickKick(item.userId)}
+          >
+            강퇴
+          </button>
         ) : <></>}
       </div>
     ))}
