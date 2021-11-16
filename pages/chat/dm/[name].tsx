@@ -147,6 +147,7 @@ const DM = () => {
   const onClosePasswordModal = useCallback((e) => {
     e.preventDefault();
     setPrivateChannelToJoin(null);
+    setPrivateGameToJoin(null);
   }, [setPrivateChannelToJoin]);
 
   useEffect(() => {
@@ -177,7 +178,18 @@ const DM = () => {
       onKeyDown={onCloseEmoji}
     >
       <div className="h-full flex flex-col">
-        {privateChannelToJoin ? (
+        {privateGameToJoin && !privateChannelToJoin
+        && (
+        <PasswordModal
+          name={privateGameToJoin.title}
+          password={password}
+          onChangePassword={onChangePassword}
+          onSubmitPassword={onSubmitPassword}
+          onCloseModal={onClosePasswordModal}
+        />
+        )}
+        {privateChannelToJoin && !privateGameToJoin
+          && (
           <PasswordModal
             name={privateChannelToJoin.name}
             password={password}
@@ -185,8 +197,9 @@ const DM = () => {
             onSubmitPassword={onSubmitPassword}
             onCloseModal={onClosePasswordModal}
           />
-        )
-          : (
+          )}
+        {!privateChannelToJoin && !privateGameToJoin
+            && (
             <>
               <div className="font-semibold text-2xl pl-6">
                 {/* {`# ${channelData?.name}`} */}
@@ -214,7 +227,7 @@ const DM = () => {
                 }
               />
             </>
-          )}
+            )}
       </div>
       <DMButtons />
       <ToastContainer />
