@@ -99,7 +99,7 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
           <option value="1" label="50%" />
           <option value="2" label="100%" />
         </datalist>
-        <InputNumber type="승리점수(1 ~ 10)" value={winScore} onChangeValue={onChangeWinScore} min={1} max={10} />
+        <InputNumber type="승리점수(2 ~ 10)" value={winScore} onChangeValue={onChangeWinScore} min={2} max={10} />
         <InputNumber type="인원수(2 ~ 8)" value={numOfSpectator} onChangeValue={onChangeNumOfSpectator} min={2} max={8} />
         <SwitchPublicPrivate
           isPrivate={isPrivate}
