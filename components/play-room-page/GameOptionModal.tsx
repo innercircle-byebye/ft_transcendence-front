@@ -7,7 +7,7 @@ import InputNumber from '../inputs/InputNumber';
 interface IProps {
   title: string;
   onChangeTitle: (e: ChangeEvent<HTMLInputElement>) => void;
-  difficulty: number;
+  difficulty: string;
   onChangeDifficulty: (e: ChangeEvent<HTMLInputElement>) => void;
   winScore: number;
   onChangeWinScore: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -19,6 +19,7 @@ interface IProps {
   onChangeRoomPassword: (e: ChangeEvent<HTMLInputElement>) => void
   onClickGameOptionApplyButton: () => void;
   onClickGameOptionCancleButton: () => void;
+  onSubmitPassword: () => void;
 }
 
 const GameOptionModal: VFC<IProps> = ({
@@ -36,6 +37,7 @@ const GameOptionModal: VFC<IProps> = ({
   onChangeRoomPassword,
   onClickGameOptionApplyButton,
   onClickGameOptionCancleButton,
+  onSubmitPassword,
 }) => (
   <div className="absolute top-1/4 left-1/3 w-1/3 bg-amber-100 rounded-md p-5 space-y-5">
     {/* title */}
@@ -83,9 +85,12 @@ const GameOptionModal: VFC<IProps> = ({
       </button>
       {isShowPasswordInputBox && (
       <input
-        type="text"
+        type="password"
         value={roomPassword}
         onChange={onChangeRoomPassword}
+        onSubmit={onSubmitPassword}
+        placeholder=""
+        maxLength={4}
       />
       )}
     </div>
