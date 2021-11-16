@@ -53,6 +53,7 @@ const DMChatList = forwardRef<Scrollbars, IProps>((
               </button>
             </div>
             {channelChatDatas.map((chat) => {
+              console.log(chat);
               if (blockMemberData?.map(
                 (blockMember) => blockMember.userId,
               ).includes(chat.sender.userId)) {
@@ -62,7 +63,7 @@ const DMChatList = forwardRef<Scrollbars, IProps>((
               || (allGameRoom && chat.type === 'game_invite' && !allGameRoom.map((v) => v.gameRoomId).includes(Number(chat.content)))) {
                 return null;
               }
-              if (chat.type !== 'plain') {
+              if (chat.type === 'channel_invite' || chat.type === 'game_invite') {
                 return (
                   <InviteItem
                     key={chat.dmId.toString() + chat.createdAt}
