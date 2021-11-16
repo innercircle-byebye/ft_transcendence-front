@@ -32,7 +32,7 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
   const [passwordError, setPasswordError] = useState(false);
 
   const onClickCancel = useCallback(() => {
-    router.push('/play');
+    router.back();
   }, [router]);
 
   const onClickMake = useCallback(() => {
