@@ -78,7 +78,7 @@ const MembersModal: VFC = () => {
     if (userData && channelData && grantChannelAdminMember) {
       axios.patch(`/api/channel/${channelData.name}/admin`, {
         isAdmin: true,
-        targetUserId: grantChannelAdminMember.userId,
+        targetUserId: Number(grantChannelAdminMember.userId),
       }, {
         headers: {
           withCredentials: 'true',
@@ -98,7 +98,7 @@ const MembersModal: VFC = () => {
     if (userData && channelData && cancelChannelAdminMember) {
       axios.patch(`/api/channel/${channelData.name}/admin`, {
         isAdmin: false,
-        targetUserId: cancelChannelAdminMember.userId,
+        targetUserId: Number(cancelChannelAdminMember.userId),
       }, {
         headers: {
           withCredentials: 'true',
@@ -117,7 +117,7 @@ const MembersModal: VFC = () => {
     if (banMember) {
       axios.patch(`/api/channel/${channelName}/member`, {
         banDate: new Date(),
-        targetUserId: banMember.userId,
+        targetUserId: Number(banMember.userId),
       }, {
         headers: {
           withCredentials: 'true',
@@ -136,7 +136,7 @@ const MembersModal: VFC = () => {
     if (cancelBanMember) {
       axios.patch(`/api/channel/${channelName}/member`, {
         banDate: null,
-        targetUserId: cancelBanMember.userId,
+        targetUserId: Number(cancelBanMember.userId),
       }, {
         headers: {
           withCredentials: 'true',

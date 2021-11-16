@@ -62,7 +62,7 @@ const ChannelInfoModal: VFC<IProps> = ({
       body.updateName = channelName;
     }
     if (maxMemberNum !== channelData.maxParticipantNum) {
-      body.maxParticipantNum = maxMemberNum;
+      body.maxParticipantNum = Number(maxMemberNum);
     }
     if (isPrivate && changePassword) {
       body.password = password;
