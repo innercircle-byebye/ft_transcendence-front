@@ -12,7 +12,7 @@ import useInput from '@/hooks/useInput';
 
 const SearchUserNicknameInputBox: VFC = () => {
   const router = useRouter();
-  const [search, onChangeSearch] = useInput('');
+  const [search, onChangeSearch, setSearch] = useInput('');
   const { data: allUserData } = useSWR<IUser[]>('/api/user/all', fetcher);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -37,6 +37,7 @@ const SearchUserNicknameInputBox: VFC = () => {
       decorator(match) {
         const arr: string[] | null = match.match(/@\[(.+?)]\((\d+?)\)/);
         if (arr) {
+          setSearch('');
           router.push(`/profile/${arr[1]}`);
           textareaRef.current?.blur();
           return (arr[1]);
@@ -44,7 +45,7 @@ const SearchUserNicknameInputBox: VFC = () => {
         return '';
       },
     });
-  }, [router, search]);
+  }, [router, search, setSearch]);
 
   return (
     <div className="flex flex-row items-center bg-white rounded-full px-3 py-1 gap-2">
