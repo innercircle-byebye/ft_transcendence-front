@@ -75,7 +75,7 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
   }, [allRoomList, roomName]);
 
   useEffect(() => {
-    if (winScore < 1) setWinScore(1);
+    if (winScore < 2) setWinScore(2);
     if (winScore > 10) setWinScore(10);
   }, [setWinScore, winScore]);
 
