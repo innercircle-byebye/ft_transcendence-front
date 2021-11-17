@@ -24,7 +24,8 @@ const RoomButtonList: VFC<IProps> = ({
       type="button"
       onClick={onClickMove}
       disabled={isPlaying}
-      className="w-1/5 rounded-md bg-blue-300 text-white"
+      className={`w-1/5 rounded-md text-white ${isPlaying ? 'bg-gray-200' : 'bg-blue-300'}`}
+      // className="w-1/5 rounded-md bg-blue-300 text-white"
     >
       {`${myRole === 'observer' ? '참여하기' : '관전하기'}`}
     </button>
