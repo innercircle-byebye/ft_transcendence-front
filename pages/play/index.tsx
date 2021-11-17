@@ -102,6 +102,7 @@ const Play = ({ userInitialData }
                     />
                     <div className="p-5">
                       <Pagination
+                        show={roomCount !== 0}
                         page={page}
                         setPage={setPage}
                         totalPage={parseInt(`${roomCount / perPage + 1}`, 10)}
