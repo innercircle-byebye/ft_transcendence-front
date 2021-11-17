@@ -20,6 +20,7 @@ interface IProps {
   myRole: string;
   setTitle: Dispatch<SetStateAction<string>>;
   setIsShowGameOptionModal: Dispatch<SetStateAction<boolean>>;
+  isPlaying: boolean;
 }
 
 const GameOptionModal: VFC<IProps> = ({
@@ -27,6 +28,7 @@ const GameOptionModal: VFC<IProps> = ({
   myRole,
   setTitle,
   setIsShowGameOptionModal,
+  isPlaying,
 }) => {
   const router = useRouter();
   const roomNumber = router.query.id;
@@ -127,7 +129,7 @@ const GameOptionModal: VFC<IProps> = ({
     return null;
   }
 
-  if (myRole === 'player1') {
+  if (myRole === 'player1' && !isPlaying) {
     return (
       <div className="absolute top-1/4 left-1/3 w-1/3 bg-amber-100 rounded-md p-5 space-y-5">
         {/* title */}
@@ -189,6 +191,7 @@ const GameOptionModal: VFC<IProps> = ({
             type="button"
             className="bg-amber-200 p-2 rounded-md"
             onClick={onClickGameOptionApplyButton}
+            disabled={isPlaying}
           >
             APPLY
           </button>

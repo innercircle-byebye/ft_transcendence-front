@@ -415,6 +415,7 @@ const Room: VFC<IProps> = ({
           myRole={myRole}
           setTitle={setTitle}
           setIsShowGameOptionModal={setIsShowGameOptionModal}
+          isPlaying={isPlaying}
         />
       )}
       {isShowInvalidAccessModal && (
