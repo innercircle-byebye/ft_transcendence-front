@@ -11,7 +11,7 @@ import fetcher from '@/utils/fetcher';
 import { IUser } from '@/typings/db';
 
 const TwoFactorAuthentication: VFC = () => {
-  const { data: userData, mutate: mutateUserData } = useSWR<IUser>('/api/user/me', fetcher);
+  const { data: userData, revalidate } = useSWR<IUser>('/api/user/me', fetcher);
   const [is2Fa, setIs2Fa] = useState(userData?.isTwoFactorAuthEnabled);
   const [authNum, setAuthNum] = useState<string>('');
   const inputRefs = useRef<HTMLInputElement[]>([]);
@@ -24,27 +24,24 @@ const TwoFactorAuthentication: VFC = () => {
           withCredentials: 'true',
         },
       }).then(() => {
-        toast.success('2FA 인증을 비활성화했습니다.', { position: 'bottom-right', theme: 'colored' });
-        mutateUserData((prev) => {
-          const newUserData = prev;
-          if (newUserData && newUserData.isTwoFactorAuthEnabled) {
-            newUserData.isTwoFactorAuthEnabled = false;
-          }
-          return newUserData;
-        }, false);
+        revalidate();
         setIs2Fa(false);
+        toast.success('2FA 인증을 비활성화했습니다.', { position: 'bottom-right', theme: 'colored' });
       }).catch(() => {
         toast.error('2FA 인증을 비활성화하는데 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
       });
     } else {
       setIs2Fa((prev) => !prev);
     }
-  }, [is2Fa, mutateUserData, userData?.isTwoFactorAuthEnabled]);
+  }, [is2Fa, revalidate, userData?.isTwoFactorAuthEnabled]);
 
   const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
 
     if (value.length >= 1) {
+      if (+name === 0) {
+        setAuthNum('');
+      }
       setAuthNum((prev) => prev + value);
       if (+name < 5) {
         inputRefs.current[+name + 1].value = '';
@@ -56,13 +53,6 @@ const TwoFactorAuthentication: VFC = () => {
   const onClickActivate2Fa = useCallback(() => {
     if (authNum.length === 6) {
       setIs2Fa(true);
-      mutateUserData((prev) => {
-        const newUserData = prev;
-        if (newUserData && !newUserData.isTwoFactorAuthEnabled) {
-          newUserData.isTwoFactorAuthEnabled = true;
-        }
-        return newUserData;
-      }, false);
       axios.post('/auth/2fa/turn_on', {
         twoFactorAuthCode: authNum,
       }, {
@@ -70,14 +60,16 @@ const TwoFactorAuthentication: VFC = () => {
           withCredentials: 'true',
         },
       }).then(() => {
+        revalidate();
         setAuthNum('');
         toast.success('2FA 인증을 활성화했습니다.', { position: 'bottom-right', theme: 'colored' });
       }).catch(() => {
+        revalidate();
         setAuthNum('');
         toast.error('2FA 인증을 활성화하는데 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
       });
     }
-  }, [authNum, mutateUserData]);
+  }, [authNum, revalidate]);
 
   return (
     <>
