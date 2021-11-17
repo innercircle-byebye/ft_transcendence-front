@@ -62,7 +62,12 @@ const EntranceModal: VFC<IProps> = ({ roomInfo, setRoomToEntrance }) => {
           <button type="button" onClick={onClickWatch} className={`${roomInfo.currentMemberCount === roomInfo.maxParticipantNum ? 'bg-gray-400' : 'bg-green-500'} p-2 rounded-xl`}>
             관전하기
           </button>
-          <button type="button" onClick={onClickPlay} className={`${roomInfo.gameMembers.length === 2 ? 'bg-gray-400' : 'bg-blue-500'} p-2 rounded-xl`}>
+          <button
+            type="button"
+            onClick={onClickPlay}
+            disabled={roomInfo.gameMembers.length === 2}
+            className={`${roomInfo.gameMembers.length === 2 ? 'bg-gray-400' : 'bg-blue-500'} p-2 rounded-xl`}
+          >
             게임하기
           </button>
         </div>
