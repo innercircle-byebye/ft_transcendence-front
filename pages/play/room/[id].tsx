@@ -183,11 +183,17 @@ const Room: VFC<IProps> = ({
   const onClickExit = useCallback(() => {
     if (isPlaying && (myRole !== 'observer')) {
       setIsShowExitRoomModal(true);
-    } else {
+    // } else {
+    }
+    if (isShowExitRoomModal) {
       disconnect();
       router.push('/play');
     }
-  }, [disconnect, isPlaying, myRole, router]);
+    if (!isPlaying && !isShowExitRoomModal) {
+      disconnect();
+      router.push('/play');
+    }
+  }, [disconnect, isPlaying, isShowExitRoomModal, myRole, router]);
 
   // 관전하기 참여하기 button event handler
   const onClickMove = useCallback(() => {
@@ -261,11 +267,11 @@ const Room: VFC<IProps> = ({
   }, []);
 
   // game room exit modal button event handler
-  const onClickExitRoomButton = useCallback(() => {
-    setIsShowExitRoomModal(false);
-    disconnect();
-    router.push('/play');
-  }, [disconnect, router]);
+  // const onClickExitRoomButton = useCallback(() => {
+  //   setIsShowExitRoomModal(false);
+  //   disconnect();
+  //   router.push('/play');
+  // }, [disconnect, router]);
 
   const onSubmitPassword = useCallback(() => {
     console.log('이것도 됩니까?');
@@ -529,7 +535,7 @@ const Room: VFC<IProps> = ({
       {isShowExitRoomModal && (
         <ChatTwoButtonModal
           question="진짜 나가려고?"
-          onClickYes={onClickExitRoomButton}
+          onClickYes={onClickExit}
           onClickNo={onClickNoExitRoomButton}
           yesButtonColor="bg-red-300"
           noButtonColor="bg-green-300"
