@@ -25,15 +25,19 @@ const RoomList: VFC<IProps> = ({
 
   return (
     <div className="relative">
-      <div className="grid grid-cols-2 grid-rows-4 gap-5 p-5 h-full w-full">
-        {roomList.map((room) => (
-          <RoomItem
-            key={room.gameRoomId}
-            roomInfo={room}
-            setRoomToEntrance={setRoomToEntrance}
-          />
-        ))}
-      </div>
+      {roomList.length ? (
+        <div className="grid grid-cols-2 grid-rows-4 gap-5 p-5 h-full w-full">
+          {roomList.map((room) => (
+            <RoomItem
+              key={room.gameRoomId}
+              roomInfo={room}
+              setRoomToEntrance={setRoomToEntrance}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-3xl">게임방이 없습니다.</div>
+      )}
       {roomToEntrance && (
       <EntranceModal roomInfo={roomToEntrance} setRoomToEntrance={setRoomToEntrance} />
       )}
