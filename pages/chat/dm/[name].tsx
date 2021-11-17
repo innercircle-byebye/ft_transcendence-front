@@ -35,7 +35,7 @@ const DM = () => {
   const isEmpty = chatDatas?.length === 0;
   const isReachingEnd = isEmpty || false
     || (chatDatas && chatDatas[chatDatas.length - 1]?.length < 20) || false;
-  const chatSections = makeSection(chatDatas ? chatDatas.flat().reverse() : []);
+  const chatSections = makeSection(chatDatas ? chatDatas?.flat().reverse() : []);
   const [privateChannelToJoin, setPrivateChannelToJoin] = useState<IChannel | null>(null);
   const [privateGameToJoin, setPrivateGameToJoin] = useState<IGameRoom | null>(null);
 
@@ -179,27 +179,27 @@ const DM = () => {
     >
       <div className="h-full flex flex-col">
         {privateGameToJoin && !privateChannelToJoin
-        && (
-        <PasswordModal
-          name={privateGameToJoin.title}
-          password={password}
-          onChangePassword={onChangePassword}
-          onSubmitPassword={onSubmitPassword}
-          onCloseModal={onClosePasswordModal}
-        />
-        )}
+          && (
+            <PasswordModal
+              name={privateGameToJoin.title}
+              password={password}
+              onChangePassword={onChangePassword}
+              onSubmitPassword={onSubmitPassword}
+              onCloseModal={onClosePasswordModal}
+            />
+          )}
         {privateChannelToJoin && !privateGameToJoin
           && (
-          <PasswordModal
-            name={privateChannelToJoin.name}
-            password={password}
-            onChangePassword={onChangePassword}
-            onSubmitPassword={onSubmitPassword}
-            onCloseModal={onClosePasswordModal}
-          />
+            <PasswordModal
+              name={privateChannelToJoin.name}
+              password={password}
+              onChangePassword={onChangePassword}
+              onSubmitPassword={onSubmitPassword}
+              onCloseModal={onClosePasswordModal}
+            />
           )}
         {!privateChannelToJoin && !privateGameToJoin
-            && (
+          && (
             <>
               <div className="font-semibold text-2xl pl-6">
                 {/* {`# ${channelData?.name}`} */}
@@ -227,7 +227,7 @@ const DM = () => {
                 }
               />
             </>
-            )}
+          )}
       </div>
       <DMButtons />
       <ToastContainer />
