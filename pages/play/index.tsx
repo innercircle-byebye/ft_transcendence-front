@@ -7,7 +7,7 @@ import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import PasswordModal from '@/components/chat-page/PasswordModal';
 import RoomList from '@/components/play-page/RoomList';
-import { IGameRoom } from '@/typings/db';
+import { IGameRoom, IUser } from '@/typings/db';
 import Pagination from '@/components/page-with-profilecard/Pagination';
 import fetcher from '@/utils/fetcher';
 import PageContainer from '@/components/page-with-profilecard/PageContainer';
@@ -27,6 +27,7 @@ const Play = ({ userInitialData }
   const [password, onChangePassword, setPassword] = useInput('');
   const { data: roomCount } = useSWR<number>('/api/game/room/list/count', fetcher);
   const [showGameRuleModal, setShowGameRuleModal] = useState(false);
+  const { data: friendData } = useSWR<IUser[]>('/api/friend/list', fetcher);
 
   const onClickMakeRoom = useCallback(() => {
     router.push('/play/create-room');
@@ -57,7 +58,7 @@ const Play = ({ userInitialData }
     e.stopPropagation();
   }, []);
 
-  if (roomCount === undefined) {
+  if (roomCount === undefined || !friendData) {
     return <div>로딩중</div>;
   }
 
@@ -73,7 +74,7 @@ const Play = ({ userInitialData }
                   <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
                   <button type="button" onClick={onClickQuickStart} className="bg-red-500 text-3xl p-5 rounded-md">빠른시작</button>
                 </div>
-                <OnlineFriendList />
+                <OnlineFriendList friendData={friendData} />
               </div>
             </ContentLeft>
             <ContentRight bgColor="bg-sky-100">
