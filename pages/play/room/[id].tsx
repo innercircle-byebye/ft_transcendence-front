@@ -4,7 +4,7 @@ import {
 } from 'react';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
@@ -20,6 +20,7 @@ import setParticipantListData from '@/utils/setParticipantListData';
 import GameResultModal from '@/components/play-room-page/GameResult';
 import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
 import GameOptionModal from '@/components/play-room-page/GameOptionModal';
+import checkRoleMoveDisabled from '@/utils/checkRoleMoveDisabled';
 
 interface IProps {
   userInitialData: IUser;
@@ -73,6 +74,8 @@ const Room: VFC<IProps> = ({
   ] = useInput(0);
   // leave event 추가
   const [isShowInvalidAccessModal, setIsShowInvalidAccessModal] = useState<boolean>(false);
+  // RoleMoveDisable 체크 변수, false 면 해당 버튼 클릭가능
+  const [isRoleMoveDisabled, setIsRoleMoveDisabled] = useState<boolean>(false);
 
   // 방 시작할때,
   useEffect(() => {
@@ -83,24 +86,18 @@ const Room: VFC<IProps> = ({
     }
     // 방 존재
     setResetData(roomData);
-    // console.log(roomData.gameResults[roomData.gameResults.length - 1].ballSpeed);
     setBallSpeed(roomData.gameResults[roomData.gameResults.length - 1].ballSpeed);
     if (ballSpeed === 'slow') {
-      // console.log('in slow');
       setDifficulty('0');
     } else if (ballSpeed === 'medium') {
-      // console.log('in medium');
       setDifficulty('1');
     } else if (ballSpeed === 'fast') {
-      // console.log('in fast');
       setDifficulty('2');
     }
     setTitle(roomData.title);
     setWinScore(roomData.gameResults[roomData.gameResults.length - 1].winPoint);
     setNumOfParticipant(roomData.maxParticipantNum);
     setIsShowPasswordInputBox(roomData.isPrivate);
-    // console.log('difficulty', difficulty);
-    // console.log('title', title);
   }, [ballSpeed, roomData, router, setDifficulty, setNumOfParticipant, setTitle, setWinScore]);
 
   useEffect(() => {
@@ -130,6 +127,8 @@ const Room: VFC<IProps> = ({
       }
       // set participant data
       setParticipantListData(setParticipantData, data);
+      // check role move disable
+      checkRoleMoveDisabled(setIsRoleMoveDisabled, data);
     });
   }, [disconnect, myRole, router.query.id, socket, userInitialData.userId]);
 
@@ -184,20 +183,38 @@ const Room: VFC<IProps> = ({
   const onClickExit = useCallback(() => {
     if (isPlaying && (myRole !== 'observer')) {
       setIsShowExitRoomModal(true);
-    } else {
+    // } else {
+    }
+    if (isShowExitRoomModal) {
       disconnect();
       router.push('/play');
     }
-  }, [disconnect, isPlaying, myRole, router]);
+    if (!isPlaying && !isShowExitRoomModal) {
+      disconnect();
+      router.push('/play');
+    }
+  }, [disconnect, isPlaying, isShowExitRoomModal, myRole, router]);
 
   // 관전하기 참여하기 button event handler
   const onClickMove = useCallback(() => {
     if (myRole === 'observer') {
-      socket?.emit('toPlayer');
+      // socket?.emit('toPlayer');
+      axios.patch(`/api/game/room/${roomNumber}/move/player`, {}, {
+        headers: {
+          withCredentials: 'true',
+        },
+      });
     } else {
-      socket?.emit('toObserver');
+      // socket?.emit('toObserver');
+      axios.patch(`/api/game/room/${roomNumber}/move/observer`, {}, {
+        headers: {
+          withCredentials: 'true',
+        },
+      });
+      // then catch 가 필요없다.
+      // gameRoomData event 에 결과가 반영되기떄문에
     }
-  }, [myRole, socket]);
+  }, [myRole, roomNumber]);
 
   // 게임 옵션 button event handler
   const onClickOption = useCallback(() => {
@@ -250,25 +267,11 @@ const Room: VFC<IProps> = ({
   }, []);
 
   // game room exit modal button event handler
-  const onClickExitRoomButton = useCallback(() => {
-    setIsShowExitRoomModal(false);
-    disconnect();
-    router.push('/play');
-  }, [disconnect, router]);
-
-  // useEffect(() => {
-  //   axios.get(`/api/game/room/${roomNumber}`, {
-  //     withCredentials: true,
-  //   }).then((res) => {
-  //     setResetData(res.data);
-  //     console.log('res.data', res.data);
-  //     setIsShowPasswordInputBox(resetData?.isPrivate);
-  //   }).catch((err) => {
-  //     console.log('방 없다.', err);
-  //     disconnect();
-  //     router.push('/play');
-  //   });
-  // }, [disconnect, resetData?.isPrivate, roomNumber, router]);
+  // const onClickExitRoomButton = useCallback(() => {
+  //   setIsShowExitRoomModal(false);
+  //   disconnect();
+  //   router.push('/play');
+  // }, [disconnect, router]);
 
   const onSubmitPassword = useCallback(() => {
     console.log('이것도 됩니까?');
@@ -360,6 +363,24 @@ const Room: VFC<IProps> = ({
   const onClickNoExitRoomButton = useCallback(() => {
     setIsShowExitRoomModal(false);
   }, []);
+
+  // 강퇴 버튼
+  const onClickKick = useCallback((userId: number) => {
+    axios.delete(`/api/game/room/${roomNumber}/kick/${userId}`, {
+      headers: {
+        withCredentials: 'true',
+      },
+    });
+  }, [roomNumber]);
+
+  // 강퇴 당하면 kick 이벤트 받기
+  useEffect(() => {
+    socket?.on('kick', () => {
+      console.log('나 강퇴당했어.. ㅠ');
+      toast.error('!강퇴! 당함', { position: 'bottom-right', theme: 'colored' });
+      router.push('/play');
+    });
+  }, [router, socket]);
 
   const onKeyUp = useCallback(
     (e) => {
@@ -455,10 +476,10 @@ const Room: VFC<IProps> = ({
           {/* 3button opt & replace & exit */}
           <RoomButtonList
             myRole={myRole}
-            isPlaying={isPlaying}
             onClickExit={onClickExit}
             onClickMove={onClickMove}
             onClickOption={onClickOption}
+            isRoleMoveDisabled={isRoleMoveDisabled}
           />
         </div>
         <div className="bg-sky-300 h-7/12">
@@ -495,7 +516,12 @@ const Room: VFC<IProps> = ({
               </div>
             ) : (
               <div className="h-full">
-                <ParticipantList participantData={participantData} />
+                <ParticipantList
+                  myRole={myRole}
+                  participantData={participantData}
+                  onClickKick={onClickKick}
+                  isPlaying={isPlaying}
+                />
               </div>
             )}
           </div>
@@ -510,7 +536,7 @@ const Room: VFC<IProps> = ({
       {isShowExitRoomModal && (
         <ChatTwoButtonModal
           question="진짜 나가려고?"
-          onClickYes={onClickExitRoomButton}
+          onClickYes={onClickExit}
           onClickNo={onClickNoExitRoomButton}
           yesButtonColor="bg-red-300"
           noButtonColor="bg-green-300"
@@ -542,6 +568,7 @@ const Room: VFC<IProps> = ({
           onClickExitButton={onClickLeaveButton}
         />
       )}
+      <ToastContainer />
     </div>
   );
 };
