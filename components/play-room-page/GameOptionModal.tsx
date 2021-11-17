@@ -51,8 +51,8 @@ const GameOptionModal: VFC<IProps> = ({
     else newBallSpeed = 'slow';
     const newPatchData: IGameOption = {
       title: newTitle,
-      maxParticipantNum: numOfParticipant,
-      winPoint: newWinScore,
+      maxParticipantNum: Number(numOfParticipant),
+      winPoint: Number(newWinScore),
       ballSpeed: newBallSpeed,
       password: undefined,
     };
