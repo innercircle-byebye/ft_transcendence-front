@@ -20,6 +20,7 @@ import setParticipantListData from '@/utils/setParticipantListData';
 import GameResultModal from '@/components/play-room-page/GameResult';
 import ChatTwoButtonModal from '@/components/chat-page/common/ChatTwoButtonModal';
 import GameOptionModal from '@/components/play-room-page/GameOptionModal';
+import checkRoleMoveDisabled from '@/utils/checkRoleMoveDisabled';
 
 interface IProps {
   userInitialData: IUser;
@@ -73,6 +74,8 @@ const Room: VFC<IProps> = ({
   ] = useInput(0);
   // leave event 추가
   const [isShowInvalidAccessModal, setIsShowInvalidAccessModal] = useState<boolean>(false);
+  // RoleMoveDisable 체크 변수, false 면 해당 버튼 클릭가능
+  const [isRoleMoveDisabled, setIsRoleMoveDisabled] = useState<boolean>(false);
 
   // 방 시작할때,
   useEffect(() => {
@@ -124,6 +127,8 @@ const Room: VFC<IProps> = ({
       }
       // set participant data
       setParticipantListData(setParticipantData, data);
+      // check role move disable
+      checkRoleMoveDisabled(setIsRoleMoveDisabled, data);
     });
   }, [disconnect, myRole, router.query.id, socket, userInitialData.userId]);
 
@@ -455,10 +460,10 @@ const Room: VFC<IProps> = ({
           {/* 3button opt & replace & exit */}
           <RoomButtonList
             myRole={myRole}
-            isPlaying={isPlaying}
             onClickExit={onClickExit}
             onClickMove={onClickMove}
             onClickOption={onClickOption}
+            isRoleMoveDisabled={isRoleMoveDisabled}
           />
         </div>
         <div className="bg-sky-300 h-7/12">
