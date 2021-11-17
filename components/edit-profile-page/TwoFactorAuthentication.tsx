@@ -66,6 +66,11 @@ const TwoFactorAuthentication: VFC = () => {
       }).catch(() => {
         revalidate();
         setAuthNum('');
+        let name = 0;
+        while (+name < 6) {
+          inputRefs.current[+name].value = '';
+          name += 1;
+        }
         toast.error('2FA 인증을 활성화하는데 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
       });
     }
