@@ -23,7 +23,6 @@ interface IProps {
 const OnlineFriendList: VFC<IProps> = ({ friendData }) => {
   const { socket } = useSocket('main');
   const [onlineFriendList, setOnlineFriendList] = useState<IOnlineFriendData[]>([]);
-  // const [onlinePlayerFriendList, setOnlinePlayerFriendList] = useState<IOnlineFriendData[]>([]);
 
   const OnlineList = useCallback(async (data: number[]) => {
     friendData.forEach((friend) => {
