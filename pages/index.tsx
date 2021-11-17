@@ -33,25 +33,27 @@ const Home = ({
           <ProfileCard profileUserData={userInitialData} />
         </ContentLeft>
         <ContentRight>
-          <div className="flex pb-5 space-x-5 w-full h-1/3">
-            <div className="flex w-5/12">
-              <RankItem rankInfo={userInitialData.rankInfo} bgColor="bg-gray-200" />
+          <div className="grid grid-rows-3">
+            <div className="flex pb-5 space-x-5 w-full">
+              <div className="flex w-5/12">
+                <RankItem rankInfo={userInitialData.rankInfo} bgColor="bg-gray-200" />
+              </div>
+              <div className="flex w-7/12">
+                <AnnouncementList />
+              </div>
             </div>
-            <div className="flex w-7/12">
-              <AnnouncementList />
+            <div className="flex pb-5 space-x-5 w-full">
+              <div className="flex w-5/12">
+                <PlayableCard />
+              </div>
+              <div className="flex w-7/12">
+                <ObservableCard />
+              </div>
             </div>
-          </div>
-          <div className="flex pb-5 space-x-5 w-full">
-            <div className="flex w-5/12">
-              <PlayableCard />
+            <div className="pb-5 grid grid-cols-2 space-x-5 w-full">
+              <OnlineFriendList friendData={friendData} />
+              <JoinedChannelList />
             </div>
-            <div className="flex w-7/12">
-              <ObservableCard />
-            </div>
-          </div>
-          <div className="pb-5 grid grid-cols-2 space-x-5 w-full">
-            <OnlineFriendList friendData={friendData} />
-            <JoinedChannelList />
           </div>
         </ContentRight>
       </ContentContainer>
