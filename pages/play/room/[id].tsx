@@ -4,7 +4,7 @@ import {
 } from 'react';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
-import { toast } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
@@ -358,6 +358,7 @@ const Room: VFC<IProps> = ({
     setIsShowExitRoomModal(false);
   }, []);
 
+  // 강퇴 버튼
   const onClickKick = useCallback((userId: number) => {
     axios.delete(`/api/game/room/${roomNumber}/kick/${userId}`, {
       headers: {
@@ -365,6 +366,15 @@ const Room: VFC<IProps> = ({
       },
     });
   }, [roomNumber]);
+
+  // 강퇴 당하면 kick 이벤트 받기
+  useEffect(() => {
+    socket?.on('kick', () => {
+      console.log('나 강퇴당했어.. ㅠ');
+      toast.error('!강퇴! 당함', { position: 'bottom-right', theme: 'colored' });
+      router.push('/play');
+    });
+  }, [router, socket]);
 
   const onKeyUp = useCallback(
     (e) => {
@@ -551,6 +561,7 @@ const Room: VFC<IProps> = ({
           onClickExitButton={onClickLeaveButton}
         />
       )}
+      <ToastContainer />
     </div>
   );
 };
