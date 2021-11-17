@@ -41,9 +41,12 @@ const FriendItem: VFC<IProps> = ({
 
   return (
     <div className="bg-amber-50 flex justify-between p-3 rounded-lg">
-      <span className="col-span-2 justify-self-start">
-        {`${friendData.nickname} [${friendData.status}]`}
-      </span>
+      <div className="flex items-center space-x-2">
+        <div>{friendData.nickname}</div>
+        {friendData.status === 'offline' && <div className="w-2 h-2 rounded-full bg-gray-500" />}
+        {friendData.status === 'online' && <div className="w-2 h-2 rounded-full bg-green-600" />}
+        {friendData.status === 'in_game' && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+      </div>
       <div className="flex gap-3">
         <span className="bg-green-300 rounded-full px-2 py-1">
           {listType === 'friendList' && onClickDeleteFriend && (
