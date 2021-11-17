@@ -520,6 +520,7 @@ const Room: VFC<IProps> = ({
                   myRole={myRole}
                   participantData={participantData}
                   onClickKick={onClickKick}
+                  isPlaying={isPlaying}
                 />
               </div>
             )}

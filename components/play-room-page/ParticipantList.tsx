@@ -5,12 +5,14 @@ interface IProps {
   participantData: IParticipant[];
   myRole: string;
   onClickKick: (userId: number) => void;
+  isPlaying: boolean;
 }
 
 const ParticipantList: VFC<IProps> = ({
   participantData,
   myRole,
   onClickKick,
+  isPlaying,
 }) => (
   <div className="w-full h-full bg-sky-200 space-y-1">
     관전자 목록입니다.
@@ -23,8 +25,9 @@ const ParticipantList: VFC<IProps> = ({
         {myRole === 'player1' && item.role !== 'player1' && item.nickname !== '' ? (
           <button
             type="button"
+            disabled={isPlaying}
             onClick={() => onClickKick(item.userId)}
-            className="bg-red-400 rounded-md"
+            className={`${isPlaying ? 'bg-gray-500' : 'bg-red-400'} rounded-md`}
           >
             강퇴
           </button>
