@@ -3,6 +3,7 @@ import {
 } from 'react';
 
 interface IProps {
+  show: boolean;
   page: number;
   setPage: Dispatch<SetStateAction<number>>;
   totalPage: number;
@@ -11,7 +12,7 @@ interface IProps {
 }
 
 const Pagination: VFC<IProps> = ({
-  page, setPage, totalPage, paginationRange, color,
+  show, page, setPage, totalPage, paginationRange, color,
 }) => {
   const [startPage, setStartPage] = useState(1);
   const [endPage, setEndPage] = useState(totalPage < paginationRange ? totalPage : paginationRange);
@@ -68,6 +69,10 @@ const Pagination: VFC<IProps> = ({
     if (totalPage === 0) return;
     setPaginationTexts(getPaginaiontLinkTexts());
   }, [getPaginaiontLinkTexts, startPage, totalPage]);
+
+  if (!show) {
+    return null;
+  }
 
   return (
     <div className="inline-block rounded-md border border-gray-50 overflow-hidden bg-gray-50">
