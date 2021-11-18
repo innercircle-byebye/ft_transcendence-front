@@ -35,11 +35,12 @@ const DM = () => {
   const isEmpty = chatDatas?.length === 0;
   const isReachingEnd = isEmpty || false
     || (chatDatas && chatDatas[chatDatas.length - 1]?.length < 20) || false;
-  const chatSections = makeSection(chatDatas ? chatDatas.flat().reverse() : []);
   const [privateChannelToJoin, setPrivateChannelToJoin] = useState<IChannel | null>(null);
   const [privateGameToJoin, setPrivateGameToJoin] = useState<IGameRoom | null>(null);
-
   const [password, onChangePassword, setPassword] = useInput('');
+  const chatSections = makeSection(
+    chatDatas && Array.isArray(chatDatas) ? chatDatas.flat().reverse() : [],
+  );
 
   const onCloseEmoji = useCallback(() => {
     setShowEmoji(false);

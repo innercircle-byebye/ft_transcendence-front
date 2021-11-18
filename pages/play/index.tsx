@@ -9,7 +9,7 @@ import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import PasswordModal from '@/components/chat-page/PasswordModal';
 import RoomList from '@/components/play-page/RoomList';
-import { IGameRoom } from '@/typings/db';
+import { IGameRoom, IUser } from '@/typings/db';
 import Pagination from '@/components/page-with-profilecard/Pagination';
 import fetcher from '@/utils/fetcher';
 import PageContainer from '@/components/page-with-profilecard/PageContainer';
@@ -29,6 +29,7 @@ const Play = ({ userInitialData }
   const [password, onChangePassword, setPassword] = useInput('');
   const { data: roomCount } = useSWR<number>('/api/game/room/list/count', fetcher);
   const [showGameRuleModal, setShowGameRuleModal] = useState(false);
+  const { data: friendData } = useSWR<IUser[]>('/api/friend/list', fetcher);
   const { data: playableData } = useSWR<IGameRoom>('/api/game/playable', fetcher);
 
   const onClickMakeRoom = useCallback(() => {
@@ -51,9 +52,24 @@ const Play = ({ userInitialData }
     }
   }, [playableData, router]);
 
-  const onSubmitPassword = useCallback(() => {
+  const onSubmitPassword = useCallback((e) => {
+    e.preventDefault();
+    if (roomToEntrance) {
+      axios.post(`/api/game/room/${roomToEntrance.gameRoomId}/join`, {
+        password,
+        role: 'observer',
+      }, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        router.push(`/play/room/${roomToEntrance.gameRoomId}`);
+      }).catch(() => {
+        toast.error('비밀번호가 일치하지 않아요!!!!!', { position: 'bottom-right', theme: 'colored' });
+      });
+    }
     setPassword('');
-  }, [setPassword]);
+  }, [password, roomToEntrance, router, setPassword]);
 
   const onClosePasswordModal = useCallback(() => {
     setRoomToEntrance(null);
@@ -72,7 +88,7 @@ const Play = ({ userInitialData }
     e.stopPropagation();
   }, []);
 
-  if (roomCount === undefined) {
+  if (roomCount === undefined || !friendData) {
     return <div>로딩중</div>;
   }
 
@@ -88,7 +104,7 @@ const Play = ({ userInitialData }
                   <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
                   <button type="button" onClick={onClickQuickStart} disabled={!playableData} className={`${playableData ? 'bg-red-500' : 'bg-gray-300'} text-3xl p-5 rounded-md`}>빠른시작</button>
                 </div>
-                <OnlineFriendList />
+                <OnlineFriendList friendData={friendData} />
               </div>
             </ContentLeft>
             <ContentRight bgColor="bg-sky-100">
@@ -127,6 +143,7 @@ const Play = ({ userInitialData }
                     </div>
                   </div>
                 )}
+              <ToastContainer />
             </ContentRight>
           </ContentContainer>
           <div role="button" tabIndex={0} onClick={stopPropagation} onKeyPress={stopPropagation}>
