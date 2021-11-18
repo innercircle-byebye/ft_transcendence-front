@@ -95,6 +95,9 @@ const Room: VFC<IProps> = ({
       // check role move disable
       checkRoleMoveDisabled(setIsRoleMoveDisabled, data);
     });
+    return (() => {
+      socket?.off('gameRoomData');
+    });
   }, [socket]);
 
   useEffect(() => {
@@ -108,6 +111,9 @@ const Room: VFC<IProps> = ({
   useEffect(() => {
     // data update
     socket?.on('update', (data) => setUpdateData(data));
+    return (() => {
+      socket?.off('update');
+    });
   });
 
   const showInvalidAccess = useCallback(() => {
@@ -116,6 +122,9 @@ const Room: VFC<IProps> = ({
 
   useEffect(() => {
     socket?.on('leave', showInvalidAccess);
+    return (() => {
+      socket?.off('leave');
+    });
   });
 
   const onClickLeaveButton = useCallback(() => {
@@ -131,6 +140,9 @@ const Room: VFC<IProps> = ({
       setIsReady1P(data === 'player1');
       setIsReady2P(data === 'player2');
     });
+    return (() => {
+      socket?.off('ready');
+    });
   });
 
   useEffect(() => {
@@ -140,6 +152,9 @@ const Room: VFC<IProps> = ({
       } else if (data === 'player2') {
         setIsReady2P(false);
       }
+    });
+    return (() => {
+      socket?.off('unReady');
     });
   }, [socket]);
 
@@ -210,6 +225,9 @@ const Room: VFC<IProps> = ({
       setIsReady1P(false);
       setIsReady2P(false);
     });
+    return (() => {
+      socket?.off('playing');
+    });
   }, [socket]);
 
   useEffect(() => {
@@ -222,6 +240,9 @@ const Room: VFC<IProps> = ({
       setIsReady2P(false);
       setGameResultMessage(data);
       setIsShowGameResultModal(true);
+    });
+    return (() => {
+      socket?.off('gameover');
     });
   }, [socket]);
 
@@ -249,6 +270,9 @@ const Room: VFC<IProps> = ({
       console.log('나 강퇴당했어.. ㅠ');
       toast.error('!강퇴! 당함', { position: 'bottom-right', theme: 'colored' });
       router.push('/play');
+    });
+    return (() => {
+      socket?.off('kick');
     });
   }, [router, socket]);
 
@@ -308,6 +332,9 @@ const Room: VFC<IProps> = ({
     socket?.on('gameChat', (data: IGameChat) => {
       // gameChatList 추가
       setGameChatListData([...gameChatListData, data]);
+    });
+    return (() => {
+      socket?.off('gameChat');
     });
   }, [gameChatListData, socket]);
 
