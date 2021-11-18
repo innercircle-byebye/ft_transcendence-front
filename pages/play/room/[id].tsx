@@ -1,11 +1,12 @@
 import { useRouter } from 'next/router';
 import {
-  useCallback, useEffect, useState, VFC,
+  useCallback, useEffect, useRef, useState, VFC,
 } from 'react';
 import { GetServerSideProps } from 'next';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import useSWR from 'swr';
+import Scrollbars from 'react-custom-scrollbars-2';
 import GameScreen from '@/components/play-room-page/GameScreen';
 import RoomButtonList from '@/components/play-room-page/RoomButtonList';
 import PlayerInfo from '@/components/play-room-page/PlayerInfo';
@@ -69,6 +70,7 @@ const Room: VFC<IProps> = ({
   const [isRoleMoveDisabled, setIsRoleMoveDisabled] = useState<boolean>(false);
   // game chat
   const [gameChatListData, setGameChatListData] = useState<IGameChat[]>([]);
+  const scrollbarRef = useRef<Scrollbars>(null);
 
   // 방 시작할때,
   useEffect(() => {
@@ -85,7 +87,6 @@ const Room: VFC<IProps> = ({
   useEffect(() => {
     // initSetting -> gameRoomData
     socket?.on('gameRoomData', (data: IGameRoomData) => {
-      console.log('gameRoomData', data);
       setName1P(data.participants.player1 ? data.participants.player1.nickname : '');
       setName2P(data.participants.player2 ? data.participants.player2.nickname : '');
       setId1P(data.participants.player1 ? data.participants.player1.userId : undefined);
@@ -271,7 +272,6 @@ const Room: VFC<IProps> = ({
   // 강퇴 당하면 kick 이벤트 받기
   useEffect(() => {
     socket?.on('kick', () => {
-      console.log('나 강퇴당했어.. ㅠ');
       toast.error('!강퇴! 당함', { position: 'bottom-right', theme: 'colored' });
       router.push('/play');
     });
@@ -285,14 +285,10 @@ const Room: VFC<IProps> = ({
       e.preventDefault();
       // 방향키 위쪽
       if (e.keyCode === 38) {
-        console.log('key up 위');
         socket?.emit('keyUp', e.keyCode);
         // 뱡향키 아래
       } else if (e.keyCode === 40) {
-        console.log('key up 아래');
         socket?.emit('keyUp', e.keyCode);
-      } else if (e.code === 'Space') {
-        console.log('key up space');
       }
     },
     [socket],
@@ -302,11 +298,9 @@ const Room: VFC<IProps> = ({
     (e) => {
       // 방향키 위쪽
       if (e.keyCode === 38) {
-        console.log('key down 위');
         socket?.emit('keyDown', e.keyCode);
         // 뱡향키 아래
       } else if (e.keyCode === 40) {
-        console.log('key down 아래');
         socket?.emit('keyDown', e.keyCode);
       }
     },
@@ -320,6 +314,7 @@ const Room: VFC<IProps> = ({
         if (gameChat && gameChat.trim()) {
           socket?.emit('gameChat', { content: gameChat });
           setGameChat('');
+          scrollbarRef.current?.scrollToBottom();
         }
       }
     },
@@ -331,16 +326,39 @@ const Room: VFC<IProps> = ({
     document.addEventListener('keydown', onKeyDown);
   }, [onKeyDown, onKeyUp]);
 
+  const onGameChat = useCallback((data: IGameChat) => {
+    // gameChatList 추가
+    setGameChatListData((prev) => {
+      const newList = [...prev];
+      newList.push(data);
+      return newList;
+    });
+    if (scrollbarRef.current) {
+      if (scrollbarRef.current.getScrollHeight()
+        < scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
+      ) {
+        setTimeout(() => {
+          scrollbarRef.current?.scrollToBottom();
+        }, 50);
+      }
+    }
+  }, []);
+
   // chat event 받아오기
   useEffect(() => {
-    socket?.on('gameChat', (data: IGameChat) => {
-      // gameChatList 추가
-      setGameChatListData([...gameChatListData, data]);
-    });
+    socket?.on('gameChat', onGameChat);
     return (() => {
       socket?.off('gameChat');
     });
-  }, [gameChatListData, socket]);
+  }, [onGameChat, socket]);
+
+  useEffect(() => {
+    if (gameChatListData?.length === 1) {
+      setTimeout(() => {
+        scrollbarRef.current?.scrollToBottom();
+      }, 500);
+    }
+  }, [gameChatListData]);
 
   return (
     <div className="flex justify-center">
@@ -409,8 +427,8 @@ const Room: VFC<IProps> = ({
           </div>
           <div className="h-11/12">
             {isChatting ? (
-              <div className="h-full">
-                <GameChatList gameChatList={gameChatListData} />
+              <div className="h-full flex flex-col">
+                <GameChatList gameChatList={gameChatListData} ref={scrollbarRef} />
                 <ChatInputBox
                   onKeyPressHandler={onKeyPressHandler}
                   gameChat={gameChat}
