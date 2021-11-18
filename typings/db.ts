@@ -232,3 +232,8 @@ export interface IGameResult {
   playerOneNickname: string;
   playerTwoNickname: string;
 }
+
+export interface IStatusPlayer {
+  player1: number[];
+  player2: number[];
+}
