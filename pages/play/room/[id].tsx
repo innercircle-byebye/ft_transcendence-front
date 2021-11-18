@@ -271,7 +271,7 @@ const Room: VFC<IProps> = ({
   // 강퇴 당하면 kick 이벤트 받기
   useEffect(() => {
     socket?.on('kick', () => {
-      console.log('나 강퇴당했어.. ㅠ');
+      // console.log('나 강퇴당했어.. ㅠ');
       toast.error('!강퇴! 당함', { position: 'bottom-right', theme: 'colored' });
       router.push('/play');
     });
@@ -378,6 +378,7 @@ const Room: VFC<IProps> = ({
           {/* play room buttons */}
           {/* 3button opt & replace & exit */}
           <RoomButtonList
+            isPlaying={isPlaying}
             myRole={myRole}
             onClickExit={onClickExit}
             onClickMove={onClickMove}

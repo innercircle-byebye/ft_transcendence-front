@@ -1,6 +1,7 @@
 import { VFC } from 'react';
 
 interface IProps {
+  isPlaying: boolean,
   myRole: string;
   onClickExit: (e: any) => void;
   onClickMove: () => void;
@@ -9,6 +10,7 @@ interface IProps {
 }
 
 const RoomButtonList: VFC<IProps> = ({
+  isPlaying,
   myRole,
   onClickExit, onClickMove, onClickOption,
   isRoleMoveDisabled,
@@ -24,8 +26,8 @@ const RoomButtonList: VFC<IProps> = ({
     <button
       type="button"
       onClick={onClickMove}
-      disabled={isRoleMoveDisabled}
-      className={`w-1/5 rounded-md text-white ${isRoleMoveDisabled ? 'bg-gray-200' : 'bg-blue-300'}`}
+      disabled={isRoleMoveDisabled || isPlaying}
+      className={`w-1/5 rounded-md text-white ${(isRoleMoveDisabled || isPlaying) ? 'bg-gray-200' : 'bg-blue-300'}`}
       // className="w-1/5 rounded-md bg-blue-300 text-white"
     >
       {`${myRole === 'observer' ? '참여하기' : '관전하기'}`}
