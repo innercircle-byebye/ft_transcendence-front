@@ -61,13 +61,13 @@ const DMList: VFC = () => {
             const isOnline = onlineList.includes(member.userId);
             const isPlayer1 = player1List.includes(member.userId);
             const isPlayer2 = player2List.includes(member.userId);
-            let status = 'online';
-            if (isOnline) {
-              status = 'online';
-            } else if (isPlayer1) {
+            let status;
+            if (isPlayer1) {
               status = 'player1';
             } else if (isPlayer2) {
               status = 'player2';
+            } else if (isOnline) {
+              status = 'online';
             } else {
               status = 'offline';
             }
