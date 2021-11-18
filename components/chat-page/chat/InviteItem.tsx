@@ -71,6 +71,7 @@ const InviteItem: FC<Props> = ({
     <div className="flex flex-row w-full">
       <div className="relative bg-blue-300 w-10 h-10 mr-2">
         <Image
+          loader={() => invitationData.imagePath}
           src={invitationData.imagePath}
           alt="previewImage"
           objectFit="cover"

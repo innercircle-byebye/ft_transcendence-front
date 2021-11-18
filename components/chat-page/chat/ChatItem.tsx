@@ -38,6 +38,7 @@ const ChatItem: FC<Props> = ({ chatData }) => {
     <div className="flex flex-row w-full">
       <div className="relative bg-blue-300 w-10 h-10 mr-2">
         <Image
+          loader={() => chatData.imagePath}
           src={chatData.imagePath}
           alt="previewImage"
           objectFit="cover"
