@@ -15,9 +15,9 @@ const PlayerInfo: VFC<IProps> = ({
   player1, player2,
   id1P, id2P,
 }) => {
-  const { data: info1p } = useSWR<IGameResultWinRate | null>(`/api/game/${id1P}/win_rate`,
+  const { data: info1p } = useSWR<IGameResultWinRate | null>(id1P ? `/api/game/${id1P}/win_rate` : null,
     fetcher);
-  const { data: info2p } = useSWR<IGameResultWinRate | null>(`/api/game/${id2P}/win_rate`,
+  const { data: info2p } = useSWR<IGameResultWinRate | null>(id2P ? `/api/game/${id2P}/win_rate` : null,
     fetcher);
   return (
     <div className="w-full h-full">
