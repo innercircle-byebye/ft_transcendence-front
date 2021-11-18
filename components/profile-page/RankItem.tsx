@@ -10,7 +10,7 @@ interface IProps {
 const RankItem: VFC<IProps> = ({ rankInfo, bgColor = 'bg-gray-300' }) => (
   <div className={`${bgColor} rounded-md flex flex-col items-center w-full`}>
     <div className="relative w-52 h-52">
-      <Image alt="rank-image" src={`${rankInfo.imagePath}`} layout="fill" />
+      <Image loader={() => rankInfo.imagePath} alt="rank-image" src={`${rankInfo.imagePath}`} layout="fill" />
     </div>
     <p className="text-xl">{rankInfo.title.toUpperCase()}</p>
   </div>

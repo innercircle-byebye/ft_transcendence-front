@@ -58,7 +58,8 @@ const ObservableCard = () => {
               <div className="flex flex-col mx-auto items-center">
                 <div className="relative w-14 h-14 rounded-full">
                   <Image
-                    src={playerOne.imagePath || '/image/rank/bronze.jpg'}
+                    loader={() => playerOne.imagePath || '/image/profile_default.png'}
+                    src={playerOne.imagePath || '/image/profile_default.jpg'}
                     alt="previewImage"
                     objectFit="cover"
                     layout="fill"
@@ -73,6 +74,7 @@ const ObservableCard = () => {
               <div className="flex flex-col mx-auto items-center">
                 <div className="relative w-14 h-14 rounded-full">
                   <Image
+                    loader={() => playerTwo.imagePath || '/image/profile_default.png'}
                     src={playerTwo.imagePath || '/image/profile_default.png'}
                     alt="previewImage"
                     objectFit="cover"

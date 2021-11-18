@@ -32,6 +32,7 @@ const InputImage: VFC<IProps> = ({ size, previewImagePath, setImageFile }) => {
     <div className={`relative bg-blue-300 w-${size} h-${size} mb-4 rounded-full shadow-lg`}>
       {previewImagePath ? (
         <Image
+          loader={() => previewImagePath}
           src={previewImagePath}
           alt="previewImage"
           objectFit="cover"

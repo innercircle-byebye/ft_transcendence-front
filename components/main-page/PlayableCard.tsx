@@ -54,6 +54,7 @@ const PlayableCard = () => {
                 <div className="flex flex-col items-center">
                   <div className="relative w-14 h-14 rounded-full">
                     <Image
+                      loader={() => playerOne.imagePath || '/image/profile_default.png'}
                       src={playerOne.imagePath || '/image/profile_default.png'}
                       alt="previewImage"
                       objectFit="cover"
