@@ -2,6 +2,8 @@ import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import React, { ReactElement, useCallback, useState } from 'react';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
 import useInput from '@/hooks/useInput';
 import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
@@ -27,14 +29,27 @@ const Play = ({ userInitialData }
   const [password, onChangePassword, setPassword] = useInput('');
   const { data: roomCount } = useSWR<number>('/api/game/room/list/count', fetcher);
   const [showGameRuleModal, setShowGameRuleModal] = useState(false);
+  const { data: playableData } = useSWR<IGameRoom>('/api/game/playable', fetcher);
 
   const onClickMakeRoom = useCallback(() => {
     router.push('/play/create-room');
   }, [router]);
 
   const onClickQuickStart = useCallback(() => {
-    console.log('빠른시작');
-  }, []);
+    if (playableData) {
+      axios.post(`/api/game/room/${playableData.gameRoomId}/join`, {
+        role: 'player2',
+      }, {
+        headers: {
+          withCredentials: 'true',
+        },
+      }).then(() => {
+        router.push(`/play/room/${playableData.gameRoomId}`);
+      }).catch(() => {
+        toast.error('빠른시작 입장에 실패했습니다.', { position: 'bottom-right', theme: 'colored' });
+      });
+    }
+  }, [playableData, router]);
 
   const onSubmitPassword = useCallback(() => {
     setPassword('');
@@ -71,7 +86,7 @@ const Play = ({ userInitialData }
                 <ProfileCard profileUserData={userInitialData} />
                 <div className="flex w-full justify-evenly">
                   <button type="button" onClick={onClickMakeRoom} className="bg-green-400 text-3xl p-5 rounded-md">방만들기</button>
-                  <button type="button" onClick={onClickQuickStart} className="bg-red-500 text-3xl p-5 rounded-md">빠른시작</button>
+                  <button type="button" onClick={onClickQuickStart} disabled={!playableData} className={`${playableData ? 'bg-red-500' : 'bg-gray-300'} text-3xl p-5 rounded-md`}>빠른시작</button>
                 </div>
                 <OnlineFriendList />
               </div>
@@ -117,6 +132,7 @@ const Play = ({ userInitialData }
           <div role="button" tabIndex={0} onClick={stopPropagation} onKeyPress={stopPropagation}>
             <GameRuleModal show={showGameRuleModal} onCloseModal={onCloseGameRuleModal} />
           </div>
+          <ToastContainer />
         </PageContainer>
       </div>
     </div>
