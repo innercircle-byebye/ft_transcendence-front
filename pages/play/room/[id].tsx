@@ -47,6 +47,8 @@ const Room: VFC<IProps> = ({
   // player Info
   const [name1P, setName1P] = useState<string>('');
   const [name2P, setName2P] = useState<string>('');
+  const [id1P, setId1P] = useState<number>();
+  const [id2P, setId2P] = useState<number>();
   const [isReady1P, setIsReady1P] = useState(false);
   const [isReady2P, setIsReady2P] = useState(false);
   // my role
@@ -86,6 +88,8 @@ const Room: VFC<IProps> = ({
       console.log('gameRoomData', data);
       setName1P(data.participants.player1 ? data.participants.player1.nickname : '');
       setName2P(data.participants.player2 ? data.participants.player2.nickname : '');
+      setId1P(data.participants.player1 ? data.participants.player1.userId : undefined);
+      setId2P(data.participants.player2 ? data.participants.player2.userId : undefined);
       setMyRole(data.role);
       setIsPlaying(data.isPlaying);
       setIsReady1P(data.player1Ready);
@@ -362,7 +366,12 @@ const Room: VFC<IProps> = ({
         </div>
         <div className="bg-red-300 h-1/4">
           {/* player Info */}
-          <PlayerInfo player1={name1P} player2={name2P} />
+          <PlayerInfo
+            player1={name1P}
+            player2={name2P}
+            id1P={id1P}
+            id2P={id2P}
+          />
           {/* 향후 전적 정보도 포함해주기 */}
         </div>
         <div className="bg-green-300 h-1/12">
