@@ -11,7 +11,7 @@ const OnlineFriendList = () => {
       {/* title */}
       <div className="text-white font-medium text-xl pt-3 pb-2">접속중인 친구목록</div>
       {/* content list */}
-      <div className="flex flex-col mx-4 py-2 space-y-2">
+      <div className="flex flex-col mx-4 py-2 space-y-2 max-h-48 overflow-y-auto">
         {friendData?.map((item: IUser) => {
           if (item.status === 'offline' || item.status === 'not_registed') {
             return null;
