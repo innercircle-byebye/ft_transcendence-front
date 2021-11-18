@@ -42,12 +42,12 @@ const DMMemberModal: VFC = () => {
       }).then(() => {
         setShowBlockUserModal(false);
         revalidateBlockMemberData();
-        toast.success(`${dmUserData.nickname}님을 차단했습니다.`, { position: 'bottom-right', theme: 'colored' });
+        router.push('/chat');
       }).catch(() => {
         toast.error(`${dmUserData.nickname}님 차단에 실패했습니다.`, { position: 'bottom-right', theme: 'colored' });
       });
     }
-  }, [dmUserData, revalidateBlockMemberData]);
+  }, [dmUserData, revalidateBlockMemberData, router]);
 
   const onClickCancelBlockYes = useCallback(() => {
     if (dmUserData) {

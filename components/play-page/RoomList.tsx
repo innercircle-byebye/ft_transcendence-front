@@ -1,11 +1,12 @@
 import {
-  Dispatch, SetStateAction, VFC,
+  Dispatch, SetStateAction, useEffect, useState, VFC,
 } from 'react';
 import useSWR from 'swr';
 import EntranceModal from '@/components/play-page/EntranceModal';
 import RoomItem from '@/components/play-page/RoomItem';
 import fetcher from '@/utils/fetcher';
 import { IGameRoom } from '@/typings/db';
+import checkIsPlayButtonDisabled from '@/utils/checkIsPlayButtonDisabled';
 
 interface IProps {
   page: number;
@@ -18,6 +19,12 @@ const RoomList: VFC<IProps> = ({
   page, perPage, roomToEntrance, setRoomToEntrance,
 }) => {
   const { data: roomList } = useSWR<IGameRoom[]>(`/api/game/room/list?perPage=${perPage}&page=${page}`, fetcher);
+  const [isPlayButtonDisabled, setIsPlayButtonDisabled] = useState<boolean>(false);
+
+  useEffect(() => {
+    // check 게임하기 disable
+    checkIsPlayButtonDisabled(setIsPlayButtonDisabled, roomToEntrance);
+  }, [roomToEntrance]);
 
   if (!roomList) {
     return <div>로딩중...</div>;
@@ -39,7 +46,11 @@ const RoomList: VFC<IProps> = ({
         <div className="text-3xl">게임방이 없습니다.</div>
       )}
       {roomToEntrance && (
-      <EntranceModal roomInfo={roomToEntrance} setRoomToEntrance={setRoomToEntrance} />
+      <EntranceModal
+        roomInfo={roomToEntrance}
+        setRoomToEntrance={setRoomToEntrance}
+        isPlayButtonDisabled={isPlayButtonDisabled}
+      />
       )}
     </div>
   );

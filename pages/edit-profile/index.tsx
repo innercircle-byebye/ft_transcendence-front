@@ -10,7 +10,6 @@ import InputImage from '@/components/inputs/InputImage';
 import useInput from '@/hooks/useInput';
 import InputNickname from '@/components/inputs/InputNickname';
 import InputEmail from '@/components/inputs/InputEmail';
-import Switch from '@/components/edit-profile-page/Switch';
 import PageContainer from '@/components/edit-profile-page/PageContainer';
 import ContentContainer from '@/components/edit-profile-page/ContentContainer';
 import MainLayout from '@/layouts/MainLayout';
@@ -27,8 +26,6 @@ const EditProfile = ({ userInitialData }
   const [nickname, onChangeNickname, setNickname] = useInput<string>(userInitialData.nickname);
   const [email, onChangeEmail, setEmail] = useInput(userInitialData.email);
   const [emailError, setEmailError] = useState(false);
-  const [isStatusPublic, setIsStatePublic] = useState(userInitialData.isStatusPublic);
-  const [isHistoryPublic, setIsHistoryPublic] = useState(userInitialData.isHistoryPublic);
   const [nicknameError, setNicknameError] = useState(false);
 
   const onClickResetNickname = useCallback(() => {
@@ -39,25 +36,15 @@ const EditProfile = ({ userInitialData }
     setEmail(userInitialData.email);
   }, [setEmail, userInitialData.email]);
 
-  const onClickSwitchState = useCallback(() => {
-    setIsStatePublic((prev: boolean) => !prev);
-  }, []);
-
-  const onClickSwitchHistory = useCallback(() => {
-    setIsHistoryPublic((prev: boolean) => !prev);
-  }, []);
-
   const onClickReset = useCallback((e) => {
     e.preventDefault();
     setNickname(userInitialData.nickname);
     setEmail(userInitialData.email);
     setPreviewImagePath(userInitialData.imagePath);
     setImageFile(null);
-    setIsStatePublic(userInitialData.isStatusPublic);
-    setIsHistoryPublic(userInitialData.isHistoryPublic);
   },
-  [setNickname, userInitialData.nickname, userInitialData.email, userInitialData.imagePath,
-    userInitialData.isStatusPublic, userInitialData.isHistoryPublic, setEmail]);
+  [setNickname, userInitialData.nickname,
+    userInitialData.email, userInitialData.imagePath, setEmail]);
 
   const onClickCancel = useCallback(() => {
     router.push(`/profile/${userInitialData.nickname}`);
@@ -72,8 +59,6 @@ const EditProfile = ({ userInitialData }
       }
       if (nickname !== userInitialData.nickname) formData.append('nickname', nickname);
       if (email !== userInitialData.email) formData.append('email', email);
-      if (isStatusPublic !== userInitialData.isStatusPublic) formData.append('isStatusPublic', isStatusPublic.toString());
-      if (isHistoryPublic !== userInitialData.isHistoryPublic) formData.append('isStatusPublic', isStatusPublic.toString());
       axios.patch('/api/user/edit', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -85,9 +70,8 @@ const EditProfile = ({ userInitialData }
         toast.error('프로필 수정에 실패했습니다.', { position: 'bottom-center', theme: 'colored' });
       });
     }
-  }, [email, emailError, imageFile, isHistoryPublic, isStatusPublic, nickname,
-    nicknameError, router, userInitialData.email, userInitialData.isHistoryPublic,
-    userInitialData.isStatusPublic, userInitialData.nickname]);
+  }, [email, emailError, imageFile, nickname, nicknameError, router,
+    userInitialData.email, userInitialData.nickname]);
 
   useEffect(() => {
     if (imageFile) {
@@ -128,10 +112,6 @@ const EditProfile = ({ userInitialData }
             setEmailError={setEmailError}
             onClickResetEmail={onClickResetEmail}
           />
-          <div className="flex">
-            <Switch title="상태공개 / 비공개" isLeft={isStatusPublic} onClickSwitch={onClickSwitchState} />
-            <Switch title="기록공개 / 비공개" isLeft={isHistoryPublic} onClickSwitch={onClickSwitchHistory} />
-          </div>
           <TwoFactorAuthentication />
           <div className="w-72 flex items-center justify-evenly pt-2">
             <button

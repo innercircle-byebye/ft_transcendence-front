@@ -49,11 +49,9 @@ const EachDM: VFC<IProps> = ({ member }) => {
             </div>
             {member.nickname}
             {count && count > 0 ? <>{`(${count})`}</> : null}
-            {member.status === 'online' ? (
-              <div className="w-2 h-2 rounded-full bg-green-600" />
-            ) : (
-              <div className="w-2 h-2 rounded-full bg-red-600" />
-            )}
+            {member.status === 'offline' && <div className="w-2 h-2 rounded-full bg-gray-500" />}
+            {member.status === 'online' && <div className="w-2 h-2 rounded-full bg-green-600" />}
+            {member.status === 'in_game' && <div className="w-2 h-2 rounded-full bg-blue-600" />}
           </div>
         </span>
       </a>

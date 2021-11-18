@@ -47,7 +47,7 @@ const AnnouncementList = () => {
         <div className="text-2xl">Announcement</div>
       </div>
       <div className="flex flex-col mx-4">
-        <div className="h-48 overflow-y-auto space-y-3">
+        <div className="max-h-48 overflow-y-auto space-y-3">
           {announcementData?.map((item: IAnnouncement) => (
             <div className="px-4 py-1 bg-sky-200 rounded-md font-light" key={item.announcementId}>
               <button

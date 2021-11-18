@@ -8,9 +8,12 @@ import { IGameRoom } from '@/typings/db';
 interface IProps {
   roomInfo: IGameRoom;
   setRoomToEntrance: Dispatch<SetStateAction<IGameRoom | null>>;
+  isPlayButtonDisabled: boolean;
 }
 
-const EntranceModal: VFC<IProps> = ({ roomInfo, setRoomToEntrance }) => {
+const EntranceModal: VFC<IProps> = ({
+  roomInfo, setRoomToEntrance, isPlayButtonDisabled,
+}) => {
   const [player1] = useState(roomInfo.gameMembers.find((v) => v.status === 'player1'));
   const [player2] = useState(roomInfo.gameMembers.find((v) => v.status === 'player2'));
 
@@ -62,7 +65,12 @@ const EntranceModal: VFC<IProps> = ({ roomInfo, setRoomToEntrance }) => {
           <button type="button" onClick={onClickWatch} className={`${roomInfo.currentMemberCount === roomInfo.maxParticipantNum ? 'bg-gray-400' : 'bg-green-500'} p-2 rounded-xl`}>
             관전하기
           </button>
-          <button type="button" onClick={onClickPlay} className={`${roomInfo.gameMembers.length === 2 ? 'bg-gray-400' : 'bg-blue-500'} p-2 rounded-xl`}>
+          <button
+            type="button"
+            onClick={onClickPlay}
+            disabled={isPlayButtonDisabled}
+            className={`${isPlayButtonDisabled ? 'bg-gray-400' : 'bg-blue-500'} p-2 rounded-xl`}
+          >
             게임하기
           </button>
         </div>
