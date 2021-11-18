@@ -7,7 +7,6 @@ interface IProps {
 }
 
 const FriendItem: VFC<IProps> = ({ nickname, status }) => (
-  // justify-between 을 적용하여 양쪽으로 퍼지게
   <div className="py-1 px-4 bg-amber-50 rounded-md flex w-full justify-between">
     <div className="flex space-x-1 items-center">
       <div>{nickname}</div>
