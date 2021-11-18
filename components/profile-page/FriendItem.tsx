@@ -69,15 +69,11 @@ const FriendItem: VFC<IProps> = ({
             </button>
           )}
         </span>
-        <span className="bg-red-300 rounded-full px-2 py-1">
-          {friendData.status === 'online'
-            && <button type="button" onClick={onClickInviteGame}>게임신청</button>}
-          {friendData.status === 'in_game' && onClickParticipate
-            && <button type="button" onClick={onClickParticipate}>참여하기</button>}
-        </span>
-        <span className="bg-sky-300 rounded-full px-2 py-1">
-          <button type="button" onClick={onClickSendDM}>DM보내기</button>
-        </span>
+        {status === 'online'
+            && <button type="button" onClick={onClickInviteGame} className="bg-red-300 rounded-full px-2 py-1">게임신청</button>}
+        {(status === 'player1' || status === 'player2') && onClickParticipate
+            && <button type="button" onClick={onClickParticipate} className="bg-red-300 rounded-full px-2 py-1">참여하기</button>}
+        <button type="button" onClick={onClickSendDM} className="bg-sky-300 rounded-full px-2 py-1">DM보내기</button>
       </div>
     </div>
   );

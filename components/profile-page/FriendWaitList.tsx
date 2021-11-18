@@ -13,9 +13,14 @@ interface IProps {
   show: boolean;
   setGameRoomId: Dispatch<SetStateAction<number | null>>;
   onClickParticipate: () => void;
+  onlineList: number[];
+  player1List: number[];
+  player2List: number[];
 }
 
-const FriendWaitList: VFC<IProps> = ({ show, setGameRoomId, onClickParticipate }) => {
+const FriendWaitList: VFC<IProps> = ({
+  show, setGameRoomId, onClickParticipate, onlineList, player1List, player2List,
+}) => {
   const { data: friendWaitData, revalidate } = useSWR<IUser[]>('/api/friend/wait', fetcher);
 
   const onClickCancelReqFriend = useCallback((friendData: IUser) => {
@@ -38,17 +43,33 @@ const FriendWaitList: VFC<IProps> = ({ show, setGameRoomId, onClickParticipate }
   return (
     <div className="space-y-3 h-48">
       <Scrollbars autoHeight>
-        {friendWaitData?.map((data) => (
-          <div key={data.userId + data.nickname} className="py-1">
-            <FriendItem
-              friendData={data}
-              listType="friendWaitList"
-              onClickCancelReqFriend={onClickCancelReqFriend}
-              setGameRoomId={setGameRoomId}
-              onClickParticipate={onClickParticipate}
-            />
-          </div>
-        ))}
+        {friendWaitData?.map((friend) => {
+          const isOnline = onlineList.includes(friend.userId);
+          const isPlayer1 = player1List.includes(friend.userId);
+          const isPlayer2 = player2List.includes(friend.userId);
+          let status;
+          if (isPlayer1) {
+            status = 'player1';
+          } else if (isPlayer2) {
+            status = 'player2';
+          } else if (isOnline) {
+            status = 'online';
+          } else {
+            status = 'offline';
+          }
+          return (
+            <div key={friend.userId + friend.nickname} className="py-1">
+              <FriendItem
+                friendData={friend}
+                listType="friendWaitList"
+                onClickCancelReqFriend={onClickCancelReqFriend}
+                setGameRoomId={setGameRoomId}
+                onClickParticipate={onClickParticipate}
+                status={status}
+              />
+            </div>
+          );
+        })}
       </Scrollbars>
     </div>
   );

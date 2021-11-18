@@ -1,27 +1,27 @@
 import {
-  Dispatch, SetStateAction, useCallback, useEffect, useState, VFC,
+  Dispatch, SetStateAction, useCallback, VFC,
 } from 'react';
 import useSWR from 'swr';
 import Scrollbars from 'react-custom-scrollbars-2';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { IStatusPlayer, IUser } from '@/typings/db';
+import { IUser } from '@/typings/db';
 import FriendItem from '@/components/profile-page/FriendItem';
 import fetcher from '@/utils/fetcher';
-import useSocket from '@/hooks/useSocket';
 
 interface IProps {
   show: boolean;
   setGameRoomId: Dispatch<SetStateAction<number | null>>;
   onClickParticipate: () => void;
+  onlineList: number[];
+  player1List: number[];
+  player2List: number[];
 }
 
-const FriendList: VFC<IProps> = ({ show, setGameRoomId, onClickParticipate }) => {
+const FriendList: VFC<IProps> = ({
+  show, setGameRoomId, onClickParticipate, onlineList, player1List, player2List,
+}) => {
   const { data: friendList, revalidate } = useSWR<IUser[]>('/api/friend/list', fetcher);
-  const { socket } = useSocket('main');
-  const [onlineList, setOnlineList] = useState<number[]>([]);
-  const [player1List, setPlayer1List] = useState<number[]>([]);
-  const [player2List, setPlayer2List] = useState<number[]>([]);
 
   const onClickDeleteFriend = useCallback((friendData: IUser) => {
     axios.delete(`/api/friend/${friendData.userId}`, {
@@ -35,33 +35,6 @@ const FriendList: VFC<IProps> = ({ show, setGameRoomId, onClickParticipate }) =>
       toast.error(`${friendData.nickname}의 친구 삭제가 실패했습니다.`, { position: 'bottom-right', theme: 'colored' });
     });
   }, [revalidate]);
-
-  const OnlineList = useCallback((data: number[]) => {
-    setOnlineList(data);
-  }, []);
-
-  const OnPlayerList = useCallback((data: IStatusPlayer) => {
-    setPlayer1List(data.player1);
-    setPlayer2List(data.player2);
-  }, []);
-
-  useEffect(() => {
-    socket?.emit('onlineList');
-  }, [socket]);
-
-  useEffect(() => {
-    socket?.on('onlineList', OnlineList);
-    return (() => {
-      socket?.off('onlineList');
-    });
-  }, [OnlineList, socket]);
-
-  useEffect(() => {
-    socket?.on('playerList', OnPlayerList);
-    return (() => {
-      socket?.off('playerList');
-    });
-  }, [OnPlayerList, socket]);
 
   if (!show) {
     return null;
