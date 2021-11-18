@@ -1,16 +1,18 @@
-import React, { useEffect, VFC } from 'react';
+import { useEffect, VFC } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import Image from 'next/image';
-import { IUser } from '@/typings/db';
+import { RiPingPongFill } from 'react-icons/ri';
 import fetcher from '@/utils/fetcher';
+import { IUser } from '@/typings/db';
 
 interface IProps {
   member: IUser;
+  status: string;
 }
 
-const EachDM: VFC<IProps> = ({ member }) => {
+const EachDM: VFC<IProps> = ({ member, status }) => {
   const router = useRouter();
   const dMUserName = router.query.name;
   const date = localStorage.getItem(`dm-${member.nickname}`) || '0';
@@ -27,7 +29,7 @@ const EachDM: VFC<IProps> = ({ member }) => {
   return (
     <Link
       href={`/chat/dm/${member.nickname}`}
-      key={member.userId + member.intraUsername}
+      key={member.userId + member.nickname}
     >
       <a>
         <span
@@ -49,9 +51,10 @@ const EachDM: VFC<IProps> = ({ member }) => {
             </div>
             {member.nickname}
             {count && count > 0 ? <>{`(${count})`}</> : null}
-            {member.status === 'offline' && <div className="w-2 h-2 rounded-full bg-gray-500" />}
-            {member.status === 'online' && <div className="w-2 h-2 rounded-full bg-green-600" />}
-            {member.status === 'in_game' && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+            {status === 'offline' && <div className="w-2 h-2 rounded-full bg-gray-500" />}
+            {status === 'online' && <div className="w-2 h-2 rounded-full bg-green-600" />}
+            {status === 'player1' && <RiPingPongFill className="text-blue-600" />}
+            {status === 'player2' && <RiPingPongFill className="text-red-500" />}
           </div>
         </span>
       </a>
