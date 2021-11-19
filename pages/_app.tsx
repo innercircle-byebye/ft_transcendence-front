@@ -57,6 +57,13 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       disconnect();
       localStorage.removeItem('namespace');
     }
+    if (localStorage.getItem('namespace') !== 'game' && pathname === '/play/room/[id]') {
+      localStorage.setItem('namespace', 'game');
+    }
+    if (localStorage.getItem('namespace') === 'game' && pathname !== '/play/room/[id]') {
+      disconnect();
+      localStorage.removeItem('namespace');
+    }
   }, [disconnect, pathname]);
 
   return getLayout(
