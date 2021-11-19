@@ -34,7 +34,11 @@ const GameScreen: VFC<IProps> = ({
         setScore2(updateData[1].score);
       }
     }
-  }, [updateData]);
+    if (!isPlaying) {
+      setScore1(0);
+      setScore2(0);
+    }
+  }, [isPlaying, updateData]);
 
   return (
     <div className="absolute w-full h-full">
