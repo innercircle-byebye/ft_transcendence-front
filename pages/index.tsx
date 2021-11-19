@@ -1,7 +1,6 @@
 import React, { ReactElement } from 'react';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import { ToastContainer } from 'react-toastify';
-import useSWR from 'swr';
 import AnnouncementList from '@/components/main-page/AnnouncementList';
 import OnlineFriendList from '@/components/main-page/OnlineFriendList';
 import JoinedChannelList from '@/components/main-page/JoinedChannelList';
@@ -14,15 +13,11 @@ import ObservableCard from '@/components/main-page/ObservableCard';
 import ProfileCard from '@/components/page-with-profilecard/ProfileCard';
 import MainLayout from '@/layouts/MainLayout';
 import RankItem from '@/components/profile-page/RankItem';
-import { IUser } from '@/typings/db';
-import fetcher from '@/utils/fetcher';
 
 const Home = ({
   userInitialData,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const { data: friendData } = useSWR<IUser[]>('/api/friend/list', fetcher);
-
-  if (!userInitialData || !friendData) {
+  if (!userInitialData) {
     return <div>로딩중...</div>;
   }
 
@@ -51,7 +46,7 @@ const Home = ({
               </div>
             </div>
             <div className="pb-5 grid grid-cols-2 space-x-5 w-full">
-              <OnlineFriendList friendData={friendData} />
+              <OnlineFriendList />
               <JoinedChannelList />
             </div>
           </div>

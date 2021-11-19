@@ -5,6 +5,7 @@ import {
 } from 'react';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
+import { RiPingPongFill } from 'react-icons/ri';
 import { IGameRoom, IUser } from '@/typings/db';
 import fetcher from '@/utils/fetcher';
 
@@ -16,11 +17,13 @@ interface IProps {
   onClickCancelReqFriend?: (friendData: IUser) => void;
   setGameRoomId?: Dispatch<SetStateAction<number | null>>;
   onClickParticipate?: () => void;
+  status?: string;
 }
 
 const FriendItem: VFC<IProps> = ({
   friendData, listType, setGameRoomId, onClickParticipate,
   onClickDeleteFriend, onClickAcceptFriend, onClickCancelReqFriend,
+  status,
 }) => {
   const router = useRouter();
   const { data: checkUserGameroom } = useSWR<IGameRoom>(friendData.status === 'in_game' ? `/api/game/room/find_user/${friendData.userId}` : null, fetcher);
@@ -43,9 +46,10 @@ const FriendItem: VFC<IProps> = ({
     <div className="bg-amber-50 flex justify-between p-3 rounded-lg">
       <div className="flex items-center space-x-2">
         <div>{friendData.nickname}</div>
-        {friendData.status === 'offline' && <div className="w-2 h-2 rounded-full bg-gray-500" />}
-        {friendData.status === 'online' && <div className="w-2 h-2 rounded-full bg-green-600" />}
-        {friendData.status === 'in_game' && <div className="w-2 h-2 rounded-full bg-blue-600" />}
+        {status === 'offline' && <div className="w-2 h-2 rounded-full bg-gray-500" />}
+        {status === 'online' && <div className="w-2 h-2 rounded-full bg-green-600" />}
+        {status === 'player1' && <RiPingPongFill className="text-blue-600" />}
+        {status === 'player2' && <RiPingPongFill className="text-red-500" />}
       </div>
       <div className="flex gap-3">
         <span className="bg-green-300 rounded-full px-2 py-1">

@@ -45,7 +45,6 @@ const DM = () => {
   const onCloseEmoji = useCallback(() => {
     setShowEmoji(false);
   }, []);
-  console.log(router.query);
   const onSubmitChat = useCallback(
     (e) => {
       e.preventDefault();

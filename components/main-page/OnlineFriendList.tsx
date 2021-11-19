@@ -1,97 +1,67 @@
 import {
   useCallback, useEffect, useState, VFC,
 } from 'react';
+import useSWR from 'swr';
 import FriendItem from '@/components/main-page/FriendItem';
-import { IUser } from '@/typings/db';
+import { IStatusPlayer, IUser } from '@/typings/db';
 import useSocket from '@/hooks/useSocket';
+import fetcher from '@/utils/fetcher';
 
-interface IOnlineFriendData {
-  userId: number;
-  nickname: string;
-  status: string;
-}
-
-interface IStatusPlayer {
-  player1: number[];
-  player2: number[];
-}
-
-interface IProps {
-  friendData: IUser[];
-}
-
-const OnlineFriendList: VFC<IProps> = ({ friendData }) => {
+const OnlineFriendList: VFC = () => {
+  const { data: friendList } = useSWR<IUser[]>('/api/friend/list', fetcher);
   const { socket } = useSocket('main');
-  const [onlineFriendList, setOnlineFriendList] = useState<IOnlineFriendData[]>([]);
+  const [onlineList, setOnlineList] = useState<number[]>([]);
+  const [player1List, setPlayer1List] = useState<number[]>([]);
+  const [player2List, setPlayer2List] = useState<number[]>([]);
 
-  const OnlineList = useCallback(async (data: number[]) => {
-    friendData.forEach((friend) => {
-      console.log(data, friend.userId);
-      if (data.includes(friend.userId)
-      && !onlineFriendList.find((v) => v.userId === friend.userId)) {
-        setOnlineFriendList([...onlineFriendList, {
-          userId: friend.userId,
-          nickname: friend.nickname,
-          status: 'online',
-        }]);
-      }
-    });
-  }, [friendData, onlineFriendList]);
+  const OnlineList = useCallback((data: number[]) => {
+    setOnlineList(data);
+  }, []);
 
-  const OnPlayerList = useCallback(async (data: IStatusPlayer) => {
-    onlineFriendList.forEach((friend) => {
-      if (data.player1.includes(friend.userId)) {
-        setOnlineFriendList((prev) => {
-          const newList = [...prev];
-          const player1 = newList.find((v) => (v.userId === friend.userId));
-          if (player1) player1.status = 'player1';
-          return newList;
-        });
-      } else if (data.player2.includes(friend.userId)) {
-        setOnlineFriendList((prev) => {
-          const newList = [...prev];
-          const player1 = newList.find((v) => (v.userId === friend.userId));
-          if (player1) player1.status = 'player2';
-          return newList;
-        });
-      } else {
-        setOnlineFriendList((prev) => {
-          const newList = [...prev];
-          const player1 = newList.find((v) => (v.userId === friend.userId));
-          if (player1) player1.status = 'online';
-          return newList;
-        });
-      }
-    });
-  }, [onlineFriendList]);
+  const OnPlayerList = useCallback((data: IStatusPlayer) => {
+    setPlayer1List(data.player1);
+    setPlayer2List(data.player2);
+  }, []);
 
   useEffect(() => {
     socket?.on('onlineList', OnlineList);
     return (() => {
       socket?.off('onlineList');
     });
-  });
+  }, [OnlineList, socket]);
 
   useEffect(() => {
     socket?.on('playerList', OnPlayerList);
     return (() => {
       socket?.off('playerList');
     });
-  });
+  }, [OnPlayerList, socket]);
 
   return (
     <div className="rounded-xl bg-sky-700 text-center flex flex-grow flex-col space-y-2">
-      {/* title */}
       <div className="text-white font-medium text-xl pt-3 pb-2">접속중인 친구목록</div>
-      {/* content list */}
       <div className="flex flex-col mx-4 py-2 space-y-2">
-        {onlineFriendList.map((friend: IOnlineFriendData) => (
-          <FriendItem
-            key={friend.userId + friend.nickname}
-            nickname={friend.nickname}
-            status={friend.status}
-          />
-        ))}
+        {friendList?.map((friend: IUser) => {
+          const isOnline = onlineList.includes(friend.userId);
+          const isPlayer1 = player1List.includes(friend.userId);
+          const isPlayer2 = player2List.includes(friend.userId);
+          if (!isOnline && !isPlayer1 && !isPlayer2) {
+            return null;
+          }
+          let status = 'online';
+          if (isPlayer1) {
+            status = 'player1';
+          } else if (isPlayer2) {
+            status = 'player2';
+          }
+          return (
+            <FriendItem
+              key={friend.userId + friend.nickname}
+              nickname={friend.nickname}
+              status={status}
+            />
+          );
+        })}
       </div>
     </div>
   );
