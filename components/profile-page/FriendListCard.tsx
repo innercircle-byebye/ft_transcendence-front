@@ -1,9 +1,11 @@
 import axios from 'axios';
-import React, { useCallback, useState, VFC } from 'react';
+import React, {
+  useCallback, useEffect, useState, VFC,
+} from 'react';
 import useSWR from 'swr';
 import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
-import { IGameRoom } from '@/typings/db';
+import { IGameRoom, IStatusPlayer } from '@/typings/db';
 import PasswordModal from '@/components/chat-page/PasswordModal';
 import BlockedList from '@/components/profile-page/BlockedList';
 import FriendList from '@/components/profile-page/FriendList';
@@ -11,6 +13,7 @@ import FriendNewList from '@/components/profile-page/FriendNewList';
 import FriendWaitList from '@/components/profile-page/FriendWaitList';
 import fetcher from '@/utils/fetcher';
 import useInput from '@/hooks/useInput';
+import useSocket from '@/hooks/useSocket';
 
 interface IProps {
   show: boolean;
@@ -23,6 +26,10 @@ const FriendListCard: VFC<IProps> = ({ show }) => {
   const [enterPrivateGameRoom, setEnterPrivateGameRoom] = useState(false);
   const { data: gameRoomInfo } = useSWR<IGameRoom>(gameRoomId ? `/api/game/room/${gameRoomId}` : null, fetcher);
   const [password, onChangePassword, setPassword] = useInput('');
+  const { socket } = useSocket('main');
+  const [onlineList, setOnlineList] = useState<number[]>([]);
+  const [player1List, setPlayer1List] = useState<number[]>([]);
+  const [player2List, setPlayer2List] = useState<number[]>([]);
 
   const handleClick = useCallback((e: any, list: string) => {
     e.preventDefault();
@@ -73,6 +80,33 @@ const FriendListCard: VFC<IProps> = ({ show }) => {
     setEnterPrivateGameRoom(false);
     setPassword('');
   }, [setPassword]);
+
+  const OnlineList = useCallback((data: number[]) => {
+    setOnlineList(data);
+  }, []);
+
+  const OnPlayerList = useCallback((data: IStatusPlayer) => {
+    setPlayer1List(data.player1);
+    setPlayer2List(data.player2);
+  }, []);
+
+  useEffect(() => {
+    socket?.emit('onlineList');
+  }, [socket]);
+
+  useEffect(() => {
+    socket?.on('onlineList', OnlineList);
+    return (() => {
+      socket?.off('onlineList');
+    });
+  }, [OnlineList, socket]);
+
+  useEffect(() => {
+    socket?.on('playerList', OnPlayerList);
+    return (() => {
+      socket?.off('playerList');
+    });
+  }, [OnPlayerList, socket]);
 
   if (!show) {
     return null;
@@ -125,9 +159,30 @@ const FriendListCard: VFC<IProps> = ({ show }) => {
               </button>
             </div>
             <div className="bg-sky-700 p-5 space-y-5 rounded-bl-md">
-              <FriendList show={clickedItem === 'friendList'} setGameRoomId={setGameRoomId} onClickParticipate={onClickParticipate} />
-              <FriendNewList show={clickedItem === 'friendNewList'} setGameRoomId={setGameRoomId} onClickParticipate={onClickParticipate} />
-              <FriendWaitList show={clickedItem === 'friendWaitList'} setGameRoomId={setGameRoomId} onClickParticipate={onClickParticipate} />
+              <FriendList
+                show={clickedItem === 'friendList'}
+                setGameRoomId={setGameRoomId}
+                onClickParticipate={onClickParticipate}
+                onlineList={onlineList}
+                player1List={player1List}
+                player2List={player2List}
+              />
+              <FriendNewList
+                show={clickedItem === 'friendNewList'}
+                setGameRoomId={setGameRoomId}
+                onClickParticipate={onClickParticipate}
+                onlineList={onlineList}
+                player1List={player1List}
+                player2List={player2List}
+              />
+              <FriendWaitList
+                show={clickedItem === 'friendWaitList'}
+                setGameRoomId={setGameRoomId}
+                onClickParticipate={onClickParticipate}
+                onlineList={onlineList}
+                player1List={player1List}
+                player2List={player2List}
+              />
               <BlockedList show={clickedItem === 'blockedList'} />
             </div>
           </>
