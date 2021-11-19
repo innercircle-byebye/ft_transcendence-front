@@ -85,7 +85,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || '';
 
   const allChannelInitialData: IChannel[] = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/channel`, {
+    .get('http://back-nestjs:3005/api/channel', {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
@@ -94,7 +94,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .then((response) => response.data);
 
   const myChannelInitialData: IChannel[] = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/me`, {
+    .get('http://back-nestjs:3005/api/channel/me', {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
@@ -103,7 +103,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .then((response) => response.data);
 
   const allUserInitialData: IUser[] = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/all`, {
+    .get('http://back-nestjs:3005/api/user/all', {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,

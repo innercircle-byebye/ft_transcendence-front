@@ -162,13 +162,12 @@ CreateChannel.getLayout = function getLayout(page: ReactElement) {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || '';
 
-  const allChannelInitialData: IChannel[] = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/channel`, {
-      withCredentials: true,
-      headers: {
-        Cookie: `Authentication=${context.req.cookies[access_token]}`,
-      },
-    })
+  const allChannelInitialData: IChannel[] = await axios.get('http://back-nestjs:3005/api/channel', {
+    withCredentials: true,
+    headers: {
+      Cookie: `Authentication=${context.req.cookies[access_token]}`,
+    },
+  })
     .then((response) => response.data);
 
   return {

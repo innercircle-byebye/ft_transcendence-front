@@ -8,15 +8,15 @@ module.exports = {
     return [
       {
         source: '/api/:path*',
-        destination: `http://back-nestjs:${process.env.BACK_PORT}/api/:path*`,
+        destination: 'http://back-nestjs:3005/api/:path*',
       },
       {
         source: '/auth/:path*',
-        destination: `http://back-nestjs:${process.env.BACK_PORT}/auth/:path*`,
+        destination: 'http://back-nestjs:3005/auth/:path*',
       },
       {
         source: '/image/:path*',
-        destination: `http://back-nestjs:${process.env.BACK_PORT}/image/:path*`,
+        destination: 'http://back-nestjs:3005/image/:path*',
       },
     ];
   },

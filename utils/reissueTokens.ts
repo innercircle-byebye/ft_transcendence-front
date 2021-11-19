@@ -10,7 +10,7 @@ const reissueToken = async (
     && !context.req.cookies[access_token]
   ) {
     await axios
-      .get(`http://back-nestjs:${process.env.BACK_PORT}/auth/refresh`, {
+      .get(`http://back-nestjs:3005/auth/refresh`, {
         withCredentials: true,
         headers: {
           Cookie: `Refresh=${context.req.cookies[refresh_token]}`,

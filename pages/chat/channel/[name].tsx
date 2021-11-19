@@ -36,22 +36,16 @@ const Channel = ({
     initialData: userInitialData,
   });
   const { data: channelData } = useSWR<IChannel>(
-    `/api/channel/${channelName}`, fetcher, {
-      initialData: channelInitialData,
-    },
+    `/api/channel/${channelName}`, fetcher, { initialData: channelInitialData },
   );
   const { revalidate } = useSWR<IChannel[]>(
-    '/api/channel/me', fetcher, {
-      initialData: myChannelInitialData,
-    },
+    '/api/channel/me', fetcher, { initialData: myChannelInitialData },
   );
   const { data: channelChatData, mutate: mutateChat, setSize } = useSWRInfinite<IChannelChat[]>(
     (index) => `/api/channel/${channelName}/chat?perPage=20&page=${index + 1}`, fetcher,
   );
   const { data: channelMemberData } = useSWR<IChannelMember[]>(
-    `/api/channel/${channelName}/member`, fetcher, {
-      initialData: channelMemberInitialData,
-    },
+    `/api/channel/${channelName}/member`, fetcher, { initialData: channelMemberInitialData },
   );
   const isEmpty = channelChatData?.length === 0;
   const isReachingEnd = isEmpty || false
@@ -114,7 +108,7 @@ const Channel = ({
         }, false).then(() => {
           if (scrollbarRef.current) {
             if (scrollbarRef.current.getScrollHeight()
-            < scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
+              < scrollbarRef.current.getClientHeight() + scrollbarRef.current.getScrollTop() + 150
             ) {
               setTimeout(() => {
                 scrollbarRef.current?.scrollToBottom();
@@ -242,7 +236,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const channelName = context.query.name;
 
   const channelInitialData: IChannel = await axios
-    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}`), {
+    .get(encodeURI(`http://back-nestjs:3005/api/channel/${channelName}`), {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
@@ -251,7 +245,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .then((response) => response.data);
 
   const myChannelInitialData: IChannel[] = await axios
-    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/me`), {
+    .get(encodeURI('http://back-nestjs:3005/api/channel/me'), {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
@@ -260,7 +254,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .then((response) => response.data);
 
   const channelMemberInitialData: IChannelMember[] = await axios
-    .get(encodeURI(`http://back-nestjs:${process.env.BACK_PORT}/api/channel/${channelName}/member`), {
+    .get(encodeURI(`http://back-nestjs:3005/api/channel/${channelName}/member`), {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,
@@ -269,7 +263,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .then((response) => response.data);
 
   if (channelInitialData
-      && (!myChannelInitialData?.map((v) => v.channelId).includes(channelInitialData?.channelId))) {
+    && (!myChannelInitialData?.map((v) => v.channelId).includes(channelInitialData?.channelId))) {
     return {
       redirect: {
         destination: '/chat',

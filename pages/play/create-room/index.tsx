@@ -44,12 +44,12 @@ const CreateRoom = ({ allRoomList }: InferGetServerSidePropsType<typeof getServe
       winPoint: Number(winScore),
       ballSpeed,
     };
-    axios.post((invite && inviteMemberData) ? `/api/game/room?invitedUserId=${inviteMemberData.userId}` : '/api/game/room',
-      newPostData, {
-        headers: {
-          withCredentials: 'true',
-        },
-      }).then((res) => {
+    axios.post((invite && inviteMemberData)
+      ? `/api/game/room?invitedUserId=${inviteMemberData.userId}` : '/api/game/room', newPostData, {
+      headers: {
+        withCredentials: 'true',
+      },
+    }).then((res) => {
       // 게임방 생성과 동시에 게임방으로 이동
       router.push(`/play/room/${res.data.gameRoomId}`);
     }).catch(() => {
@@ -147,7 +147,7 @@ export const getServerSideProps: GetServerSideProps<IProps> = async (context) =>
   const access_token = process.env.ACCESS_TOKEN || '';
 
   const allRoomList: IGameRoom[] = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/game/room/list`, {
+    .get('http://back-nestjs:3005/api/game/room/list', {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,

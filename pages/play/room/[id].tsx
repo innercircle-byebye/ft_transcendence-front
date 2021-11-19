@@ -410,18 +410,14 @@ const Room: VFC<IProps> = ({
             <button
               type="button"
               onClick={() => setIsChatting(true)}
-              className={`w-1/2 ${isChatting && 'bg-sky-200'} ${
-                !isChatting && 'bg-gray-400'
-              }`}
+              className={`w-1/2 ${isChatting && 'bg-sky-200'} ${!isChatting && 'bg-gray-400'}`}
             >
               chatting
             </button>
             <button
               type="button"
               onClick={() => setIsChatting(false)}
-              className={`w-1/2 ${!isChatting && 'bg-sky-200'} ${
-                isChatting && 'bg-gray-400'
-              }`}
+              className={`w-1/2 ${!isChatting && 'bg-sky-200'} ${isChatting && 'bg-gray-400'}`}
             >
               participant
             </button>
@@ -488,7 +484,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const access_token = process.env.ACCESS_TOKEN || '';
 
   const roomData: IGameRoom | null = await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/game/room/${context.query.id}`, {
+    .get(`http://back-nestjs:3005/api/game/room/${context.query.id}`, {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${context.req.cookies[access_token]}`,

@@ -90,9 +90,9 @@ MyApp.getInitialProps = async (context: any) => {
     pageProps = await Component.getInitialProps(ctx);
   }
 
-  let userInitialData: IUser| undefined;
+  let userInitialData: IUser | undefined;
   await axios
-    .get(`http://back-nestjs:${process.env.BACK_PORT}/api/user/me`, {
+    .get('http://back-nestjs:3005/api/user/me', {
       withCredentials: true,
       headers: {
         Cookie: `Authentication=${ctx.req.cookies[access_token]}`,
