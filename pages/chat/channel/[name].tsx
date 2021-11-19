@@ -148,6 +148,12 @@ const Channel = ({
     localStorage.removeItem(deleteChannel);
   }, [router]);
 
+  const onBanChannel = useCallback((data) => {
+    if (data.channelName === channelName && data.userId === userInitialData.userId) {
+      router.push('/chat');
+    }
+  }, [channelName, router, userInitialData.userId]);
+
   useEffect(() => {
     socket?.on('message', onMessage);
     return () => {
@@ -175,6 +181,13 @@ const Channel = ({
       socket?.off('deleteChannel', onDeleteChannel);
     };
   }, [onDeleteChannel, socket]);
+
+  useEffect(() => {
+    socket?.on('banUserFromChannel', onBanChannel);
+    return () => {
+      socket?.off('banUserFromChannel', onBanChannel);
+    };
+  }, [onBanChannel, socket]);
 
   useEffect(() => {
     if (channelChatData?.length === 1) {
