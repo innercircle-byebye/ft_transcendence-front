@@ -396,6 +396,7 @@ const Room: VFC<IProps> = ({
           {/* play room buttons */}
           {/* 3button opt & replace & exit */}
           <RoomButtonList
+            isPlaying={isPlaying}
             myRole={myRole}
             onClickExit={onClickExit}
             onClickMove={onClickMove}

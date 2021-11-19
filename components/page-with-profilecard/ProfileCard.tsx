@@ -24,7 +24,7 @@ const ProfileCard: VFC<IProps> = ({ profileUserData }) => {
     <div className="py-10 px-10 rounded-md bg-gray-200">
       <div className="flex justify-center mb-4">
         <div className="relative w-72 h-72 rounded-full overflow-hidden">
-          <Image src={imagePath} alt="profile-image" layout="fill" />
+          <Image loader={() => imagePath} src={imagePath} alt="profile-image" layout="fill" />
         </div>
       </div>
       <div className="py-2 text-center">

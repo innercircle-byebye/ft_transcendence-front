@@ -32,11 +32,12 @@ const MentionMember: VFC<IProps> = ({
       return (
         <button
           type="button"
-          className={`px-1 py-2 flex items-center w-full space-x-2 ${
-            focus ? 'text-bold bg-sky-800 text-white' : 'text-base bg-white'
-          }`}
+          className={`px-1 py-2 flex items-center w-full space-x-2
+          ${focus ? 'text-bold bg-sky-800 text-white' : 'text-base bg-white'
+            }`}
         >
           <Image
+            loader={() => data[index].imagePath}
             src={data[index].imagePath}
             alt={data[index].nickname}
             width={20}
@@ -64,11 +65,11 @@ const MentionMember: VFC<IProps> = ({
         appendSpaceOnAdd
         trigger={trigger}
         data={
-              data?.map((v) => ({
-                id: v.userId,
-                display: v.nickname,
-              })) || []
-            }
+          data?.map((v) => ({
+            id: v.userId,
+            display: v.nickname,
+          })) || []
+        }
         renderSuggestion={renderSuggestion}
       />
     </MentionsInput>

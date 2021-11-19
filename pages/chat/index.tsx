@@ -41,8 +41,7 @@ const Chat = ({
         await router.push(`/chat/channel/${channelName}`);
       }).catch((error) => {
         setPassword('');
-        console.dir(error);
-        toast.error('틀린 비밀번호 입니다.', { position: 'bottom-right', theme: 'colored' });
+        toast.error(error.response.data.data, { position: 'bottom-right', theme: 'colored' });
       });
     }
   }, [mutateMyChannelData, password, privateChannelToJoin, router, setPassword]);

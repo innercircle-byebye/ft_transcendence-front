@@ -33,15 +33,14 @@ const EachDM: VFC<IProps> = ({ member, status }) => {
     >
       <a>
         <span
-          className={`w-full px-2 py-1.5 border-b-2 flex justify-between hover:bg-gray-300 ${
-            dMUserName && dMUserName === member.nickname
-              ? 'bg-sky-200'
-              : ''
-          }`}
+          className={`w-full px-2 py-1.5 border-b-2 flex justify-between hover:bg-gray-300
+            ${dMUserName && dMUserName === member.nickname ? 'bg-sky-200' : ''
+            }`}
         >
           <div className="flex flex-row items-center space-x-1">
             <div className="relative bg-blue-300 w-5 h-5 rounded-full shadow-lg mr-2">
               <Image
+                loader={() => member.imagePath}
                 src={member.imagePath}
                 alt="previewImage"
                 objectFit="cover"

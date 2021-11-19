@@ -6,10 +6,6 @@ const checkRoleMoveDisabled = (
   data: IGameRoomData,
 ) => {
   setIsRoleMoveDisabled(false);
-  // 게임 중이면 disable 시킨다.
-  if (data.isPlaying) {
-    setIsRoleMoveDisabled(true);
-  }
   // 게임 중이 아닌 경우
   // 내가 1P 이고, 1P 만 있다면 disable 시킨다.
   if (data.role === 'player1') {
